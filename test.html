@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover"
+  />
+  <title>Attic Ladder Grid</title>
+  <style>
+    :root {
+      --ui-bg: #f8f9fb;
+      --ui-border: rgba(0, 0, 0, 0.12);
+      --minor: rgba(0, 0, 0, 0.5);
+      --major: rgba(0, 0, 0, 1);
+      --accent: #e53935;
+
+      /* label styling */
+      --label-color: #111;
+      --label-halo: rgba(255, 255, 255, 0.92);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+
+    /* Prevent pull-to-refresh / overscroll bounce where supported */
+    html, body, .stage {
+      overscroll-behavior-y: none;
+      overscroll-behavior-x: none;
+    }
+
+    body {
+      font: 14px/1.3 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Helvetica, Arial;
+      color: #222;
+      background: #fff;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh; /* fallback */
+      width: 100%;
+    }
+    @supports (height: 100dvh) {
+      .app { height: 100dvh; }
+    }
+
+    .controls {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: var(--ui-bg);
+      border-bottom: 1px solid var(--ui-border);
+      flex-wrap: wrap;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    label { font-size: 13px; }
+    input[type="number"] {
+      width: 60px;
+      padding: 8px 10px;
+      border: 1px solid var(--ui-border);
+      border-radius: 8px;
+      background: #fff;
+      color: #111;
+      -moz-appearance: textfield;
+      -webkit-appearance: none;
+      appearance: none;
+      text-align: center;
+    }
+
+    /* normalized select centering across browsers */
+    select {
+      width: 80px;
+      padding: 8px 10px;
+      border: 1px solid var(--ui-border);
+      border-radius: 8px;
+      background: #fff;
+      color: #111;
+
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: none;
+
+      text-align: center;
+
+      text-indent: 0;
+      -webkit-padding-start: 10px;
+      -webkit-padding-end: 10px;
+    }
+    select::-ms-expand { display: none; }
+    @-moz-document url-prefix() {
+      select { text-align-last: center; }
+      select > option { text-align: center; }
+    }
+
+    input::placeholder { color: #9aa3ad; opacity: 1; }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+    button {
+      padding: 8px 12px;
+      border: 1px solid var(--ui-border);
+      border-radius: 8px;
+      background: #fff;
+      color: #111;
+      cursor: pointer;
+    }
+    button:active { transform: translateY(1px); }
+
+    .hint { font-size: 12px; opacity: 0.7; }
+
+    .stage {
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 0;
+      position: relative;
+      background: #fff;
+    }
+    #grid {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #fff;
+
+      /* gestures handled in JS */
+      touch-action: none;
+    }
+
+    /* Settings modal */
+    .modal-backdrop[hidden] { display: none !important; }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+    .modal {
+      width: min(420px, 92vw);
+      background: #fff;
+      border: 1px solid var(--ui-border);
+      border-radius: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+      overflow: hidden;
+    }
+    .modal-header, .modal-footer {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--ui-border);
+    }
+    .modal-footer { border-top: 1px solid var(--ui-border); border-bottom: 0; }
+    .modal-body { padding: 16px; }
+    .modal-title { margin: 0; font-size: 16px; font-weight: 700; }
+    .icon-btn {
+      border: none;
+      background: transparent;
+      padding: 6px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .icon-btn:hover { background: rgba(0,0,0,0.06); }
+    .checkbox {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="controls" aria-label="Plot point controls">
+      <div class="row">
+        <select id="modelSelect" aria-label="Choose model">
+          <option value="" selected disabled>Model</option>
+          <option value="P30">P30</option>
+          <option value="P36">P36</option>
+          <option value="D28">D28</option>
+          <option value="D30">D30</option>
+          <option value="D36">D36</option>
+          <option value="Q24">Q24</option>
+          <option value="Q27">Q27</option>
+          <option value="A25">A25</option>
+          <option value="A28">A28</option>
+          <option value="A36">A36</option>
+          <option value="A40">A40</option>
+          <option value="P30SS">P30 SS</option>
+          <option value="P30HB">P30 HB</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <input id="xmm" type="number" step="1" inputmode="decimal" placeholder="X →" aria-label="X coordinate (mm)" />
+      </div>
+      <div class="row">
+        <input id="ymm" type="number" step="1" inputmode="decimal" placeholder="Y ↓" aria-label="Y coordinate (mm)" />
+      </div>
+
+      <!-- Settings (replaces old Reset) -->
+      <button id="settingsBtn" type="button" title="Settings">⚙️</button>
+    </div>
+
+    <main class="stage">
+      <canvas id="grid" aria-label="Millimeter grid canvas with numeric axis labels"></canvas>
+    </main>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal-backdrop" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="modal-header">
+        <h2 id="settingsTitle" class="modal-title">Settings</h2>
+        <button id="settingsClose" class="icon-btn" title="Close" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <label class="checkbox" for="crosshairToggle">
+            <input id="crosshairToggle" type="checkbox" />
+            Show Crosshair
+          </label>
+
+          <label class="checkbox" for="lockXToggle" title="Prevent touch/drag from changing X. You can still type a new X value above.">
+            <input id="lockXToggle" type="checkbox" />
+            Lock X →
+          </label>
+
+          <label class="checkbox" for="lockYToggle" title="Prevent touch/drag from changing Y. You can still type a new Y value above.">
+            <input id="lockYToggle" type="checkbox" />
+            Lock Y ↓
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <!-- Reset button inside modal (same behavior as before) -->
+        <button id="clearBtn" type="button" title="Reset to default (no model, empty inputs)">Reset</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  (function () {
+    // Defaults when no model is selected
+    const DEFAULT_MM_W = 1000
+    const DEFAULT_MM_H = 2000
+
+    const MAJOR_MM = 100;
+    const MINOR_MM = 50;
+    const FIT = 'height';
+
+    const MINOR_MM_THICK = 0.25;
+    const MAJOR_MM_THICK = 0.5;
+
+    // Crosshair thickness
+    const CROSSHAIR_LW_MAIN = 1.5; // px in main view
+    const CROSSHAIR_LW_LENS = 1; // px inside magnifier (thinner)
+
+    // Labeling config
+    const LABEL_MIN_SPACING_PX = 48;
+    const LABEL_FONT_PX = 12;
+
+    // 50mm label gating
+    const MINOR_LABEL_MIN_SPACING_PX = 36;
+    const MINOR_LABEL_ALPHA = 0.75;
+    const MINOR_HALO_ALPHA = 0.9;
+
+    // Magnifier lens (touch-only)
+    const LENS_OFFSET_PX = 72;
+    const LENS_RADIUS_PX = 64;
+    const LENS_ZOOM = 2.5;
+    const LENS_BORDER_PX = 2;
+    const LENS_MIN_MARGIN_PX = 8;
+    const LENS_DOT_SCALE = 0.6; // dot inside lens = 60% of normal (independent of lens zoom)
+
+    // Models
+    const MODELS = {
+      P30: { label: 'P30', mmW: 1900, mmH: 3100, extraTop: 140, svg: 'https://r0wanb3zy.github.io/sellwood/images/grid/P30.svg' },
+      P36: { label: 'P36', mmW: 1900, mmH: 3700, extraTop: 140, svg: 'https://r0wanb3zy.github.io/sellwood/images/grid/P36.svg' },
+      D28: { label: 'D28', mmW: 2000, mmH: 2900, extraTop: 130, svg: 'https://r0wanb3zy.github.io/sellwood/images/grid/D28.svg' },
+      D30: { label: 'D30', mmW: 2100, mmH: 3200, extraTop: 130, svg: 'https://r0wanb3zy.github.io/sellwood/images/grid/D30.svg' },
+      D36: { label: 'D36', mmW: 2100, mmH: 3700, extraTop: 130, svg: 'https://r0wanb3zy.github.io/sellwood/images/grid/D36.svg' },
+      Q24: { label: 'Q24', mmW: 1400, mmH: 2500, extraTop: 140, svg: 'https://r0wanb3zy.github.io/sellwood/images/grid/Q24.svg' },
+      Q27: { label: 'Q27', mmW: 1400, mmH: 2800, extraTop: 140, svg: 'https://r0wanb3zy.github.io/sellwood/images/grid/Q27.svg' },
+      A25: { label: 'A25', mmW: 1700, mmH: 2600, extraTop: 140, svg: 'https://r0wanb3zy.github.io/sellwood/images/grid/A25.svg' },
+      A28: { label: 'A28', mmW: 1800, mmH: 2800, extraTop: 140, svg: 'https://r0wanb3zy.github.io/sellwood/images/grid/A28.svg' },
+      A36: { label: 'A36', mmW: 1900, mmH: 3800, extraTop: 140, svg: 'https://r0wanb3zy.github.io/sellwood/images/grid/A36.svg' },
+      A40: { label: 'A40', mmW: 2100, mmH: 4100, extraTop: 140, svg: 'https://r0wanb3zy.github.io/sellwood/images/grid/A40.svg' },
+      P30SS:{ label: 'P30-SS', mmW: 1600, mmH: 2650, extraTop: 140, svg: 'https://r0wanb3zy.github.io/sellwood/images/grid/P30-SS.svg' },
+      P30HB:{ label: 'P30-HB', mmW: 1500, mmH: 3100, extraTop: 140, svg: 'https://r0wanb3zy.github.io/sellwood/images/grid/P30-HB.svg' },
+    };
+
+    const DEFAULT_MODEL_CONFIG = {
+      label: 'P30',
+      mmW: DEFAULT_MM_W,
+      mmH: DEFAULT_MM_H,
+      extraTop: 0,
+      svg: null
+    };
+
+    const canvas = document.getElementById('grid');
+    const ctx = canvas.getContext('2d', { alpha: false });
+
+    const modelSelect = document.getElementById('modelSelect');
+    const xInput = document.getElementById('xmm');
+    const yInput = document.getElementById('ymm');
+
+    // Settings modal elements
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsModal = document.getElementById('settingsModal');
+    const settingsClose = document.getElementById('settingsClose');
+    const crosshairToggle = document.getElementById('crosshairToggle');
+    const lockXToggle = document.getElementById('lockXToggle');
+    const lockYToggle = document.getElementById('lockYToggle');
+
+    // Reset button now lives in the modal
+    const clearBtn = document.getElementById('clearBtn');
+    const stage = document.querySelector('.stage');
+
+    const STORAGE_KEY_XY = 'grid-plotter-xy';
+    const STORAGE_KEY_MODEL = 'grid-plotter-model';
+    const STORAGE_KEY_CROSSHAIR = 'grid-plotter-crosshair';
+    const STORAGE_KEY_LOCKX = 'grid-plotter-lock-x';
+    const STORAGE_KEY_LOCKY = 'grid-plotter-lock-y';
+
+    const DEFAULT_X = 0;
+    const DEFAULT_Y = 0;
+    const DEFAULT_MODEL = '';
+
+    let selectedModel = DEFAULT_MODEL;
+
+    // Effective DPR includes page pinch-zoom
+    let dpr = 1;
+    function getEffectiveDpr() {
+      const base = Math.max(1, window.devicePixelRatio || 1);
+      const zoom = (window.visualViewport && window.visualViewport.scale) ? window.visualViewport.scale : 1;
+      return Math.min(6, base * zoom);
+    }
+
+    let svgInfo = null;
+
+    function getModelConfig(key = selectedModel) {
+      return (key && MODELS[key]) ? MODELS[key] : DEFAULT_MODEL_CONFIG;
+    }
+
+    // View transform
+    const view = { scale: 1, x: 0, y: 0 };
+    const VIEW_MIN = 1;
+    const VIEW_MAX = 16;
+
+    const EPS = 1e-6;
+    const canPan = () => view.scale > VIEW_MIN + EPS;
+    function clampViewAtMin() {
+      if (view.scale <= VIEW_MIN + EPS) {
+        view.scale = VIEW_MIN;
+        view.x = 0;
+        view.y = 0;
+        return true;
+      }
+      return false;
+    }
+
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+    function resetView() { view.scale = VIEW_MIN; view.x = 0; view.y = 0; draw(); }
+
+    let rafId = 0;
+    function scheduleResize() {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        resizeCanvas();
+      });
+    }
+
+    function resizeCanvas() {
+      dpr = getEffectiveDpr();
+
+      const rect = canvas.getBoundingClientRect();
+      const w = Math.max(1, Math.round(rect.width * dpr));
+      const h = Math.max(1, Math.round(rect.height * dpr));
+
+      if (canvas.width !== w) canvas.width = w;
+      if (canvas.height !== h) canvas.height = h;
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = false;
+
+      clampViewAtMin();
+      draw();
+    }
+
+    function computeLayout() {
+      const { extraTop, mmW, mmH } = getModelConfig();
+      const width = canvas.width / dpr;
+      const height = canvas.height / dpr;
+
+      const MM_TOTAL_H = mmH + extraTop;
+
+      let scale, gridW, gridH, gridLeft, gridTop;
+
+      if (FIT === 'width') {
+        scale = width / mmW;
+        gridW = width;
+        gridH = MM_TOTAL_H * scale;
+        gridLeft = 0;
+        gridTop = Math.max(0, (height - gridH) / 2);
+      } else if (FIT === 'contain') {
+        scale = Math.min(width / mmW, height / MM_TOTAL_H);
+        gridW = mmW * scale;
+        gridH = MM_TOTAL_H * scale;
+        gridLeft = Math.max(0, (width - gridW) / 2);
+        gridTop = Math.max(0, (height - gridH) / 2);
+      } else { // 'height'
+        scale = height / MM_TOTAL_H;
+        gridH = height;
+        gridW = mmW * scale;
+        gridLeft = Math.max(0, (width - gridW) / 2);
+        gridTop = 0;
+      }
+      return { width, height, scale, gridW, gridH, gridLeft, gridTop, extraTop, mmW, mmH };
+    }
+
+    function lineWidths(scale) {
+      const minorCss = MINOR_MM_THICK * scale;
+      const majorCss = MAJOR_MM_THICK * scale;
+      return { minor: minorCss, major: majorCss };
+    }
+
+    // Enhanced to consider current transform scale (e.g., lens zoom)
+    function crispCoord(v, lineWidthCss, transformScale = 1) {
+      const lwDev = lineWidthCss * dpr * transformScale;
+      const isInt = Math.abs(lwDev - Math.round(lwDev)) < 1e-6;
+      const isOddDevicePx = isInt && (Math.round(lwDev) % 2 === 1);
+      const centerOffsetDev = isOddDevicePx ? 0.5 : 0;
+      return (Math.round(v * dpr * transformScale) + centerOffsetDev) / (dpr * transformScale);
+    }
+
+    function alignToDevicePixel(v) {
+      return Math.round(v * dpr) / dpr;
+    }
+
+    function draw() {
+      const { width, height, scale: baseScale, gridLeft: baseLeft, gridTop: baseTop, extraTop, mmW, mmH } = computeLayout();
+
+      const mm2px = baseScale * view.scale;
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, width, height);
+
+      const gridLeft = baseLeft + view.x;
+      const gridTop = baseTop + view.y;
+
+      const { minor, major } = lineWidths(mm2px);
+
+      const gridW = mmW * mm2px;
+      const gridH = (mmH + extraTop) * mm2px;
+
+      // Pass lensZoom: 1 for the main view
+      drawGrid({ mmW, mmH, scale: mm2px, gridW, gridH, gridLeft, gridTop, minorLW: minor, majorLW: major, extraTop, lensZoom: 1 });
+      drawSvgOverlay({ mmW, mmH, scale: mm2px, gridLeft, gridTop, extraTop });
+
+      // Crosshair (if enabled)
+      drawCrosshair({ mmW, mmH, scale: mm2px, gridLeft, gridTop, gridW, gridH, extraTop, lensZoom: 1 });
+
+      // Axis labels
+      drawAxisLabelsPinned({ mmW, mmH, scale: mm2px, gridLeft, gridTop, extraTop, width, height });
+
+      // Dot
+      drawDot({ scale: mm2px, gridLeft, gridTop, extraTop, width, height, suppressLens: false, insideLens: false, lensZoom: 1 });
+    }
+
+    // UPDATED: stroke-aware, symmetric clip; lens-aware crisping
+    function drawGrid({ mmW, mmH, scale, gridW, gridH, gridLeft, gridTop, minorLW, majorLW, extraTop, lensZoom = 1 }) {
+      const minorColor = getComputedStyle(document.documentElement).getPropertyValue('--minor').trim() || '#d9d9d9';
+      const majorColor = getComputedStyle(document.documentElement).getPropertyValue('--major').trim() || '#7a7a7a';
+
+      const yMin = -extraTop;
+      const yMax = mmH;
+
+      ctx.save();
+      // Half the thickest stroke + a tiny epsilon (pre-transform units)
+      const pad = Math.max(minorLW, majorLW) / 2 + 1 / (dpr * lensZoom);
+      ctx.beginPath();
+      ctx.rect(gridLeft - pad, gridTop - pad, gridW + 2 * pad, gridH + 2 * pad);
+      ctx.clip();
+
+      // Minor lines
+      ctx.strokeStyle = minorColor;
+      ctx.lineWidth = minorLW;
+
+      for (let xm = MINOR_MM; xm < mmW; xm += MINOR_MM) {
+        if (xm % MAJOR_MM === 0) continue;
+        const x = crispCoord(gridLeft + xm * scale, ctx.lineWidth, lensZoom);
+        ctx.beginPath();
+        ctx.moveTo(x, gridTop);
+        ctx.lineTo(x, gridTop + gridH);
+        ctx.stroke();
+      }
+      for (let ym = Math.ceil(yMin / MINOR_MM) * MINOR_MM; ym < yMax; ym += MINOR_MM) {
+        if (ym % MAJOR_MM === 0) continue;
+        const y = crispCoord(gridTop + (ym + extraTop) * scale, ctx.lineWidth, lensZoom);
+        ctx.beginPath();
+        ctx.moveTo(gridLeft, y);
+        ctx.lineTo(gridLeft + gridW, y);
+        ctx.stroke();
+      }
+
+      // Major lines
+      ctx.strokeStyle = majorColor;
+      ctx.lineWidth = majorLW;
+
+      for (let xm = 0; xm <= mmW; xm += MAJOR_MM) {
+        const x = crispCoord(gridLeft + xm * scale, ctx.lineWidth, lensZoom);
+        ctx.beginPath();
+        ctx.moveTo(x, gridTop);
+        ctx.lineTo(x, gridTop + gridH);
+        ctx.stroke();
+      }
+      for (let ym = Math.ceil(yMin / MAJOR_MM) * MAJOR_MM; ym <= yMax; ym += MAJOR_MM) {
+        const y = crispCoord(gridTop + (ym + extraTop) * scale, ctx.lineWidth, lensZoom);
+        ctx.beginPath();
+        ctx.moveTo(gridLeft, y);
+        ctx.lineTo(gridLeft + gridW, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawAxisLabelsPinned({ mmW, mmH, scale, gridLeft, gridTop, extraTop, width, height }) {
+      const labelColor = getComputedStyle(document.documentElement).getPropertyValue('--label-color').trim() || '#111';
+      const labelHalo  = getComputedStyle(document.documentElement).getPropertyValue('--label-halo').trim()  || 'rgba(255,255,255,0.92)';
+
+      const stepFactor = Math.max(1, Math.ceil(LABEL_MIN_SPACING_PX / (MAJOR_MM * scale)));
+      const step = MAJOR_MM * stepFactor;
+
+      const showMinorLabels = (stepFactor === 1) && (MINOR_MM * scale >= MINOR_LABEL_MIN_SPACING_PX);
+
+      const fontPx = LABEL_FONT_PX;
+      const haloWidth = 3;
+
+      const margin = 6;
+      const outsideGap = 6;
+
+      const xMinMmVisible = Math.max(0, (0 - gridLeft) / scale);
+      const xMaxMmVisible = Math.min(mmW, (width - gridLeft) / scale);
+
+      const yMinMmVisible = Math.max(0, (0 - gridTop) / scale - extraTop);
+      const yMaxMmVisible = Math.min(mmH, (height - gridTop) / scale - extraTop);
+
+      // Bottom X labels
+      if (xMaxMmVisible >= 0 && xMinMmVisible <= mmW) {
+        ctx.save();
+        ctx.font = `600 ${fontPx}px system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Helvetica, Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.lineJoin = 'round';
+        ctx.miterLimit = 2;
+
+        const gridBottom = gridTop + (extraTop + mmH) * scale;
+        const desiredTop = gridBottom + outsideGap;
+
+        const haloPad = Math.ceil(haloWidth / 2) + 1;
+        const maxTop = height - margin - fontPx - haloPad;
+        const yTop = alignToDevicePixel(Math.min(desiredTop, maxTop));
+
+        const startXMajor = Math.ceil(xMinMmVisible / step) * step;
+        for (let xm = startXMajor; xm <= xMaxMmVisible; xm += step) {
+          const sx = alignToDevicePixel(gridLeft + xm * scale);
+          const text = String(xm);
+          ctx.lineWidth = haloWidth;
+          ctx.strokeStyle = labelHalo;
+          ctx.globalAlpha = 1;
+          ctx.strokeText(text, sx, yTop);
+          ctx.fillStyle = labelColor;
+          ctx.fillText(text, sx, yTop);
+        }
+
+        if (showMinorLabels) {
+          const startXMinor = Math.ceil(xMinMmVisible / MINOR_MM) * MINOR_MM;
+          for (let xm = startXMinor; xm <= xMaxMmVisible; xm += MINOR_MM) {
+            if (xm % MAJOR_MM === 0) continue;
+            const sx = alignToDevicePixel(gridLeft + xm * scale);
+            const text = String(xm);
+            ctx.lineWidth = haloWidth;
+            ctx.strokeStyle = labelHalo;
+            ctx.globalAlpha = MINOR_HALO_ALPHA;
+            ctx.strokeText(text, sx, yTop);
+            ctx.fillStyle = labelColor;
+            ctx.globalAlpha = MINOR_LABEL_ALPHA;
+            ctx.fillText(text, sx, yTop);
+            ctx.globalAlpha = 1;
+          }
+        }
+        ctx.restore();
+      }
+
+      // Left Y labels
+      if (yMaxMmVisible >= 0 && yMinMmVisible <= mmH) {
+        ctx.save();
+        ctx.font = `600 ${fontPx}px system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Helvetica, Arial`;
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.lineJoin = 'round';
+        ctx.miterLimit = 2;
+
+        const labelsMajor = [];
+        const startYMajor = Math.ceil(yMinMmVisible / step) * step;
+        for (let ym = startYMajor; ym <= yMaxMmVisible; ym += step) labelsMajor.push(String(ym));
+
+        let maxW = 0;
+        for (const txt of labelsMajor) {
+          const w = ctx.measureText(txt).width;
+          if (w > maxW) maxW = w;
+        }
+        const haloPad = Math.ceil(haloWidth / 2) + 1;
+
+        const desiredRightX = gridLeft - outsideGap;
+        const minRightX = margin + maxW + haloPad;
+        const xRight = alignToDevicePixel(Math.max(desiredRightX, minRightX));
+
+        for (let i = 0; i < labelsMajor.length; i++) {
+          const ym = startYMajor + i * step;
+          const sy = alignToDevicePixel(gridTop + (extraTop + ym) * scale);
+          const text = labelsMajor[i];
+          ctx.lineWidth = haloWidth;
+          ctx.strokeStyle = labelHalo;
+          ctx.globalAlpha = 1;
+          ctx.strokeText(text, xRight, sy);
+          ctx.fillStyle = labelColor;
+          ctx.fillText(text, xRight, sy);
+        }
+
+        if (showMinorLabels) {
+          const startYMinor = Math.ceil(yMinMmVisible / MINOR_MM) * MINOR_MM;
+          for (let ym = startYMinor; ym <= yMaxMmVisible; ym += MINOR_MM) {
+            if (ym % MAJOR_MM === 0) continue;
+            const sy = alignToDevicePixel(gridTop + (extraTop + ym) * scale);
+            const text = String(ym);
+            ctx.lineWidth = haloWidth;
+            ctx.strokeStyle = labelHalo;
+            ctx.globalAlpha = MINOR_HALO_ALPHA;
+            ctx.strokeText(text, xRight, sy);
+            ctx.fillStyle = labelColor;
+            ctx.globalAlpha = MINOR_LABEL_ALPHA;
+            ctx.fillText(text, xRight, sy);
+            ctx.globalAlpha = 1;
+          }
+        }
+        ctx.restore();
+      }
+    }
+
+    function drawDot({ scale, gridLeft, gridTop, extraTop, width, height, suppressLens = false, insideLens = false, lensZoom = 1 }) {
+      const xParsed = parseFloat(xInput.value);
+      const yParsed = parseFloat(yInput.value);
+      const xmm = Number.isFinite(xParsed) ? xParsed : DEFAULT_X;
+      const ymm = Number.isFinite(yParsed) ? yParsed : DEFAULT_Y;
+
+      const x = gridLeft + xmm * scale;
+      const y = gridTop + (extraTop + ymm) * scale;
+
+      const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#e53935';
+      const labelHalo = getComputedStyle(document.documentElement).getPropertyValue('--label-halo').trim() || 'rgba(255,255,255,0.92)';
+      const labelColor = getComputedStyle(document.documentElement).getPropertyValue('--label-color').trim() || '#111';
+
+      // Keep visuals constant-size regardless of page zoom
+      const pageZoom = (window.visualViewport && window.visualViewport.scale) ? window.visualViewport.scale : 1;
+      const cssScale = 1 / pageZoom;
+
+      const rCssBase = 4;
+      let rCss = rCssBase * cssScale;
+
+      // Inside lens: make the dot smaller and cancel the lens zoom
+      if (insideLens) {
+        rCss = rCssBase * cssScale * (LENS_DOT_SCALE / Math.max(1e-6, lensZoom));
+      }
+
+      const cx = alignToDevicePixel(x);
+      const cy = alignToDevicePixel(y);
+
+      // Actual placed dot
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, rCss, 0, Math.PI * 2);
+      ctx.fillStyle = accent;
+      ctx.fill();
+      ctx.restore();
+
+      // Touch-only magnifier while placing (guarded to prevent recursion)
+      if (!suppressLens && placing.active && placing.isTouch) {
+        drawMagnifier({
+          centerX: cx, centerY: cy,
+          width, height,
+          xmm, ymm,
+          accent, labelHalo, labelColor,
+          cssScale
+        });
+      }
+    }
+
+    // UPDATED: stroke-aware, symmetric clip; lens-aware crisping
+    function drawCrosshair({ mmW, mmH, scale, gridLeft, gridTop, gridW, gridH, extraTop, lensZoom = 1 }) {
+      if (!isCrosshairEnabled()) return;
+
+      const xParsed = parseFloat(xInput.value);
+      const yParsed = parseFloat(yInput.value);
+      const xmm = Number.isFinite(xParsed) ? xParsed : DEFAULT_X;
+      const ymm = Number.isFinite(yParsed) ? yParsed : DEFAULT_Y;
+
+      const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#e53935';
+
+      const px = gridLeft + xmm * scale;
+      const py = gridTop + (extraTop + ymm) * scale;
+
+      // Keep apparent thickness constant in the lens
+      const desiredCss = (lensZoom === 1) ? CROSSHAIR_LW_MAIN : CROSSHAIR_LW_LENS;
+      const effectiveLineWidth = desiredCss / lensZoom;
+
+      ctx.save();
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = effectiveLineWidth;
+
+      // Half the stroke + epsilon (pre-transform units)
+      const pad = ctx.lineWidth / 2 + 1 / (dpr * lensZoom);
+      ctx.beginPath();
+      ctx.rect(gridLeft - pad, gridTop - pad, gridW + 2 * pad, gridH + 2 * pad);
+      ctx.clip();
+
+      // Pixel-crisp alignment
+      const cx = crispCoord(px, ctx.lineWidth, lensZoom);
+      const cy = crispCoord(py, ctx.lineWidth, lensZoom);
+
+      // Horizontal line
+      ctx.beginPath();
+      ctx.moveTo(gridLeft, cy);
+      ctx.lineTo(gridLeft + gridW, cy);
+      ctx.stroke();
+
+      // Vertical line
+      ctx.beginPath();
+      ctx.moveTo(cx, gridTop);
+      ctx.lineTo(cx, gridTop + gridH);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawMagnifier({ centerX, centerY, width, height, xmm, ymm, accent, labelHalo, labelColor, cssScale }) {
+      const { lx, ly } = computeLensPlacement(centerX, centerY, width, height);
+
+      const R = LENS_RADIUS_PX * cssScale;
+      const border = LENS_BORDER_PX * cssScale;
+      const zoom = LENS_ZOOM;
+
+      // Clip to circular lens
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(lx, ly, R, 0, Math.PI * 2);
+      ctx.clip();
+
+      // Fill lens background white to hide the outside/base grid
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(lx - R - 2, ly - R - 2, (R + 2) * 2, (R + 2) * 2);
+
+      // Re-render content in the lens: grid + overlay + thinner crosshair + smaller dot
+      ctx.save();
+      ctx.translate(lx, ly);
+      ctx.scale(zoom, zoom);
+      ctx.translate(-centerX, -centerY);
+
+      const { scale: baseScale, gridLeft: baseLeft, gridTop: baseTop, extraTop, mmW, mmH } = computeLayout();
+      const mm2px = baseScale * view.scale;
+      const gridLeft = baseLeft + view.x;
+      const gridTop = baseTop + view.y;
+
+      const { minor, major } = lineWidths(mm2px);
+      const gridW = mmW * mm2px;
+      const gridH = (mmH + extraTop) * mm2px;
+
+      // Draw the zoomed-in grid inside the lens (lens-aware)
+      drawGrid({ mmW, mmH, scale: mm2px, gridW, gridH, gridLeft, gridTop, minorLW: minor, majorLW: major, extraTop, lensZoom: zoom });
+
+      // SVG overlay
+      drawSvgOverlay({ mmW, mmH, scale: mm2px, gridLeft, gridTop, extraTop });
+
+      // Crosshair inside lens (thinner)
+      drawCrosshair({ mmW, mmH, scale: mm2px, gridLeft, gridTop, gridW, gridH, extraTop, lensZoom: zoom });
+
+      // Draw the dot again inside the lens (smaller), suppress lens recursion
+      drawDot({
+        scale: mm2px,
+        gridLeft,
+        gridTop,
+        extraTop,
+        width,
+        height,
+        suppressLens: true,
+        insideLens: true,
+        lensZoom: zoom
+      });
+
+      ctx.restore(); // end content inside lens
+      ctx.restore(); // end lens clip
+
+      // Lens ring
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(lx, ly, R, 0, Math.PI * 2);
+      ctx.strokeStyle = labelHalo;
+      ctx.lineWidth = border * 2.5;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(lx, ly, R, 0, Math.PI * 2);
+      ctx.strokeStyle = '#222';
+      ctx.lineWidth = border;
+      ctx.stroke();
+      ctx.restore();
+
+      // Coordinates ABOVE the lens, formatted: X=..., Y=...
+      const text = `X=${xmm}, Y=${ymm}`;
+      ctx.save();
+      ctx.font = `600 ${Math.round(12 * cssScale)}px system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Helvetica, Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      const ty = ly - R - 8 * cssScale;
+      const haloWidth = 3 * cssScale;
+      ctx.lineWidth = haloWidth;
+      ctx.strokeStyle = labelHalo;
+      ctx.strokeText(text, lx, ty);
+      ctx.fillStyle = labelColor;
+      ctx.fillText(text, lx, ty);
+      ctx.restore();
+    }
+
+    function computeLensPlacement(cx, cy, width, height) {
+      const o = LENS_OFFSET_PX;
+      const m = LENS_MIN_MARGIN_PX + LENS_RADIUS_PX;
+      const candidates = [
+        { dx: 0,  dy: -o }, // above
+        { dx: 0,  dy:  o }, // below
+        { dx: -o, dy:  0 }, // left
+        { dx:  o, dy:  0 }, // right
+      ];
+      for (const c of candidates) {
+        const lx = cx + c.dx;
+        const ly = cy + c.dy;
+        if (lx >= m && lx <= width - m && ly >= m && ly <= height - m) return { lx, ly };
+      }
+      // Fallback: clamp inside canvas, prefer above
+      return {
+        lx: clamp(cx, m, width - m),
+        ly: clamp(cy - o, m, height - m)
+      };
+    }
+
+    function drawSvgOverlay({ mmW, mmH, scale, gridLeft, gridTop, extraTop }) {
+      if (!svgInfo || !svgInfo.img || !svgInfo.mmSize.width || !svgInfo.mmSize.height) return;
+
+      const destW = svgInfo.mmSize.width * scale;
+      const destH = svgInfo.mmSize.height * scale;
+      const dx = gridLeft;
+      const dy = gridTop;
+
+      ctx.save();
+      const half = 0.5 / dpr;
+      ctx.beginPath();
+      ctx.rect(gridLeft - half, gridTop - half, mmW * scale + 2 * half, (mmH + extraTop) * scale + 2 * half);
+      ctx.clip();
+
+      ctx.drawImage(svgInfo.img, dx, dy, destW, destH);
+      ctx.restore();
+    }
+
+    function parseLengthToMm(val) {
+      if (!val) return null;
+      const m = String(val).trim().match(/^(-?\d+(\.\d+)?)([a-z%]*)$/i);
+      if (!m) return null;
+      const num = parseFloat(m[1]);
+      const unit = (m[3] || '').toLowerCase();
+      const mmPerUnit = {
+        mm: 1, cm: 10, in: 25.4, pt: 25.4 / 72, pc: 25.4 / 6, px: 25.4 / 96, q: 0.25
+      };
+      const k = unit ? mmPerUnit[unit] : 1;
+      if (!k) return null;
+      return num * k;
+    }
+
+    async function loadSvgInfo(url) {
+      const [img, meta] = await Promise.all([
+        new Promise((resolve, reject) => {
+          const i = new Image();
+          i.crossOrigin = 'anonymous';
+          i.onload = () => resolve(i);
+          i.onerror = reject;
+          i.src = url;
+        }),
+        fetch(url, { mode: 'cors' })
+          .then(r => r.text())
+          .then(txt => {
+            const doc = new DOMParser().parseFromString(txt, 'image/svg+xml');
+            const svg = doc.documentElement;
+            const viewBox = svg.getAttribute('viewBox');
+            let minX = 0, minY = 0, vbW = 0, vbH = 0;
+            if (viewBox) {
+              const p = viewBox.trim().split(/[\s,]+/).map(Number);
+              if (p.length === 4) [minX, minY, vbW, vbH] = p;
+            }
+            const widthMm = parseLengthToMm(svg.getAttribute('width'));
+            const heightMm = parseLengthToMm(svg.getAttribute('height'));
+
+            let mmPerUnitX = (vbW && widthMm != null) ? widthMm / vbW : null;
+            let mmPerUnitY = (vbH && heightMm != null) ? heightMm / vbH : null;
+            if (mmPerUnitX == null && mmPerUnitY != null) mmPerUnitX = mmPerUnitY;
+            if (mmPerUnitY == null && mmPerUnitX != null) mmPerUnitY = mmPerUnitX;
+            if (mmPerUnitX == null || mmPerUnitY == null) mmPerUnitX = mmPerUnitY = 1;
+
+            const mmW = widthMm ?? (vbW ? vbW * mmPerUnitX : null);
+            const mmH = heightMm ?? (vbH ? vbH * mmPerUnitY : null);
+
+            return {
+              vb: { minX, minY, width: vbW, height: vbH },
+              mmSize: { width: mmW, height: mmH },
+              mmPerUnit: { x: mmPerUnitX, y: mmPerUnitY }
+            };
+          })
+      ]);
+      return { img, ...meta };
+    }
+
+    // Persistence
+    function saveXY() {
+      try {
+        const data = { x: xInput.value, y: yInput.value };
+        localStorage.setItem(STORAGE_KEY_XY, JSON.stringify(data));
+      } catch (e) {}
+    }
+    function restoreXY() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_XY);
+        if (!raw) return;
+        const { x, y } = JSON.parse(raw);
+        if (x !== undefined && x !== null) xInput.value = x;
+        if (y !== undefined && y !== null) yInput.value = y;
+      } catch (e) {}
+    }
+
+    function saveModel() {
+      try {
+        localStorage.setItem(STORAGE_KEY_MODEL, selectedModel || '');
+      } catch (e) {}
+    }
+    function restoreModel() {
+      try {
+        const m = localStorage.getItem(STORAGE_KEY_MODEL) || '';
+        if (m && MODELS[m]) {
+          modelSelect.value = m;
+          setModel(m);
+        } else {
+          modelSelect.value = '';
+          setModel('');
+        }
+      } catch (e) {
+        setModel('');
+      }
+    }
+
+    function saveCrosshairSetting() {
+      try {
+        localStorage.setItem(STORAGE_KEY_CROSSHAIR, crosshairToggle.checked ? '1' : '0');
+      } catch (e) {}
+    }
+function restoreCrosshairSetting() {
+  try {
+    const v = localStorage.getItem(STORAGE_KEY_CROSSHAIR);
+    if (v === null) {
+      // First load: default ON, and persist that default
+      crosshairToggle.checked = true;
+      saveCrosshairSetting();
+    } else {
+      crosshairToggle.checked = (v === '1');
+    }
+  } catch (e) {
+    // If storage is unavailable, default to ON
+    crosshairToggle.checked = true;
+  }
+}
+    function isCrosshairEnabled() {
+      return !!(crosshairToggle && crosshairToggle.checked);
+    }
+
+    function saveLockSettings() {
+      try {
+        localStorage.setItem(STORAGE_KEY_LOCKX, lockXToggle.checked ? '1' : '0');
+        localStorage.setItem(STORAGE_KEY_LOCKY, lockYToggle.checked ? '1' : '0');
+      } catch (e) {}
+    }
+    function restoreLockSettings() {
+      try {
+        const lx = localStorage.getItem(STORAGE_KEY_LOCKX);
+        const ly = localStorage.getItem(STORAGE_KEY_LOCKY);
+        if (lx === '1') lockXToggle.checked = true;
+        if (ly === '1') lockYToggle.checked = true;
+      } catch (e) {}
+      applyLockUI();
+    }
+    function isLockXEnabled() { return !!(lockXToggle && lockXToggle.checked); }
+    function isLockYEnabled() { return !!(lockYToggle && lockYToggle.checked); }
+    function applyLockUI() {
+      const lockX = isLockXEnabled();
+      const lockY = isLockYEnabled();
+      // Inputs remain editable as requested; just update titles for clarity
+      xInput.title = lockX ? 'X locked from touch/drag; input still editable' : '';
+      yInput.title = lockY ? 'Y locked from touch/drag; input still editable' : '';
+    }
+
+    function setModel(key) {
+      selectedModel = (key && MODELS[key]) ? key : DEFAULT_MODEL;
+
+      svgInfo = null;
+
+      const { svg } = getModelConfig();
+      if (svg) {
+        loadSvgInfo(svg)
+          .then(info => { svgInfo = info; draw(); })
+          .catch(err => console.error('SVG load/parse failed:', err));
+      }
+
+      draw();
+    }
+
+    function enableSelectAllOnFocus(el) {
+      el.addEventListener('focus', () => {
+        setTimeout(() => {
+          try { el.select(); el.setSelectionRange?.(0, 9999); } catch (e) {}
+        }, 0);
+      });
+
+      const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+      if (!isTouch) {
+        el.addEventListener('mouseup', e => e.preventDefault());
+      }
+    }
+
+    // Wheel zoom
+    function wheelZoomHandler(e) {
+      e.preventDefault();
+
+      const rect = canvas.getBoundingClientRect();
+      const px = e.clientX - rect.left;
+      const py = e.clientY - rect.top;
+
+      const { scale: baseScale, gridLeft: baseLeft, gridTop: baseTop } = computeLayout();
+
+      const deltaPx = (e.deltaMode === 1) ? (e.deltaY * 16)
+                    : (e.deltaMode === 2) ? (e.deltaY * rect.height)
+                    : e.deltaY;
+
+      const factor = Math.exp(-deltaPx / 300);
+
+      const prevVS = view.scale;
+      let nextVS = clamp(prevVS * factor, VIEW_MIN, VIEW_MAX);
+      if (Math.abs(nextVS - prevVS) < 1e-6) return;
+
+      const ratio = nextVS / prevVS;
+
+      let anchorX, anchorY;
+
+      if (nextVS > prevVS) {
+        anchorX = px;
+        anchorY = py;
+      } else {
+        const S = baseScale * prevVS;
+        const Smin = baseScale * VIEW_MIN;
+        if (S - Smin < 1e-6) {
+          anchorX = baseLeft;
+          anchorY = baseTop;
+        } else {
+          const axOff = -view.x * Smin / (S - Smin);
+          const ayOff = -view.y * Smin / (S - Smin);
+          anchorX = baseLeft + axOff;
+          anchorY = baseTop + ayOff;
+        }
+      }
+
+      view.x = view.x * ratio + (anchorX - baseLeft) * (1 - ratio);
+      view.y = view.y * ratio + (anchorY - baseTop) * (1 - ratio);
+      view.scale = nextVS;
+
+      clampViewAtMin();
+      draw();
+    }
+
+    // Pointer-based pan and pinch
+    const pointers = new Map(); // id -> {x, y}
+    const pan = { active: false, lastX: 0, lastY: 0 };
+    const pinch = {
+      active: false,
+      startScale: 1,
+      startViewX: 0,
+      startViewY: 0,
+      startCenterX: 0,
+      startCenterY: 0,
+      startDist: 0
+    };
+
+    // Long-press placement state
+    const LONG_PRESS_MS = 200;
+    const DRAG_TOLERANCE_PX = 6;
+    const placing = {
+      active: false,
+      timer: 0,
+      startX: 0,
+      startY: 0,
+      pointerId: null,
+      isTouch: false // magnifier only when true
+    };
+
+    function getCanvasPoint(e) {
+      const rect = canvas.getBoundingClientRect();
+      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }
+
+    function updatePointer(e) {
+      pointers.set(e.pointerId, getCanvasPoint(e));
+    }
+
+    function startPinchBaseline() {
+      const pts = [...pointers.values()];
+      if (pts.length < 2) return;
+      const p1 = pts[0], p2 = pts[1];
+      pinch.active = true;
+      pinch.startScale = view.scale;
+      pinch.startViewX = view.x;
+      pinch.startViewY = view.y;
+      pinch.startCenterX = (p1.x + p2.x) / 2;
+      pinch.startCenterY = (p1.y + p2.y) / 2;
+      pinch.startDist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+    }
+
+    function getGridGeometry() {
+      const { scale: baseScale, gridLeft: baseLeft, gridTop: baseTop, extraTop, mmW, mmH } = computeLayout();
+      const mm2px = baseScale * view.scale;
+      const gridLeft = baseLeft + view.x;
+      const gridTop = baseTop + view.y;
+      const gridW = mmW * mm2px;
+      const gridH = (mmH + extraTop) * mm2px;
+      return { mm2px, gridLeft, gridTop, gridW, gridH, extraTop, mmW, mmH };
+    }
+
+    function isPointInGrid(px, py, geom = getGridGeometry()) {
+      return (
+        px >= geom.gridLeft && px <= geom.gridLeft + geom.gridW &&
+        py >= geom.gridTop  && py <= geom.gridTop + geom.gridH
+      );
+    }
+
+    function setDotFromCanvasPoint(px, py) {
+      const geom = getGridGeometry();
+      let xmm = (px - geom.gridLeft) / geom.mm2px;
+      let ymm = (py - geom.gridTop)  / geom.mm2px - geom.extraTop;
+
+      // Clamp and round to nearest mm
+      xmm = Math.round(clamp(xmm, 0, geom.mmW));
+      ymm = Math.round(clamp(ymm, 0, geom.mmH));
+
+      // Apply locking: prevent canvas/touch from changing locked axes
+      if (!isLockXEnabled()) xInput.value = String(xmm);
+      if (!isLockYEnabled()) yInput.value = String(ymm);
+
+      saveXY();
+      draw();
+    }
+
+    function schedulePlaceAfterLongPress(pointerId, pointerType) {
+      cancelPlaceTimer();
+      placing.pointerId = pointerId;
+      placing.isTouch = (pointerType === 'touch');
+      placing.timer = setTimeout(() => {
+        placing.timer = 0;
+        if (!pointers.has(placing.pointerId) || pointers.size !== 1) return;
+        const p = pointers.get(placing.pointerId);
+        if (!p) return;
+        if (!isPointInGrid(p.x, p.y)) return;
+
+        placing.active = true;
+        pan.active = false;
+        setDotFromCanvasPoint(p.x, p.y);
+      }, LONG_PRESS_MS);
+    }
+
+    function cancelPlaceTimer() {
+      if (placing.timer) {
+        clearTimeout(placing.timer);
+        placing.timer = 0;
+      }
+    }
+
+    function handlePinch() {
+      const pts = [...pointers.values()];
+      if (pts.length < 2) return;
+      const { scale: baseScale, gridLeft: baseLeft, gridTop: baseTop } = computeLayout();
+
+      const p1 = pts[0], p2 = pts[1];
+      const centerX = (p1.x + p2.x) / 2;
+      const centerY = (p1.y + p2.y) / 2;
+      const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+
+      if (!pinch.active) startPinchBaseline();
+      if (pinch.startDist <= 0) return;
+
+      const rawScale = pinch.startScale * (dist / pinch.startDist);
+      const newScale = clamp(rawScale, VIEW_MIN, VIEW_MAX);
+
+      if (newScale <= VIEW_MIN + EPS) {
+        view.scale = VIEW_MIN;
+        view.x = 0;
+        view.y = 0;
+        draw();
+        return;
+      }
+
+      const ratio = newScale / pinch.startScale;
+
+      view.x = pinch.startViewX * ratio + (centerX - baseLeft) - (pinch.startCenterX - baseLeft) * ratio;
+      view.y = pinch.startViewY * ratio + (centerY - baseTop) - (pinch.startCenterY - baseTop) * ratio;
+      view.scale = newScale;
+
+      draw();
+    }
+
+    function onPointerDown(e) {
+      canvas.setPointerCapture?.(e.pointerId);
+      updatePointer(e);
+      e.preventDefault();
+
+      if (pointers.size === 1) {
+        const p = [...pointers.values()][0];
+
+        // Track for long-press vs drag
+        placing.startX = p.x;
+        placing.startY = p.y;
+
+        if (isPointInGrid(p.x, p.y)) {
+          schedulePlaceAfterLongPress(e.pointerId, e.pointerType);
+        } else {
+          cancelPlaceTimer();
+        }
+
+        // Pan when zoomed-in
+        if (canPan()) {
+          pan.active = true;
+          pan.lastX = p.x;
+          pan.lastY = p.y;
+        } else {
+          pan.active = false;
+        }
+        pinch.active = false;
+      } else if (pointers.size === 2) {
+        cancelPlaceTimer();
+        placing.active = false;
+
+        pan.active = false;
+        startPinchBaseline();
+      }
+    }
+
+    function onPointerMove(e) {
+      if (!pointers.has(e.pointerId)) return;
+      updatePointer(e);
+      e.preventDefault();
+
+      if (pointers.size === 1) {
+        const p = [...pointers.values()][0];
+
+        // If moved too much before long-press triggers, cancel it
+        if (placing.timer) {
+          const dx = p.x - placing.startX;
+          const dy = p.y - placing.startY;
+          if (Math.hypot(dx, dy) > DRAG_TOLERANCE_PX) {
+            cancelPlaceTimer();
+          }
+        }
+
+        if (placing.active) {
+          // Dragging the dot (magnifier shows only for touch)
+          setDotFromCanvasPoint(p.x, p.y);
+        } else if (pan.active) {
+          const dx = p.x - pan.lastX;
+          const dy = p.y - pan.lastY;
+          pan.lastX = p.x;
+          pan.lastY = p.y;
+          view.x += dx;
+          view.y += dy;
+          draw();
+        }
+      } else if (pointers.size >= 2) {
+        cancelPlaceTimer();
+        placing.active = false;
+        handlePinch();
+      }
+    }
+
+    function onPointerUp(e) {
+      if (pointers.has(e.pointerId)) pointers.delete(e.pointerId);
+      e.preventDefault();
+
+      cancelPlaceTimer();
+      placing.active = false; // close magnifier on lift
+
+      if (pointers.size === 0) {
+        pan.active = false;
+        pinch.active = false;
+        clampViewAtMin();
+      } else if (pointers.size === 1) {
+        const p = [...pointers.values()][0];
+        pan.active = canPan();
+        pan.lastX = p.x;
+        pan.lastY = p.y;
+        pinch.active = false;
+      } else if (pointers.size >= 2) {
+        startPinchBaseline();
+      }
+
+      // Ensure the lens is removed immediately
+      draw();
+    }
+
+    // Settings modal helpers
+    function openSettings() {
+      settingsModal.hidden = false;
+      // Optional: focus the first interactive element
+      setTimeout(() => {
+        try { crosshairToggle.focus(); } catch (e) {}
+      }, 0);
+    }
+    function closeSettings() {
+      settingsModal.hidden = true;
+    }
+
+    // Init
+    restoreXY();
+    resizeCanvas();
+    restoreModel();
+    restoreCrosshairSetting();
+    restoreLockSettings();
+
+    window.addEventListener('resize', scheduleResize);
+    window.addEventListener('orientationchange', scheduleResize);
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(() => scheduleResize());
+      ro.observe(stage);
+    }
+
+    if (window.visualViewport) {
+      visualViewport.addEventListener('resize', scheduleResize, { passive: true });
+      visualViewport.addEventListener('scroll', scheduleResize, { passive: true });
+    }
+
+    // Inputs remain editable even when locked
+    xInput.addEventListener('input', () => { saveXY(); draw(); });
+    yInput.addEventListener('input', () => { saveXY(); draw(); });
+    [xInput, yInput].forEach(el =>
+      el.addEventListener('keydown', e => { if (e.key === 'Enter') { saveXY(); draw(); } })
+    );
+
+    modelSelect.addEventListener('change', (e) => {
+      setModel(e.target.value);
+      saveModel();
+    });
+
+    [xInput, yInput].forEach(enableSelectAllOnFocus);
+
+    // Reset button: clear inputs and reset zoom/pan (same as before)
+clearBtn.addEventListener('click', () => {
+  // Clear XY
+  xInput.value = '';
+  yInput.value = '';
+  saveXY();
+
+
+
+  // Reset view and close
+  resetView();
+  closeSettings();
+});
+
+    // Desktop zoom + reset
+    canvas.addEventListener('wheel', wheelZoomHandler, { passive: false });
+    canvas.addEventListener('dblclick', resetView);
+
+    // Prevent context menu on long-press/right-click over canvas
+    canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+    // Pointer gestures
+    canvas.addEventListener('pointerdown', onPointerDown, { passive: false });
+    canvas.addEventListener('pointermove', onPointerMove, { passive: false });
+    canvas.addEventListener('pointerup', onPointerUp, { passive: false });
+    canvas.addEventListener('pointercancel', onPointerUp, { passive: false });
+    canvas.addEventListener('lostpointercapture', onPointerUp, { passive: false });
+
+    // Blur inputs when tapping non-interactive area
+    const blurIfOutsideInputs = (e) => {
+      const t = e.target;
+      if (t.closest('input, select, textarea, button, a, [role="button"], [contenteditable], [tabindex]:not([tabindex="-1"])')) {
+        return;
+      }
+      const ae = document.activeElement;
+      if (ae && (ae.matches('input, select, textarea, [contenteditable]'))) ae.blur();
+    };
+    document.addEventListener('pointerdown', blurIfOutsideInputs, { capture: true, passive: true });
+    document.addEventListener('mousedown', blurIfOutsideInputs, { capture: true, passive: true });
+    document.addEventListener('touchstart', blurIfOutsideInputs, { capture: true, passive: true });
+
+    // Settings modal interactions
+    settingsBtn.addEventListener('click', openSettings);
+    settingsClose.addEventListener('click', closeSettings);
+    settingsModal.addEventListener('click', (e) => {
+      if (e.target === settingsModal) closeSettings(); // click backdrop to close
+    });
+
+    crosshairToggle.addEventListener('change', () => {
+      saveCrosshairSetting();
+      draw();
+    });
+
+    lockXToggle.addEventListener('change', () => {
+      applyLockUI();
+      saveLockSettings();
+    });
+    lockYToggle.addEventListener('change', () => {
+      applyLockUI();
+      saveLockSettings();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        // If modal is open, close it
+        if (!settingsModal.hidden) {
+          closeSettings();
+          return;
+        }
+        // Otherwise, blur active input if any
+        const ae = document.activeElement;
+        if (ae && (ae.matches('input, select, textarea, [contenteditable]'))) {
+          ae.blur();
+        }
+      }
+    });
+  })();
+</script>
+</body>
+</html>

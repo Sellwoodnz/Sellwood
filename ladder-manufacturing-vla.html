@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ladder Manufacturing VLA</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #container {
+            max-width: 300px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            margin: 10px auto;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        input[type="text"].error {
+            border: 1px solid red;
+        }
+
+        input[type="text"]::placeholder {
+            color: #ccc;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-label {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group label {
+            margin-left: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #ED1C24;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #c70014;
+        }
+
+        #output {
+            margin-top: -5px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        #error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="container">
+        <input type="text" id="jobName" placeholder="Job Name" required><br>
+        <input type="text" id="ladderHeight" placeholder="Ladder Height (mm)" required><br>
+        <div class="input-group">
+            <input type="text" id="ladderAngle" placeholder="Ladder Angle" value="90" required>
+            <label for="ladderAngle" class="input-label">(Angle)</label>
+        </div>
+        <div class="input-group">
+            <input type="text" id="topGap" value="30" placeholder="Gap" required>
+            <label for="topGap" class="input-label">(Top)</label>
+        </div>
+        <div class="input-group">
+            <input type="text" id="bottomGap" value="65" placeholder="Gap">
+            <label for="bottomGap" class="input-label">(Bottom)</label>
+        </div>
+        <div class="checkbox-group">
+            <input type="checkbox" id="staCheckbox">
+            <label for="staCheckbox">Step Through Adaption (STA)</label>
+        </div>
+        <button id="calculateButton" onclick="calculateTreads()">Calculate</button>
+        <div id="error"></div>
+        <div id="output"></div>
+        <button id="Button" style="display: none;" onclick="printOutput()">Print</button>
+    </div>
+
+    <script>
+function calculateTreads() {
+    const jobName = document.getElementById('jobName').value.trim();
+    const jobNameField = document.getElementById('jobName');
+    const ladderHeight = parseInt(document.getElementById('ladderHeight').value);
+    const ladderAngle = parseFloat(document.getElementById('ladderAngle').value);
+    const staCheckbox = document.getElementById('staCheckbox').checked;
+    const minTopGap = 30, minBottomGap = 65, minSpacing = 250, maxSpacing = 300;
+    const maxLadderHeight = staCheckbox ? 5000 : 6000, minLadderHeight = 345, minValidHeightForZeroBottom = 530;
+    let topGap = parseInt(document.getElementById('topGap').value);
+    let bottomGap = document.getElementById('bottomGap').value === '' ? null : parseInt(document.getElementById('bottomGap').value);
+
+    document.getElementById('error').textContent = ''; // Clear previous errors
+    document.getElementById('output').innerHTML = ''; // Clear the output
+    document.getElementById('Button').style.display = 'none'; // Hide print button
+
+    // Validate job name
+    if (!jobName) {
+        jobNameField.classList.add('error');
+        document.getElementById('error').textContent = 'Job name is required.';
+        return;
+    } else {
+        jobNameField.classList.remove('error');
+    }
+
+    // Validate ladder height
+    if (isNaN(ladderHeight) || ladderHeight < minLadderHeight || ladderHeight > maxLadderHeight) {
+        document.getElementById('error').textContent = `Ladder height must be between ${minLadderHeight}mm and ${maxLadderHeight}mm.`;
+        return;
+    }
+
+    // Validate ladder angle
+    if (isNaN(ladderAngle) || ladderAngle < 70 || ladderAngle > 90) {
+        document.getElementById('error').textContent = 'Ladder angle must be between 70° and 90°.';
+        return;
+    }
+
+    // Apply STA settings if checkbox is checked
+    let stringerHeight = ladderHeight;
+    if (staCheckbox) {
+        topGap = 1000;
+        stringerHeight += 1000;
+    }
+
+    // Validate top gap
+    if (isNaN(topGap) || topGap < minTopGap) {
+        document.getElementById('error').textContent = `Top gap must be at least ${minTopGap}mm.`;
+        return;
+    }
+
+    // Validate bottom gap with conditions
+    if (bottomGap === null || bottomGap === 0) {
+        if (ladderHeight < minValidHeightForZeroBottom || ladderHeight > maxLadderHeight) {
+            document.getElementById('error').textContent = `When the bottom gap is set to 0, ladder height must be between ${minValidHeightForZeroBottom}mm and ${maxLadderHeight}mm.`;
+            return;
+        }
+        bottomGap = 0;
+    } else if (isNaN(bottomGap) || bottomGap < minBottomGap) {
+        document.getElementById('error').textContent = `Bottom gap must be at least ${minBottomGap}mm.`;
+        return;
+    }
+
+    // Check that gaps are compatible with ladder height
+    if (ladderHeight < topGap + bottomGap) {
+        document.getElementById('error').textContent = 'Ladder height is too short for the required gaps.';
+        return;
+    }
+
+    const ladderLength = stringerHeight / Math.cos((90 - ladderAngle) * Math.PI / 180);
+    const landingSpace = (stringerHeight / Math.tan(ladderAngle * (Math.PI / 180))) + 160;
+    let usableHeight = ladderLength - topGap - (bottomGap ?? 0);
+    let treads = Math.floor(usableHeight / minSpacing) + 1;
+    let spacing = usableHeight / (treads - 1);
+
+    while ((spacing < minSpacing || spacing > maxSpacing) && (topGap + (bottomGap ?? 0)) < stringerHeight) {
+        topGap += 1;
+        usableHeight = ladderLength - topGap - (bottomGap ?? 0);
+        treads = Math.floor(usableHeight / minSpacing) + 1;
+        spacing = usableHeight / (treads - 1);
+    }
+
+    if (spacing < minSpacing || spacing > maxSpacing || topGap + (bottomGap ?? 0) >= ladderLength) {
+        document.getElementById('error').textContent = 'No valid tread arrangement within spacing limits and gap constraints.';
+    } else {
+        if (bottomGap === null || bottomGap === 0) { treads -= 1; }
+
+        let runningMeasurements = [];
+        for (let i = 0; i < treads; i++) {
+            runningMeasurements.push(`${i + 1}) ${Math.round(topGap + i * spacing)}`);
+        }
+
+        const timestamp = new Date();
+        const formattedTimestamp = `${timestamp.getDate().toString().padStart(2, '0')}/${
+            (timestamp.getMonth() + 1).toString().padStart(2, '0')
+        }/${timestamp.getFullYear().toString().slice(-2)} ${
+            timestamp.getHours() % 12 || 12
+        }:${timestamp.getMinutes().toString().padStart(2, '0')} ${
+            timestamp.getHours() >= 12 ? 'pm' : 'am'
+        }`;
+
+let brackets;
+if (ladderAngle === 90) {
+    if (stringerHeight <= 2000) brackets = 4;
+    else if (stringerHeight <= 4000) brackets = 6;
+    else if (stringerHeight <= 6000) brackets = 8;
+    else brackets = 'N/A';
+} else {
+    brackets = null;
+}
+        
+        document.getElementById('output').innerHTML = `
+        Timestamp: ${formattedTimestamp}<br>
+        Job name: ${jobName}<br>
+        ${staCheckbox ? 'Step Through Adaption: Enabled<br>' : '' }
+        ----------------------------------------<br>
+        Ladder type: Vertical ladder <br>
+        Ladder height: ${ladderHeight}<br>
+        Ladder length: ${Math.round(ladderLength)}<br>
+        Landing space: ${Math.round(landingSpace)}<br>
+        Ladder angle: ${ladderAngle}°<br>
+        ----------------------------------------<br>
+        ${brackets !== null ? `Brackets: ${brackets}<br>` : ''}
+        Stringer: ${Math.round(ladderLength)}<br>
+        Treads: ${treads} @ ${staCheckbox ? 532 : 407}<br>
+        Tread Spacing: ${Math.round(spacing)}<br>
+        Gap top: ${topGap}<br>
+        Gap bottom: ${bottomGap ?? 0}<br>
+        ----------------------------------------<br>
+        ${runningMeasurements.join('<br>')}
+        `;
+        document.getElementById('Button').style.display = 'block';
+    }
+}
+
+function printOutput() {
+    var outputDiv = document.getElementById("output");
+    var printWindow = window.open('', '', 'width=600,height=400');
+    printWindow.document.open();
+    printWindow.document.write('<html><head><title>Print</title></head><body>');
+    printWindow.document.write('<h1>Vertical Ladder</h1>');
+    printWindow.document.write('<h2>Job Name: ' + document.getElementById('jobName').value + '</h2>');
+    printWindow.document.write(outputDiv.innerHTML);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+}
+
+// Add event listener to input fields to allow Enter key to trigger calculation
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            calculateTreads();
+        }
+    });
+});
+    </script>
+
+</body>
+
+</html>
