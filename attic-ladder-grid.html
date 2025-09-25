@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta
     name="viewport"
-      content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover"
+    content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover"
   />
   <title>Attic Ladder Grid</title>
   <style>
@@ -18,9 +18,17 @@
       /* label styling */
       --label-color: #111;
       --label-halo: rgba(255, 255, 255, 0.92);
+
+      /* VisualViewport-driven app height (fallback to 100dvh) */
+      --app-h: 100dvh;
     }
+
     * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden; /* avoid page scroll/bounce */
+    }
 
     /* Prevent pull-to-refresh / overscroll bounce where supported */
     html, body, .stage {
@@ -37,11 +45,14 @@
     .app {
       display: flex;
       flex-direction: column;
-      height: 100vh; /* fallback */
       width: 100%;
-    }
-    @supports (height: 100dvh) {
-      .app { height: 100dvh; }
+      height: var(--app-h); /* true visible viewport height */
+      /* keep content inside safe areas (notch, home indicator) */
+      padding:
+        env(safe-area-inset-top)
+        env(safe-area-inset-right)
+        env(safe-area-inset-bottom)
+        env(safe-area-inset-left);
     }
 
     .controls {
@@ -143,7 +154,12 @@
       align-items: center;
       justify-content: center;
       z-index: 1000;
-      padding: 16px;
+      /* include safe-area padding */
+      padding:
+        calc(16px + env(safe-area-inset-top))
+        calc(16px + env(safe-area-inset-right))
+        calc(16px + env(safe-area-inset-bottom))
+        calc(16px + env(safe-area-inset-left));
     }
     .modal {
       width: min(420px, 92vw);
@@ -377,6 +393,13 @@
     function resetView() { view.scale = VIEW_MIN; view.x = 0; view.y = 0; draw(); }
 
     let rafId = 0;
+
+    // NEW: Keep --app-h synced to the true visible viewport height
+    function updateAppHeightVar() {
+      const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      document.documentElement.style.setProperty('--app-h', `${vh}px`);
+    }
+
     function scheduleResize() {
       if (rafId) return;
       rafId = requestAnimationFrame(() => {
@@ -1373,13 +1396,23 @@ function restoreCrosshairSetting() {
 
     // Init
     restoreXY();
+
+    // NEW: set the app height variable before measuring canvas
+    updateAppHeightVar();
+
     resizeCanvas();
     restoreModel();
     restoreCrosshairSetting();
     restoreLockSettings();
 
-    window.addEventListener('resize', scheduleResize);
-    window.addEventListener('orientationchange', scheduleResize);
+    window.addEventListener('resize', () => {
+      updateAppHeightVar();
+      scheduleResize();
+    });
+    window.addEventListener('orientationchange', () => {
+      updateAppHeightVar();
+      scheduleResize();
+    });
 
     if ('ResizeObserver' in window) {
       const ro = new ResizeObserver(() => scheduleResize());
@@ -1387,8 +1420,14 @@ function restoreCrosshairSetting() {
     }
 
     if (window.visualViewport) {
-      visualViewport.addEventListener('resize', scheduleResize, { passive: true });
-      visualViewport.addEventListener('scroll', scheduleResize, { passive: true });
+      visualViewport.addEventListener('resize', () => {
+        updateAppHeightVar();
+        scheduleResize();
+      }, { passive: true });
+      visualViewport.addEventListener('scroll', () => {
+        updateAppHeightVar();
+        scheduleResize();
+      }, { passive: true });
     }
 
     // Inputs remain editable even when locked
