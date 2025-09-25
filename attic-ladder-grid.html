@@ -276,7 +276,9 @@
 
     const MAJOR_MM = 100;
     const MINOR_MM = 50;
-    const FIT = 'height';
+
+    // Desktop default keeps height-fit, but we'll auto-switch to "contain" on mobile.
+    const FIT_DESKTOP = 'height'; // 'height' | 'width' | 'contain'
 
     const MINOR_MM_THICK = 0.25;
     const MAJOR_MM_THICK = 0.5;
@@ -372,6 +374,16 @@
       return (key && MODELS[key]) ? MODELS[key] : DEFAULT_MODEL_CONFIG;
     }
 
+    // Auto-fit mode: contain on mobile (coarse pointer), height on desktop
+    function isMobileLike() {
+      // Covers phones/tablets and touch laptops
+      return (window.matchMedia && matchMedia('(pointer: coarse)').matches)
+          || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    }
+    function getFitMode() {
+      return isMobileLike() ? 'contain' : FIT_DESKTOP;
+    }
+
     // View transform
     const view = { scale: 1, x: 0, y: 0 };
     const VIEW_MIN = 1;
@@ -394,7 +406,7 @@
 
     let rafId = 0;
 
-    // NEW: Keep --app-h synced to the true visible viewport height
+    // Keep --app-h synced to the true visible viewport height
     function updateAppHeightVar() {
       const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
       document.documentElement.style.setProperty('--app-h', `${vh}px`);
@@ -429,24 +441,26 @@
       const { extraTop, mmW, mmH } = getModelConfig();
       const width = canvas.width / dpr;
       const height = canvas.height / dpr;
-
       const MM_TOTAL_H = mmH + extraTop;
+
+      const fit = getFitMode();
 
       let scale, gridW, gridH, gridLeft, gridTop;
 
-      if (FIT === 'width') {
+      if (fit === 'width') {
         scale = width / mmW;
         gridW = width;
         gridH = MM_TOTAL_H * scale;
         gridLeft = 0;
         gridTop = Math.max(0, (height - gridH) / 2);
-      } else if (FIT === 'contain') {
+      } else if (fit === 'contain') {
+        // Always fits both dimensions in view
         scale = Math.min(width / mmW, height / MM_TOTAL_H);
         gridW = mmW * scale;
         gridH = MM_TOTAL_H * scale;
         gridLeft = Math.max(0, (width - gridW) / 2);
         gridTop = Math.max(0, (height - gridH) / 2);
-      } else { // 'height'
+      } else { // 'height' (desktop default)
         scale = height / MM_TOTAL_H;
         gridH = height;
         gridW = mmW * scale;
@@ -1397,7 +1411,7 @@ function restoreCrosshairSetting() {
     // Init
     restoreXY();
 
-    // NEW: set the app height variable before measuring canvas
+    // Set the app height variable before measuring canvas
     updateAppHeightVar();
 
     resizeCanvas();
@@ -1430,6 +1444,14 @@ function restoreCrosshairSetting() {
       }, { passive: true });
     }
 
+    // Also react if pointer capability changes (e.g., attach a mouse)
+    if (window.matchMedia) {
+      const mm = matchMedia('(pointer: coarse)');
+      const onChange = () => scheduleResize();
+      if (mm.addEventListener) mm.addEventListener('change', onChange);
+      else if (mm.addListener) mm.addListener(onChange);
+    }
+
     // Inputs remain editable even when locked
     xInput.addEventListener('input', () => { saveXY(); draw(); });
     yInput.addEventListener('input', () => { saveXY(); draw(); });
@@ -1450,8 +1472,6 @@ clearBtn.addEventListener('click', () => {
   xInput.value = '';
   yInput.value = '';
   saveXY();
-
-
 
   // Reset view and close
   resetView();
