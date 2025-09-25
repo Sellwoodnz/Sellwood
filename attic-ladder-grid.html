@@ -1008,20 +1008,23 @@ const maxCss = 2.5
         localStorage.setItem(STORAGE_KEY_MODEL, selectedModel || '');
       } catch (e) {}
     }
-    function restoreModel() {
-      try {
-        const m = localStorage.getItem(STORAGE_KEY_MODEL) || '';
-        if (m && MODELS[m]) {
-          modelSelect.value = m;
-          setModel(m);
-        } else {
-          modelSelect.value = '';
-          setModel('');
-        }
-      } catch (e) {
-        setModel('');
-      }
+function restoreModel() {
+  try {
+    const m = localStorage.getItem(STORAGE_KEY_MODEL);
+    if (m && MODELS[m]) {
+      modelSelect.value = m;
+      setModel(m);
+    } else {
+      // Default to P30 on first load or if no valid model is stored
+      modelSelect.value = 'P30';
+      setModel('P30');
     }
+  } catch (e) {
+    // Default to P30 if storage access fails
+    modelSelect.value = 'P30';
+    setModel('P30');
+  }
+}
 
     function saveCrosshairSetting() {
       try {
