@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Parts Catalog</title>
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #2563eb;
+      --border: #e5e7eb;
+      --shadow: 0 10px 20px rgba(2, 8, 23, 0.06);
+      --radius: 14px;
+      --maxw: 1200px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #f8fafc, #eef2f7);
+    }
+
+    .container {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    header {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .title {
+      font-size: clamp(22px, 4vw, 34px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding: 12px 0 20px;
+      background: linear-gradient(180deg, rgba(248,250,252,0.85), rgba(248,250,252,0));
+      backdrop-filter: blur(6px);
+    }
+
+    .search-wrap {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      box-shadow: var(--shadow);
+    }
+    .search input {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 16px;
+      color: var(--text);
+    }
+    .search .icon {
+      width: 22px;
+      height: 22px;
+      color: var(--muted);
+      flex: 0 0 auto;
+    }
+    .clear-btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .clear-btn:hover {
+      color: var(--text);
+      border-color: #cdd3da;
+      transform: translateY(-1px);
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: clip;
+      display: flex;
+      flex-direction: column;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 30px rgba(2, 8, 23, 0.09);
+    }
+
+    .media {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #eef2f7;
+      overflow: hidden;
+    }
+    .media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px;
+    }
+
+    .name {
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    .code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      color: #0b6bcd;
+      background: #eaf3ff;
+      border: 1px solid #d2e6ff;
+      padding: 2px 8px;
+      width: fit-content;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+
+    .desc {
+      color: #334155;
+      font-size: 14px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 3.6em;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 6px;
+    }
+    .price {
+      font-weight: 800;
+      color: #111827;
+      font-size: 18px;
+      letter-spacing: -0.01em;
+    }
+    .cta {
+      appearance: none;
+      border: 1px solid #dbe3ef;
+      background: linear-gradient(180deg, #ffffff, #f7f9fc);
+      color: #0b67c0;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all .15s ease;
+    }
+    .cta:hover { border-color: #cdd6e4; transform: translateY(-1px); }
+
+    .empty {
+      display: none;
+      text-align: center;
+      padding: 36px 12px 48px;
+      color: var(--muted);
+    }
+    .empty.active { display: block; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="title">Parts Catalog</div>
+      <div class="subtitle">Browse parts below. Use the search to filter by name, code, or description.</div>
+    </header>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <label class="search" for="search">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <input id="search" type="search" placeholder="Search parts by name, code, or description..." autocomplete="off" />
+        </label>
+        <button class="clear-btn" id="clearBtn" title="Clear search">Clear</button>
+      </div>
+      <div class="meta">
+        <div id="count">Showing 0 of 0 parts</div>
+      </div>
+    </div>
+
+    <div id="grid" class="grid" aria-live="polite"></div>
+
+    <div id="empty" class="empty">No parts found. Try different keywords.</div>
+  </div>
+
+  <script>
+    // Dummy data
+    const PARTS = [
+      { id: 1,  name: 'Air Filter - HEPA',     code: 'FLT-HEPA-300',  description: 'High-efficiency particulate air filter for HVAC systems, 300mm.', price: 24.99, image: 'https://placehold.co/600x400?text=Air+Filter' },
+      { id: 2,  name: 'Ball Bearing 6203-ZZ',  code: 'BRG-6203-ZZ',   description: 'Shielded deep groove ball bearing, 17x40x12mm.',                price: 7.50,  image: 'https://placehold.co/600x400?text=Bearing' },
+      { id: 3,  name: 'Hex Bolt M6 x 20',      code: 'BLT-M6-20',     description: 'Stainless steel hex bolt, metric thread, grade A2-70.',        price: 0.15,  image: 'https://placehold.co/600x400?text=Hex+Bolt' },
+      { id: 4,  name: 'Timing Belt 200-2GT',   code: 'BLT-200-2GT',   description: '2GT timing belt, 200mm length, 6mm width.',                    price: 5.00,  image: 'https://placehold.co/600x400?text=Timing+Belt' },
+      { id: 5,  name: 'Hydraulic Hose 3/8"',   code: 'HOS-038-2W',    description: 'Two-wire braided hydraulic hose, 3/8 inch ID.',                 price: 12.00, image: 'https://placehold.co/600x400?text=Hydraulic+Hose' },
+      { id: 6,  name: 'O-Ring NBR 20x2',       code: 'ORG-20X2-NBR',  description: 'Nitrile rubber O-ring, 20mm ID, 2mm cross-section.',           price: 0.35,  image: 'https://placehold.co/600x400?text=O-ring' },
+      { id: 7,  name: 'Gearbox 20:1',          code: 'GRB-020-PL',    description: 'Planetary gearbox with 20:1 ratio, low backlash.',             price: 129.99,image: 'https://placehold.co/600x400?text=Gearbox' },
+      { id: 8,  name: 'DC Motor 12V 100W',     code: 'MTR-12V-100W',  description: 'Brushed DC motor, 12V, 100W output, ~3000 RPM.',               price: 59.00, image: 'https://placehold.co/600x400?text=DC+Motor' },
+      { id: 9,  name: 'Proximity Sensor NPN',  code: 'SNS-PRX-NPN',   description: 'Inductive proximity sensor, 8mm, NPN NO output.',               price: 18.99, image: 'https://placehold.co/600x400?text=Sensor' },
+      { id: 10, name: 'Power Supply 24V 5A',   code: 'PSU-24V-5A',    description: 'Switch-mode power supply, 24V, 5A, DIN rail mount.',           price: 39.99, image: 'https://placehold.co/600x400?text=Power+Supply' },
+      { id: 11, name: 'Aluminum Profile 2020', code: 'ALU-2020-1M',   description: '2020 aluminum extrusion, 1 meter length.',                      price: 14.50, image: 'https://placehold.co/600x400?text=Aluminum+Profile' },
+      { id: 12, name: 'Cable Tie 200mm',       code: 'CBL-TIE-200',   description: 'Nylon cable ties, 200mm length, pack of 100.',                  price: 3.25,  image: 'https://placehold.co/600x400?text=Cable+Ties' },
+    ];
+
+    const currency = 'USD';
+    const fmtPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency });
+
+    const grid = document.getElementById('grid');
+    const countEl = document.getElementById('count');
+    const emptyEl = document.getElementById('empty');
+    const searchInput = document.getElementById('search');
+    const clearBtn = document.getElementById('clearBtn');
+
+    function render(list) {
+      grid.innerHTML = '';
+      if (!list.length) {
+        emptyEl.classList.add('active');
+      } else {
+        emptyEl.classList.remove('active');
+      }
+
+      list.forEach(p => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.setAttribute('data-code', p.code);
+
+        card.innerHTML = `
+          <div class="media">
+            <img src="${p.image}" alt="${p.name}" loading="lazy" />
+          </div>
+          <div class="content">
+            <div class="name">${p.name}</div>
+            <div class="code">${p.code}</div>
+            <div class="desc">${p.description}</div>
+            <div class="price-row">
+              <div class="price">${fmtPrice.format(p.price)}</div>
+              <button class="cta" type="button" aria-label="Details for ${p.name}">Details</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      countEl.textContent = `Showing ${list.length} of ${PARTS.length} parts`;
+    }
+
+    // Token-based search: all words must match somewhere in name/code/description
+    function filterParts(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) return PARTS;
+
+      const tokens = q.split(/\s+/).filter(Boolean);
+      return PARTS.filter(p => {
+        const hay = `${p.name} ${p.code} ${p.description}`.toLowerCase();
+        return tokens.every(t => hay.includes(t));
+      });
+    }
+
+    // Events
+    searchInput.addEventListener('input', () => {
+      render(filterParts(searchInput.value));
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchInput.focus();
+      render(PARTS);
+    });
+
+    // Initial render
+    render(PARTS);
+  </script>
+</body>
+</html>

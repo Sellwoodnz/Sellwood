@@ -29,6 +29,7 @@
       color: black;
       font-family: Helvetica, Arial, sans-serif;
       /* no fixed or min height */
+      box-sizing: border-box;
     }
 
     .tile:focus-visible {
@@ -104,5 +105,26 @@
       <span class="heading">Spacing Calculator</span>
     </a>
   </div>
+  <script>
+    function equalizeTileHeights() {
+      const tiles = document.querySelectorAll('.tile');
+      let maxHeight = 0;
+      tiles.forEach(tile => {
+        tile.style.height = 'auto'; // reset to calculate intrinsic height
+        const height = tile.offsetHeight;
+        if (height > maxHeight) maxHeight = height;
+      });
+      tiles.forEach(tile => {
+        tile.style.height = maxHeight + 'px';
+      });
+    }
+
+    window.addEventListener('load', equalizeTileHeights);
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(equalizeTileHeights, 250);
+    });
+  </script>
 </body>
 </html>
