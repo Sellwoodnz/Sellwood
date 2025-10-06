@@ -1,98 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tile Grid</title>
-    <style>
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .tile {
-            text-align: center;
-            padding: 10px;
-            border: 1px solid hsl(0, 0%, 95%);
-            border-radius: 5px;
-            background-color: hsl(0, 0%, 95%);
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 50px;
-            font-family: Helvetica, Arial, sans-serif;
-        }
-        .emoji {
-            font-size: 24px;
-            display: block;
-            margin-bottom: 5px;
-            margin-top: -5px;
-            font-family: 'Noto Color Emoji', sans-serif;  /* Forces Google's emojis */
-        }
-        .heading {
-            font-size: 12px;
-            font-weight: 600;
-            display: block;
-            color: black;  /* For contrast on red background */
-            text-decoration: none;
-            line-height: 1;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tile Grid</title>
+  <style>
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr)); /* always 3 columns */
+      gap: 5px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .tile {
+      text-align: center;
+      padding: 10px;
+      border: 1px solid hsl(0, 0%, 95%);
+      border-radius: 5px;
+      background-color: hsl(0, 0%, 95%);
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* no fixed or min height */
+      min-height: 0;
+      /* if you previously used min-block-size, this ensures it's cleared */
+      min-block-size: 0;
+      font-family: Helvetica, Arial, sans-serif;
+      color: black;
+    }
+
+    .tile:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+
+    .emoji {
+      font-size: 24px;
+      display: block;
+      margin-bottom: 5px;
+      margin-top: -5px;
+      font-family: 'Noto Color Emoji', sans-serif;
+    }
+
+    .heading {
+      font-size: 12px;
+      font-weight: 600;
+      display: block;
+      color: black;
+      text-decoration: none;
+      line-height: 1;
+    }
+  </style>
 </head>
 <body>
-    <div class="grid-container">
-        <a href="https://forms.office.com/r/RbsYb6fquzl" target="_top" class="tile">
-            <span class="emoji">📝</span>
-            <span class="heading">M&Q Form</span>
-        </a>
-        <a href="https://forms.office.com/r/xs6F9wZtH2" target="_top" class="tile">
-            <span class="emoji">📝</span>
-            <span class="heading">Home Show Form</span>
-        </a>
-        <a href="https://forms.office.com/r/nm2Tj12bHH" target="_top" class="tile">
-            <span class="emoji">📝</span>
-            <span class="heading">Service Form</span>
-        </a>
-        <a href="https://forms.office.com/r/ErKZGq4nSs" target="_top" class="tile">
-            <span class="emoji">📝</span>
-            <span class="heading">Factory Seconds Form</span>
-        </a>
-        <a href="https://forms.office.com/r/DRyuRVUrvS" target="_top" class="tile">
-            <span class="emoji">📝</span>
-            <span class="heading">Document Scanner Form</span>
-        </a>
-        <a href="https://booking.pelcs.co.nz/" target="_top" class="tile">
-            <span class="emoji">🚚</span>
-            <span class="heading">Parcel Express - 63650</span>
-        </a>
-        <a href="https://sellwoodnz.github.io/sellwood/label-printing" target="_top" class="tile">
-            <span class="emoji">🖨️</span>
-            <span class="heading">Label Printing</span>
-        </a>
-        <a href="https://sellwoodnz.github.io/sellwood/attic-ladder-grid" target="_top" class="tile">
-            <span class="emoji">📈</span>
-            <span class="heading">Attic Ladder Grid</span>
-        </a>
-        <a href="https://sellwoodnz.github.io/sellwood/product-selector" target="_top" class="tile">
-            <span class="emoji">🏷️</span>
-            <span class="heading">Product Selector</span>
-        </a>
-        <a href="https://sellwoodnz.github.io/sellwood/ladder-manufacturing-fla-pla-hla" target="_top" class="tile">
-            <span class="emoji">🪜</span>
-            <span class="heading">FLA PLA HLA</span>
-        </a>
-        <a href="https://sellwoodnz.github.io/sellwood/ladder-manufacturing-vla" target="_top" class="tile">
-            <span class="emoji">🪜</span>
-            <span class="heading">VLA</span>
-        </a>
-        <a href="https://sellwoodnz.github.io/sellwood/spacing-calculator" target="_top" class="tile">
-            <span class="emoji">📐</span>
-            <span class="heading">Spacing Calculator</span>
-        </a>
-    </div>
+  <div class="grid-container">
+    <a href="https://forms.office.com/r/RbsYb6fquzl" target="_top" class="tile">
+      <span class="emoji" aria-hidden="true">📝</span>
+      <span class="heading">M&Q Form</span>
+    </a>
+    <a href="https://forms.office.com/r/xs6F9wZtH2" target="_top" class="tile">
+      <span class="emoji" aria-hidden="true">📝</span>
+      <span class="heading">Home Show Form</span>
+    </a>
+    <a href="https://forms.office.com/r/nm2Tj12bHH" target="_top" class="tile">
+      <span class="emoji" aria-hidden="true">📝</span>
+      <span class="heading">Service Form</span>
+    </a>
+    <a href="https://forms.office.com/r/ErKZGq4nSs" target="_top" class="tile">
+      <span class="emoji" aria-hidden="true">📝</span>
+      <span class="heading">Factory Seconds Form</span>
+    </a>
+    <a href="https://forms.office.com/r/DRyuRVUrvS" target="_top" class="tile">
+      <span class="emoji" aria-hidden="true">📝</span>
+      <span class="heading">Document Scanner Form</span>
+    </a>
+    <a href="https://booking.pelcs.co.nz/" target="_top" class="tile">
+      <span class="emoji" aria-hidden="true">🚚</span>
+      <span class="heading">Parcel Express - 63650</span>
+    </a>
+    <a href="https://sellwoodnz.github.io/sellwood/label-printing" target="_top" class="tile">
+      <span class="emoji" aria-hidden="true">🖨️</span>
+      <span class="heading">Label Printing</span>
+    </a>
+    <a href="https://sellwoodnz.github.io/sellwood/attic-ladder-grid" target="_top" class="tile">
+      <span class="emoji" aria-hidden="true">📈</span>
+      <span class="heading">Attic Ladder Grid</span>
+    </a>
+    <a href="https://sellwoodnz.github.io/sellwood/product-selector" target="_top" class="tile">
+      <span class="emoji" aria-hidden="true">🏷️</span>
+      <span class="heading">Product Selector</span>
+    </a>
+    <a href="https://sellwoodnz.github.io/sellwood/ladder-manufacturing-fla-pla-hla" target="_top" class="tile">
+      <span class="emoji" aria-hidden="true">🪜</span>
+      <span class="heading">FLA PLA HLA</span>
+    </a>
+    <a href="https://sellwoodnz.github.io/sellwood/ladder-manufacturing-vla" target="_top" class="tile">
+      <span class="emoji" aria-hidden="true">🪜</span>
+      <span class="heading">VLA</span>
+    </a>
+    <a href="https://sellwoodnz.github.io/sellwood/spacing-calculator" target="_top" class="tile">
+      <span class="emoji" aria-hidden="true">📐</span>
+      <span class="heading">Spacing Calculator</span>
+    </a>
+  </div>
 </body>
 </html>
