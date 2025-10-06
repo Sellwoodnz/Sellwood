@@ -1,106 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover"
-  >
-  <title>Sellwood</title>
-
-  <!-- Icons for various platforms -->
-  <link rel="icon" href="https://sellwoodnz.github.io/sellwood/images/favicon.ico" type="image/x-icon">
-  <link rel="apple-touch-icon" sizes="180x180" href="https://sellwoodnz.github.io/sellwood/images/icon-180.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="https://sellwoodnz.github.io/sellwood/images/icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="https://sellwoodnz.github.io/sellwood/images/icon-512.png">
-
-  <!-- Web Manifest for Android -->
-  <link rel="manifest" href="https://sellwoodnz.github.io/sellwood/manifest.json">
-
-  <style>
-    :root {
-      /* VisualViewport-driven height (JS updates this) */
-      --app-h: 100dvh;
-    }
-
-    * { box-sizing: border-box; }
-
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
-
-    body {
-      display: flex;
-      align-items: top;
-      justify-content: center;
-
-      /* Use the true visible viewport height, but allow page to scroll if needed */
-      min-height: var(--app-h);
-
-      /* Keep content away from notches/home indicators */
-      padding:
-        env(safe-area-inset-top)
-        env(safe-area-inset-right)
-        env(safe-area-inset-bottom)
-        env(safe-area-inset-left);
-
-      font-family: Arial, sans-serif;
-      color: black;
-    }
-
-    .centered-div {
-      text-align: center;
-      font-size: 14px;
-      line-height: 1;
-
-      /* Keep it nicely contained on small screens */
-      max-width: min(520px, 92vw);
-      background: #fff;
-    }
-
-    .centered-div a {
-      text-decoration: none;
-      color: inherit;
-      display: inline-block;
-      margin: 4px 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tile Grid</title>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .tile {
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            background-color: #red;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 60px;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+        .emoji {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 5px;
+            margin-top: -6px;
+        }
+        .heading {
+            font-size: 12px;
+            font-weight: 600;
+            display: block;
+            color: #1a1a1a;
+            text-decoration: none;
+            line-height: 1;
+        }
+    </style>
 </head>
 <body>
-  <div class="centered-div">
-    <a href="https://forms.office.com/r/RbsYb6fquzl" target="_top">📝 M&Q NZ Form</a><br>
-    <a href="https://forms.office.com/r/nm2Tj12bHH" target="_top">📝 Service Form</a><br>
-    <a href="https://forms.office.com/r/ErKZGq4nSs" target="_top">📝 Factory Seconds Form</a><br>
-    <a href="https://forms.office.com/r/xs6F9wZtH2" target="_top">📝 Home Show Form</a><br>
-    <a href="https://forms.office.com/r/DRyuRVUrvS" target="_top">📝 Document Scanner Form</a><br><br>
-    <a href="https://booking.pelcs.co.nz/" target="_top">🚚 Parcel Express - 63650</a><br><br>
-    <a href="https://sellwoodnz.github.io/sellwood/label-printing" target="_top">🖨️ Label Printing</a><br>
-    <a href="https://sellwoodnz.github.io/sellwood/ladder-manufacturing-fla-pla-hla" target="_top">🪜 Manufacturing FLA PLA HLA</a><br>
-    <a href="https://sellwoodnz.github.io/sellwood/ladder-manufacturing-vla" target="_top">🪜 Manufacturing VLA</a><br>
-    <a href="https://sellwoodnz.github.io/sellwood/attic-ladder-grid" target="_top">📈 Attic Ladder Grid</a><br>
-    <a href="https://sellwoodnz.github.io/sellwood/product-selector" target="_top">🏷️ Product Selector</a><br>
-    <a href="https://sellwoodnz.github.io/sellwood/spacing-calculator" target="_top">📐 Spacing Calculator</a><br>
-  </div>
-
-  <script>
-    // Keep --app-h equal to the true visible viewport height (works in standalone PWAs)
-    function updateAppHeightVar() {
-      const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-      document.documentElement.style.setProperty('--app-h', `${vh}px`);
-    }
-
-    // Initial set
-    updateAppHeightVar();
-
-    // Keep it in sync with changes (keyboard, toolbar, orientation, PWA chrome)
-    window.addEventListener('resize', updateAppHeightVar);
-    window.addEventListener('orientationchange', updateAppHeightVar);
-
-    if (window.visualViewport) {
-      visualViewport.addEventListener('resize', updateAppHeightVar, { passive: true });
-      visualViewport.addEventListener('scroll', updateAppHeightVar, { passive: true });
-    }
-  </script>
+    <div class="grid-container">
+        <a href="https://forms.office.com/r/RbsYb6fquzl" target="_top" class="tile">
+            <span class="emoji">📝</span>
+            <span class="heading">M&Q Form</span>
+        </a>
+                <a href="https://forms.office.com/r/xs6F9wZtH2" target="_top" class="tile">
+            <span class="emoji">📝</span>
+            <span class="heading">Home Show Form</span>
+        </a>
+        <a href="https://forms.office.com/r/nm2Tj12bHH" target="_top" class="tile">
+            <span class="emoji">📝</span>
+            <span class="heading">Service Form</span>
+        </a>
+        <a href="https://forms.office.com/r/ErKZGq4nSs" target="_top" class="tile">
+            <span class="emoji">📝</span>
+            <span class="heading">Factory Seconds Form</span>
+        </a>
+        <a href="https://forms.office.com/r/DRyuRVUrvS" target="_top" class="tile">
+            <span class="emoji">📝</span>
+            <span class="heading">Document Scanner Form</span>
+        </a>
+        <a href="https://booking.pelcs.co.nz/" target="_top" class="tile">
+            <span class="emoji">🚚</span>
+            <span class="heading">Parcel Express - 63650</span>
+        </a>
+        <a href="https://sellwoodnz.github.io/sellwood/label-printing" target="_top" class="tile">
+            <span class="emoji">🖨️</span>
+            <span class="heading">Label Printing</span>
+        </a>
+        <a href="https://sellwoodnz.github.io/sellwood/ladder-manufacturing-fla-pla-hla" target="_top" class="tile">
+            <span class="emoji">🪜</span>
+            <span class="heading">Manufacturing FLA PLA HLA</span>
+        </a>
+        <a href="https://sellwoodnz.github.io/sellwood/ladder-manufacturing-vla" target="_top" class="tile">
+            <span class="emoji">🪜</span>
+            <span class="heading">Manufacturing VLA</span>
+        </a>
+        <a href="https://sellwoodnz.github.io/sellwood/attic-ladder-grid" target="_top" class="tile">
+            <span class="emoji">📈</span>
+            <span class="heading">Attic Ladder Grid</span>
+        </a>
+        <a href="https://sellwoodnz.github.io/sellwood/product-selector" target="_top" class="tile">
+            <span class="emoji">🏷️</span>
+            <span class="heading">Product Selector</span>
+        </a>
+        <a href="https://sellwoodnz.github.io/sellwood/spacing-calculator" target="_top" class="tile">
+            <span class="emoji">📐</span>
+            <span class="heading">Spacing Calculator</span>
+        </a>
+    </div>
 </body>
 </html>
