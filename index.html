@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tile Grid</title>
     <style>
+        @font-face {
+            font-family: 'Noto Color Emoji';
+            src: ur[](https://raw.githack.com/googlefonts/noto-emoji/main/fonts/NotoColorEmoji.ttf);
+        }
         .grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -15,9 +19,9 @@
         .tile {
             text-align: center;
             padding: 10px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid hsl(0, 0%, 95%);
             border-radius: 5px;
-            background-color: #red;
+            background-color: hsl(0, 0%, 95%);
             text-decoration: none;
             display: flex;
             flex-direction: column;
@@ -27,16 +31,17 @@
             font-family: Helvetica, Arial, sans-serif;
         }
         .emoji {
-            font-size: 2em;
+            font-size: 24px;
             display: block;
             margin-bottom: 5px;
             margin-top: -6px;
+            font-family: 'Noto Color Emoji', sans-serif;  /* Forces Google's emojis */
         }
         .heading {
             font-size: 12px;
             font-weight: 600;
             display: block;
-            color: #1a1a1a;
+            color: black;  /* For contrast on red background */
             text-decoration: none;
             line-height: 1;
         }
@@ -48,7 +53,7 @@
             <span class="emoji">📝</span>
             <span class="heading">M&Q Form</span>
         </a>
-                <a href="https://forms.office.com/r/xs6F9wZtH2" target="_top" class="tile">
+        <a href="https://forms.office.com/r/xs6F9wZtH2" target="_top" class="tile">
             <span class="emoji">📝</span>
             <span class="heading">Home Show Form</span>
         </a>
