@@ -110,6 +110,17 @@
       margin-top: 10px;
       color: var(--muted);
       font-size: 14px;
+      gap: 10px;
+    }
+    .sort-wrap {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .sort-select {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: #fff;
+      color: var(--text);
     }
 
     .grid {
@@ -171,7 +182,6 @@
       font-size: 12px;
     }
 
-    /* Models badges under the code */
     .models {
       display: flex;
       flex-wrap: wrap;
@@ -251,145 +261,154 @@
         </label>
         <button class="clear-btn" id="clearBtn" title="Clear search">Clear</button>
       </div>
+
       <div class="meta">
-        <div id="count">Showing 0 of 0 parts</div>
+        <div id="count" aria-live="polite">Showing 0 of 0 parts</div>
+        <label class="sort-wrap" for="sort">
+          <span>Sort</span>
+          <select id="sort" class="sort-select">
+            <option value="relevance">Relevance</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="name-asc">Name: A–Z</option>
+            <option value="name-desc">Name: Z–A</option>
+          </select>
+        </label>
       </div>
     </div>
 
     <div id="grid" class="grid" aria-live="polite"></div>
-
     <div id="empty" class="empty">No parts found. Try different keywords.</div>
   </div>
 
   <script>
-    // Dummy data (no 'id'). Added 'keywords' (hidden) and 'models' (visible)
-    const PARTS = [
-      {
-        name: 'Ladder Hinge P',
-        code: 'PART-LHP',
-        description: 'V shaped ladder hinge',
-        price: 15.00,
-        image: 'https://placehold.co/600x400?text=Ladder Hinge P',
-        keywords: ['filter', 'hepa', 'hvac', 'air', '300mm'],
-        models: ['P30', 'FT30', 'FA30', 'FTW30']
-      },
-      {
-        name: 'Ladder Hinge D',
-        code: 'PART-LHD',
-        description: 'Plate shaped ladder hinge',
-        price: 25.00,
-        image: 'https://placehold.co/600x400?text=Ladder Hinge D',
-        keywords: ['filter', 'hepa', 'hvac', 'air', '300mm'],
-        models: ['D28', 'D30', 'D36']
-      },
-      {
-        name: 'Hex Bolt M6 x 20',
-        code: 'BLT-M6-20',
-        description: 'Stainless steel hex bolt, metric thread, grade A2-70.',
-        price: 0.15,
-        image: 'https://placehold.co/600x400?text=Hex+Bolt',
-        keywords: ['bolt', 'screw', 'fastener', 'm6', 'stainless', 'a2-70'],
-        models: ['Frame-2020', 'Bracket-Kit', 'General']
-      },
-      {
-        name: 'Timing Belt 200-2GT',
-        code: 'BLT-200-2GT',
-        description: '2GT timing belt, 200mm length, 6mm width.',
-        price: 5.00,
-        image: 'https://placehold.co/600x400?text=Timing+Belt',
-        keywords: ['timing', 'belt', 'gt2', '2gt', '200mm', '6mm'],
-        models: ['CNC-Mini', '3D-Printer', 'Plotter-X']
-      },
-      {
-        name: 'Hydraulic Hose 3/8"',
-        code: 'HOS-038-2W',
-        description: 'Two-wire braided hydraulic hose, 3/8 inch ID.',
-        price: 12.00,
-        image: 'https://placehold.co/600x400?text=Hydraulic+Hose',
-        keywords: ['hose', 'hydraulic', '3/8', 'two-wire', 'braided'],
-        models: ['HDU-38', 'Pump-2000']
-      },
-      {
-        name: 'O-Ring NBR 20x2',
-        code: 'ORG-20X2-NBR',
-        description: 'Nitrile rubber O-ring, 20mm ID, 2mm cross-section.',
-        price: 0.35,
-        image: 'https://placehold.co/600x400?text=O-ring',
-        keywords: ['o-ring', 'seal', 'nbr', '20x2', '20 mm', '2 mm'],
-        models: ['Valve-20', 'Pump-2000', 'Manifold-M2']
-      },
-      {
-        name: 'Gearbox 20:1',
-        code: 'GRB-020-PL',
-        description: 'Planetary gearbox with 20:1 ratio, low backlash.',
-        price: 129.99,
-        image: 'https://placehold.co/600x400?text=Gearbox',
-        keywords: ['gearbox', 'reduction', 'planetary', '20:1', 'low backlash'],
-        models: ['MTR-PL-42', 'MTR-PL-57']
-      },
-      {
-        name: 'DC Motor 12V 100W',
-        code: 'MTR-12V-100W',
-        description: 'Brushed DC motor, 12V, 100W output, ~3000 RPM.',
-        price: 59.00,
-        image: 'https://placehold.co/600x400?text=DC+Motor',
-        keywords: ['motor', 'dc', '12v', '100w', 'brushed', '3000 rpm'],
-        models: ['MTR-PL-42', 'Drive-12V', 'Conveyor-Mini']
-      },
-      {
-        name: 'Proximity Sensor NPN',
-        code: 'SNS-PRX-NPN',
-        description: 'Inductive proximity sensor, 8mm, NPN NO output.',
-        price: 18.99,
-        image: 'https://placehold.co/600x400?text=Sensor',
-        keywords: ['sensor', 'proximity', 'inductive', 'npn', 'no', '8mm', 'm12'],
-        models: ['PLC-IO', 'Limit-NPN']
-      },
-      {
-        name: 'Power Supply 24V 5A',
-        code: 'PSU-24V-5A',
-        description: 'Switch-mode power supply, 24V, 5A, DIN rail mount.',
-        price: 39.99,
-        image: 'https://placehold.co/600x400?text=Power+Supply',
-        keywords: ['psu', 'power', 'supply', '24v', '120w', 'din rail'],
-        models: ['Control-Panel-24', 'PLC-IO']
-      },
-      {
-        name: 'Aluminum Profile 2020',
-        code: 'ALU-2020-1M',
-        description: '2020 aluminum extrusion, 1 meter length.',
-        price: 14.50,
-        image: 'https://placehold.co/600x400?text=Aluminum+Profile',
-        keywords: ['extrusion', 'aluminum', '2020', 'v-slot', 't-slot'],
-        models: ['Frame-2020', '3D-Printer']
-      },
-      {
-        name: 'Cable Tie 200mm',
-        code: 'CBL-TIE-200',
-        description: 'Nylon cable ties, 200mm length, pack of 100.',
-        price: 3.25,
-        image: 'https://placehold.co/600x400?text=Cable+Ties',
-        keywords: ['zip tie', 'cable tie', 'nylon', '200mm', 'ties'],
-        models: ['General', 'Harness-Kit']
-      }
-    ];
-
+    // Configuration: set to your CSV location (relative or absolute)
+    const CSV_URL = 'parts.csv';
     const currency = 'USD';
-    const fmtPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency });
 
+    // Formatting + DOM refs
+    const fmtPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency });
     const grid = document.getElementById('grid');
     const countEl = document.getElementById('count');
     const emptyEl = document.getElementById('empty');
     const searchInput = document.getElementById('search');
     const clearBtn = document.getElementById('clearBtn');
+    const sortSelect = document.getElementById('sort');
 
+    // State
+    let PARTS = [];
+    const SCORES = new Map(); // query-time relevance scores
+
+    // Helpers
+    function debounce(fn, wait = 180) {
+      let t;
+      return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
+    }
+
+    // Normalize: lowercase, fold accents, normalize separators
+    function norm(s) {
+      return String(s || '')
+        .toLowerCase()
+        .normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[_/\\-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function splitList(s) {
+      // Split on semicolons primarily; also allow commas
+      if (!s) return [];
+      return String(s)
+        .split(/[;]+|,(?!\s)/g)
+        .map(v => v.trim())
+        .filter(Boolean);
+    }
+
+    // CSV parsing (handles quoted fields and escaped quotes)
+    function parseCSV(text) {
+      const rows = [];
+      let i = 0, field = '', row = [], inQuotes = false;
+
+      function pushField() { row.push(field); field = ''; }
+      function pushRow() { rows.push(row); row = []; }
+
+      while (i < text.length) {
+        const c = text[i];
+
+        if (inQuotes) {
+          if (c === '"') {
+            if (text[i + 1] === '"') { field += '"'; i++; } // escaped quote
+            else { inQuotes = false; }
+          } else {
+            field += c;
+          }
+        } else {
+          if (c === '"') {
+            inQuotes = true;
+          } else if (c === ',') {
+            pushField();
+          } else if (c === '\n') {
+            pushField(); pushRow();
+          } else if (c === '\r') {
+            // ignore, handle \r\n by letting \n close the row
+          } else {
+            field += c;
+          }
+        }
+        i++;
+      }
+      // flush last field/row if needed
+      if (field.length > 0 || row.length) { pushField(); pushRow(); }
+
+      // Trim empty trailing rows
+      while (rows.length && rows[rows.length - 1].every(v => v === '')) rows.pop();
+      if (!rows.length) return [];
+
+      // Map to objects using header row (case-insensitive)
+      const header = rows[0].map(h => norm(h).replace(/\s+/g, ''));
+      const records = rows.slice(1).map(r => {
+        const o = {};
+        for (let j = 0; j < header.length; j++) {
+          o[header[j]] = r[j] ?? '';
+        }
+        return o;
+      });
+      return records;
+    }
+
+    function recordsToParts(records) {
+      return records.map(rec => {
+        const name = rec.name ?? rec['name'] ?? '';
+        const code = rec.code ?? rec['code'] ?? '';
+        const description = rec.description ?? rec['description'] ?? '';
+        const price = parseFloat(rec.price ?? rec['price'] ?? '0') || 0;
+        const image = rec.image ?? rec['image'] ?? '';
+        const models = splitList(rec.models ?? rec['models']);
+        const keywords = splitList(rec.keywords ?? rec['keywords']);
+
+        return { name, code, description, price, image, models, keywords };
+      });
+    }
+
+    async function loadCSV(url) {
+      try {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        const records = parseCSV(text);
+        return recordsToParts(records);
+      } catch (err) {
+        console.error('Failed to load CSV:', err);
+        return [];
+      }
+    }
+
+    // Rendering
     function render(list) {
       grid.innerHTML = '';
-      if (!list.length) {
-        emptyEl.classList.add('active');
-      } else {
-        emptyEl.classList.remove('active');
-      }
+      if (!list.length) emptyEl.classList.add('active');
+      else emptyEl.classList.remove('active');
 
       list.forEach(p => {
         const card = document.createElement('article');
@@ -400,9 +419,11 @@
           .map(m => `<span class="model-tag">${m}</span>`)
           .join('');
 
+        const imgSrc = p.image || `https://placehold.co/600x400?text=${encodeURIComponent(p.name || 'Part')}`;
+
         card.innerHTML = `
           <div class="media">
-            <img src="${p.image}" alt="${p.name}" loading="lazy" />
+            <img src="${imgSrc}" alt="${p.name}" loading="lazy" />
           </div>
           <div class="content">
             <div class="name">${p.name}</div>
@@ -415,44 +436,143 @@
             </div>
           </div>
         `;
+
+        // Fallback image if broken
+        const img = card.querySelector('img');
+        img.addEventListener('error', () => {
+          img.src = `https://placehold.co/600x400?text=${encodeURIComponent(p.name || 'Part')}`;
+        });
+
         grid.appendChild(card);
       });
 
       countEl.textContent = `Showing ${list.length} of ${PARTS.length} parts`;
     }
 
-    // Token-based search across name, code, description, models, and keywords
+    // Relevance scoring
+    const WEIGHTS = { name: 3, code: 3, models: 2, keywords: 1, description: 1 };
+
     function filterParts(query) {
-      const q = query.trim().toLowerCase();
-      if (!q) return PARTS;
+      const q = norm(query);
+      if (!q) {
+        SCORES.clear();
+        return PARTS.slice();
+      }
+      const tokens = q.split(' ');
+      SCORES.clear();
 
-      const tokens = q.split(/\s+/).filter(Boolean);
       return PARTS.filter(p => {
-        const hay = [
-          p.name,
-          p.code,
-          p.description,
-          ...(p.models || []),
-          ...(p.keywords || [])
-        ].join(' ').toLowerCase();
+        const f = {
+          name: norm(p.name),
+          code: norm(p.code),
+          description: norm(p.description),
+          models: (p.models || []).map(norm),
+          keywords: (p.keywords || []).map(norm)
+        };
 
-        return tokens.every(t => hay.includes(t));
+        let score = 0;
+        const pass = tokens.every(t => {
+          let hit = false;
+
+          for (const key of ['name', 'code', 'description']) {
+            const val = f[key];
+            if (val && val.includes(t)) {
+              hit = true;
+              score += WEIGHTS[key] + ((key === 'name' || key === 'code') && val.startsWith(t) ? 1 : 0);
+            }
+          }
+          for (const key of ['models', 'keywords']) {
+            const arr = f[key];
+            if (arr?.some(v => v.includes(t))) {
+              hit = true;
+              score += WEIGHTS[key];
+            }
+          }
+          return hit;
+        });
+
+        if (pass) SCORES.set(p.code, score);
+        return pass;
       });
     }
 
+    function sortParts(list, mode) {
+      const arr = list.slice();
+      switch (mode) {
+        case 'price-asc':
+          return arr.sort((a, b) => a.price - b.price || a.name.localeCompare(b.name));
+        case 'price-desc':
+          return arr.sort((a, b) => b.price - a.price || a.name.localeCompare(b.name));
+        case 'name-asc':
+          return arr.sort((a, b) => a.name.localeCompare(b.name));
+        case 'name-desc':
+          return arr.sort((a, b) => b.name.localeCompare(a.name));
+        case 'relevance':
+        default:
+          return arr.sort((a, b) => {
+            const sa = SCORES.get(a.code) || 0;
+            const sb = SCORES.get(b.code) || 0;
+            return (sb - sa) || (a.price - b.price) || a.name.localeCompare(b.name);
+          });
+      }
+    }
+
+    // URL sync
+    function updateUrl(q, s) {
+      const params = new URLSearchParams(location.search);
+      if (q) params.set('q', q); else params.delete('q');
+      if (s && s !== 'relevance') params.set('sort', s); else params.delete('sort');
+      const qs = params.toString();
+      history.replaceState(null, '', qs ? `${location.pathname}?${qs}` : location.pathname);
+    }
+
+    // Central update
+    function update() {
+      const q = searchInput.value;
+      const s = sortSelect.value;
+      const filtered = filterParts(q);
+      const sorted = sortParts(filtered, s);
+      render(sorted);
+      updateUrl(q, s);
+    }
+
+    const debouncedUpdate = debounce(update, 150);
+
     // Events
-    searchInput.addEventListener('input', () => {
-      render(filterParts(searchInput.value));
-    });
+    searchInput.addEventListener('input', debouncedUpdate);
+    sortSelect.addEventListener('change', update);
 
     clearBtn.addEventListener('click', () => {
       searchInput.value = '';
       searchInput.focus();
-      render(PARTS);
+      update();
     });
 
-    // Initial render
-    render(PARTS);
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        searchInput.focus();
+      }
+      if (e.key === 'Escape') {
+        if (searchInput.value) {
+          searchInput.value = '';
+          update();
+        }
+      }
+    });
+
+    // Init: read URL, then load CSV and render
+    (async function init() {
+      const params = new URLSearchParams(location.search);
+      const q = params.get('q') || '';
+      const s = params.get('sort') || 'relevance';
+      searchInput.value = q;
+      sortSelect.value = s;
+
+      PARTS = await loadCSV(CSV_URL);
+      update();
+    })();
   </script>
 </body>
 </html>
