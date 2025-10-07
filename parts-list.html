@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Parts Catalog</title>
+  <title>Sellwood Catalog</title>
   <style>
     :root {
       --bg: #f7f8fa;
@@ -16,7 +16,7 @@
       --radius: 14px;
       --maxw: 1200px;
 
-      /* Added: shared control height to match search and sort */
+      /* Shared control height to match search and sort */
       --control-h: 46px; /* ~24px icon + 20px padding + 2px borders */
     }
 
@@ -56,20 +56,13 @@
       z-index: 10;
       padding: 12px 0 20px;
 
-      /* More see-through frosted background */
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      background: rgba(255, 255, 255, 0.28);
+      /* Solid white background (no transparency/blur) */
+
     }
     .toolbar::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -16px;
-      height: 16px;
-      pointer-events: none;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.28), rgba(255,255,255,0));
+      /* Remove the fade overlay */
+      content: none;
+      display: none;
     }
 
     .search-wrap {
@@ -90,7 +83,7 @@
       box-shadow: var(--shadow);
       min-width: 0; /* avoid overflow in grid */
 
-      /* Added: ensure search is at least the shared control height */
+      /* Ensure search is at least the shared control height */
       min-height: var(--control-h);
     }
     .search input {
@@ -304,8 +297,7 @@
 <body>
   <div class="container">
     <header>
-      <div class="title">Parts Catalog</div>
-      <div class="subtitle">Browse parts below. Use the search to filter by name, code, description, model, or keywords.</div>
+      <div class="title">Sellwood Catalog</div>
     </header>
 
     <div class="toolbar">
