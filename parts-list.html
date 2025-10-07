@@ -73,7 +73,7 @@
       border-radius: 12px;
       padding: 10px 12px;
       box-shadow: var(--shadow);
-      min-width: 0; /* avoid overflow in grid */
+      min-width: 0;
       min-height: var(--control-h);
       margin-left: 15px;
     }
@@ -96,7 +96,6 @@
       flex: 0 0 auto;
     }
 
-    /* Inline clear "X" button inside the search (left, replacing icon) */
     .clear-x {
       appearance: none;
       border: none;
@@ -105,20 +104,18 @@
       width: 24px;
       height: 24px;
       border-radius: 50%;
-      display: none; /* hidden until there's text */
+      display: none;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       flex: 0 0 auto;
     }
 
-    /* Swap logic: show magnifier by default, show X when input has value */
     .search .icon-search { display: inline-block; }
     .search .clear-x { display: none; }
     .search.has-value .icon-search { display: none; }
     .search.has-value .clear-x { display: inline-flex; }
 
-    /* Count inside the search, far right */
     .search .count {
       margin-left: auto;
       color: var(--muted);
@@ -129,12 +126,12 @@
 
     .sort-select {
       border: 1px solid var(--border);
-      border-radius: 12px;       /* match .search */
-      padding: 0 12px;           /* let height control vertical size */
-      height: var(--control-h);  /* match search height */
+      border-radius: 12px;
+      padding: 0 12px;
+      height: var(--control-h);
       background: #fff;
       color: var(--text);
-      box-shadow: var(--shadow); /* match .search */
+      box-shadow: var(--shadow);
       font-size: 16px;
       margin-right: 15px;
     }
@@ -243,7 +240,6 @@
       z-index: 1;
     }
 
-    /* CTA container bottom-right for multiple buttons */
     .img-ctas {
       position: absolute;
       right: 10px;
@@ -280,10 +276,9 @@
       padding: 14px;
     }
 
-    /* Name + Code always on the same line */
     .title-row {
       display: grid;
-      grid-template-columns: 1fr auto; /* name grows, code stays compact */
+      grid-template-columns: 1fr auto;
       align-items: center;
       gap: 8px;
     }
@@ -294,11 +289,7 @@
       white-space: nowrap;
     }
 
-    .name {
-      font-weight: 700;
-      font-size: 16px;
-      line-height: 1.25;
-    }
+    .name { font-weight: 700; font-size: 16px; line-height: 1.25; }
 
     .code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
@@ -317,6 +308,7 @@
       flex-wrap: wrap;
       gap: 6px;
       margin-top: 4px;
+      margin-bottom: 1px;
     }
     .model-tag {
       font-size: 12px;
@@ -349,7 +341,7 @@
 
     .price-row { display: none; }
 
-    /* Simple modal: fully centered and contained on mobile */
+    /* Simple modal: fully centered and contained on mobile/desktop */
     .modal {
       position: fixed;
       inset: 0;
@@ -357,7 +349,7 @@
       display: grid;
       place-items: center;
       background: rgba(2, 8, 23, 0.55);
-      padding: 12px; /* tighter to ensure it never overflows on small screens */
+      padding: 12px;
       opacity: 0;
       visibility: hidden;
       transition: opacity .18s ease, visibility .18s ease;
@@ -405,14 +397,12 @@
     <div class="toolbar">
       <div class="search-wrap">
         <label class="search" for="search" id="searchLabel">
-          <!-- Clear X (left) replaces the search icon when typing) -->
           <button class="clear-x" id="clearX" type="button" aria-label="Clear search" title="Clear search">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             </svg>
           </button>
 
-          <!-- Search icon (shown when input is empty) -->
           <svg class="icon icon-search" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
@@ -421,13 +411,12 @@
           <span id="count" class="count" aria-live="polite">0 of 0</span>
         </label>
 
-        <!-- Sort to the right of the search -->
         <select id="sort" class="sort-select">
-          <option value="relevance">Relevance</option>
-          <option value="price-asc">Price: Low</option>
-          <option value="price-desc">Price: High</option>
-          <option value="name-asc">Name: A–Z</option>
-          <option value="name-desc">Name: Z–A</option>
+          <option value="relevance">Sort</option>
+          <option value="name-asc">A–Z</option>
+          <option value="name-desc">Z–A</option>
+          <option value="price-asc">Low</option>
+          <option value="price-desc">High</option>
         </select>
       </div>
     </div>
@@ -436,7 +425,7 @@
     <div id="empty" class="empty" aria-live="polite"></div>
   </div>
 
-  <!-- Simple PDF Modal (just the iframe) -->
+  <!-- Simple PDF Modal (desktop only; mobile opens new tab) -->
   <div id="pdfModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="panel">
       <iframe id="pdfFrame" title="PDF"></iframe>
@@ -475,7 +464,7 @@
 
     // State
     let PARTS = [];
-    const SCORES = new Map(); // query-time relevance scores
+    const SCORES = new Map();
     let lastFocused = null;
 
     // Helpers
@@ -502,7 +491,6 @@
         .filter(Boolean);
     }
 
-    // For images: only split on semicolons
     function splitImages(s) {
       if (!s) return [];
       return String(s)
@@ -511,7 +499,7 @@
         .filter(Boolean);
     }
 
-    // CSV parsing (handles quoted fields and escaped quotes)
+    // CSV parsing
     function parseCSV(text) {
       const rows = [];
       let i = 0, field = '', row = [], inQuotes = false;
@@ -530,17 +518,11 @@
             field += c;
           }
         } else {
-          if (c === '"') {
-            inQuotes = true;
-          } else if (c === ',') {
-            pushField();
-          } else if (c === '\n') {
-            pushField(); pushRow();
-          } else if (c === '\r') {
-            // ignore
-          } else {
-            field += c;
-          }
+          if (c === '"') inQuotes = true;
+          else if (c === ',') pushField();
+          else if (c === '\n') { pushField(); pushRow(); }
+          else if (c === '\r') { /* ignore */ }
+          else field += c;
         }
         i++;
       }
@@ -551,9 +533,7 @@
       const header = rows[0].map(h => norm(h).replace(/\s+/g, ''));
       const records = rows.slice(1).map(r => {
         const o = {};
-        for (let j = 0; j < header.length; j++) {
-          o[header[j]] = r[j] ?? '';
-        }
+        for (let j = 0; j < header.length; j++) o[header[j]] = r[j] ?? '';
         return o;
       });
       return records;
@@ -566,30 +546,23 @@
       return '';
     }
 
-    // "Label;URL", "URL", or empty => returns {label, url}
-    // Default label is "Link" (overridable via CSV "link" field)
+    // "Label;URL" | "URL"
     function parseLink(raw) {
       const s = String(raw || '').trim();
       if (!s) return null;
 
       const idx = s.indexOf(';');
-      let label = '';
-      let url = '';
+      let label = '', url = '';
 
       if (idx === -1) {
-        if (/^https?:\/\//i.test(s)) {
-          label = 'Link';
-          url = s;
-        } else {
-          return null;
-        }
+        if (/^https?:\/\//i.test(s)) { label = 'Link'; url = s; }
+        else return null;
       } else {
         label = s.slice(0, idx).trim();
         url = s.slice(idx + 1).trim();
         if (!url) return null;
         if (!label) label = 'Link';
       }
-
       return { label, url };
     }
 
@@ -600,24 +573,23 @@
         const description = pick(rec, ['description']);
         const price = parseFloat(pick(rec, ['price'])) || 0;
 
-        // Images: support multiple, split by ';'
+        // Images: multiple via ';'
         const imageRaw = pick(rec, ['image']);
         const images = splitImages(imageRaw);
-        const image = images[0] || ''; // backward compatibility
+        const image = images[0] || '';
 
         const models = splitList(pick(rec, ['model', 'models']));
         const keywords = splitList(pick(rec, ['keywords']));
         const linkRaw = pick(rec, ['link']);
         const link = parseLink(linkRaw);
 
-        // Support "file" column
+        // File
         const file = pick(rec, ['file', 'pdf', 'datasheet']);
 
         return { name, code, description, price, image, images, models, keywords, link, file };
       });
     }
 
-    // Build an image URL from CSV value (filename only)
     function resolveImage(raw) {
       let v = String(raw || '').trim();
       if (!v) return null;
@@ -636,7 +608,6 @@
       return v;
     }
 
-    // Build a file URL from CSV value (filename only)
     function resolveFile(raw) {
       let v = String(raw || '').trim();
       if (!v) return null;
@@ -661,16 +632,11 @@
 
       if (!list.length) {
         let msg = '';
-        if (PARTS.length === 0) {
-          msg = 'No parts available.';
-        } else if (q) {
-          msg = `No parts found for "${q}". Try different keywords.`;
-        }
+        if (PARTS.length === 0) msg = 'No parts available.';
+        else if (q) msg = `No parts found for "${q}". Try different keywords.`;
         emptyEl.textContent = msg;
         if (msg) emptyEl.classList.add('active'); else emptyEl.classList.remove('active');
-      } else {
-        emptyEl.classList.remove('active');
-      }
+      } else emptyEl.classList.remove('active');
 
       list.forEach(p => {
         const card = document.createElement('article');
@@ -682,7 +648,7 @@
           ? (p.models || []).map(m => `<span class="model-tag">${m}</span>`).join('')
           : '';
 
-        // Resolve images (support multiple)
+        // Resolve images
         const rawImages = (Array.isArray(p.images) && p.images.length) ? p.images : (p.image ? [p.image] : []);
         let resolved = rawImages.map(v => resolveImage(v)).filter(Boolean);
         const placeholder = `https://placehold.co/600x400/eee/666?text=${encodeURIComponent(p.name || 'Part')}`;
@@ -730,20 +696,14 @@
           </div>
         `;
 
-        // Fallback image if broken (for each slide)
+        // Fallback for each slide
         const imgs = card.querySelectorAll('.slide img');
-        imgs.forEach(img => {
-          img.addEventListener('error', () => { img.src = placeholder; }, { once: true });
-        });
+        imgs.forEach(img => img.addEventListener('error', () => { img.src = placeholder; }, { once: true }));
 
-        // Setup carousel interactions if multiple images
-        const mediaEl = card.querySelector('.media');
-        setupCarousel(mediaEl);
-
+        setupCarousel(card.querySelector('.media'));
         grid.appendChild(card);
       });
 
-      // Compact "X of Y" inside the search box
       countEl.textContent = `${list.length} of ${PARTS.length}`;
     }
 
@@ -766,26 +726,20 @@
         mediaEl.dataset.index = idx;
       }
 
-      // Click on dots to jump
       mediaEl.addEventListener('click', (e) => {
         const dot = e.target.closest('.dot');
-        if (!dot) return;
-        e.stopPropagation();
-        const i = parseInt(dot.dataset.i || '0', 10);
-        go(i);
-      });
-
-      // Click on image to go next (ignore when clicking CTAs or dots)
-      mediaEl.addEventListener('click', (e) => {
+        if (dot) {
+          e.stopPropagation();
+          go(parseInt(dot.dataset.i || '0', 10));
+          return;
+        }
         if (e.target.closest('.img-cta') || e.target.closest('.dots')) return;
         go(idx + 1);
       });
 
-      // Basic swipe support
       mediaEl.addEventListener('touchstart', (e) => {
         const t = e.touches[0];
-        startX = t.clientX;
-        startY = t.clientY;
+        startX = t.clientX; startY = t.clientY;
       }, { passive: true });
 
       mediaEl.addEventListener('touchend', (e) => {
@@ -793,8 +747,7 @@
         const dx = t.clientX - startX;
         const dy = t.clientY - startY;
         if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy)) {
-          if (dx < 0) go(idx + 1);
-          else go(idx - 1);
+          if (dx < 0) go(idx + 1); else go(idx - 1);
         }
       }, { passive: true });
     }
@@ -804,10 +757,7 @@
 
     function filterParts(query) {
       const q = norm(query);
-      if (!q) {
-        SCORES.clear();
-        return PARTS.slice();
-      }
+      if (!q) { SCORES.clear(); return PARTS.slice(); }
       const tokens = q.split(' ');
       SCORES.clear();
 
@@ -823,7 +773,6 @@
         let score = 0;
         const pass = tokens.every(t => {
           let hit = false;
-
           for (const key of ['name', 'code', 'description']) {
             const val = f[key];
             if (val && val.includes(t)) {
@@ -833,10 +782,7 @@
           }
           for (const key of ['models', 'keywords']) {
             const arr = f[key];
-            if (arr?.some(v => v.includes(t))) {
-              hit = true;
-              score += WEIGHTS[key];
-            }
+            if (arr?.some(v => v.includes(t))) { hit = true; score += WEIGHTS[key]; }
           }
           return hit;
         });
@@ -849,14 +795,10 @@
     function sortParts(list, mode) {
       const arr = list.slice();
       switch (mode) {
-        case 'price-asc':
-          return arr.sort((a, b) => a.price - b.price || a.name.localeCompare(b.name));
-        case 'price-desc':
-          return arr.sort((a, b) => b.price - a.price || a.name.localeCompare(b.name));
-        case 'name-asc':
-          return arr.sort((a, b) => a.name.localeCompare(b.name));
-        case 'name-desc':
-          return arr.sort((a, b) => b.name.localeCompare(a.name));
+        case 'price-asc': return arr.sort((a, b) => a.price - b.price || a.name.localeCompare(b.name));
+        case 'price-desc': return arr.sort((a, b) => b.price - a.price || a.name.localeCompare(b.name));
+        case 'name-asc': return arr.sort((a, b) => a.name.localeCompare(b.name));
+        case 'name-desc': return arr.sort((a, b) => b.name.localeCompare(a.name));
         case 'relevance':
         default:
           return arr.sort((a, b) => {
@@ -882,13 +824,30 @@
       searchLabel.classList.toggle('has-value', has);
     }
 
-    // Ensure PDF opens "fit to page"
+    // Try to force "fit to page" across viewers:
+    // - PDF.js (Firefox) honors zoom=page-fit
+    // - Chrome often honors zoom=page-width; Fit is not fully supported
+    // - Acrobat honors view=Fit
     function withPdfFit(url) {
-      const hasHash = url.includes('#');
-      if (!hasHash) return url + '#page=1&zoom=page-fit';
-      if (/zoom=/i.test(url)) return url; // respect existing zoom
-      // append zoom param to existing hash
-      return url + (url.endsWith('#') ? '' : '&') + 'zoom=page-fit';
+      const [base, hash = ''] = url.split('#');
+      const params = new URLSearchParams(hash);
+      if (!params.has('page')) params.set('page', '1');
+
+      // Add both view=Fit and a zoom fallback based on browser
+      if (!params.has('view')) params.set('view', 'Fit');
+
+      if (!params.has('zoom')) {
+        const ua = navigator.userAgent;
+        const isChrome = /Chrome\/|Chromium\/|CriOS\//.test(ua) && !/Edg\//.test(ua) && !/OPR\//.test(ua);
+        params.set('zoom', isChrome ? 'page-width' : 'page-fit');
+      }
+      const h = params.toString();
+      return base + (h ? '#' + h : '');
+    }
+
+    function isMobile() {
+      return window.matchMedia('(max-width: 640px)').matches
+        || /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
     }
 
     // Central update
@@ -917,22 +876,29 @@
       searchInput.value = '';
       setClearXVisible();
       update();
-      // Hide keyboard + cursor (mobile and desktop)
+      // Hide keyboard + cursor
       searchInput.blur();
     });
 
-    // Delegated handler for PDF CTA buttons
+    // PDF button: open directly on mobile, modal on desktop
     grid.addEventListener('click', (e) => {
       const btn = e.target.closest('.pdf-cta');
       if (!btn) return;
       const url = btn.getAttribute('data-file');
-      openPdfModal(url);
+      const finalUrl = withPdfFit(url);
+
+      if (isMobile()) {
+        const w = window.open(finalUrl, '_blank', 'noopener');
+        if (!w) location.href = finalUrl; // fallback if popup blocked
+        return;
+      }
+      openPdfModal(finalUrl);
     });
 
-    // Modal behavior (centered and constrained)
+    // Modal behavior (desktop)
     function openPdfModal(url) {
       lastFocused = document.activeElement;
-      pdfFrame.src = withPdfFit(url);
+      pdfFrame.src = url;
       pdfModal.classList.add('open');
       document.body.classList.add('modal-open');
       document.addEventListener('keydown', onModalKeydown);
@@ -968,7 +934,7 @@
           searchInput.value = '';
           setClearXVisible();
           update();
-          searchInput.blur(); // ensure keyboard hides if open
+          searchInput.blur();
         }
       }
     });
