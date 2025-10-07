@@ -178,12 +178,57 @@
       background: #eee;
       overflow: hidden;
       position: relative;
+      user-select: none;
     }
-    .media img {
+
+    /* Carousel (added) */
+    .carousel {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform .3s ease;
+      will-change: transform;
+      cursor: pointer;
+    }
+    .slide {
+      width: 100%;
+      height: 100%;
+      flex: 0 0 100%;
+      position: relative;
+    }
+    .slide img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
+      pointer-events: none; /* so clicks go to carousel for next */
+    }
+
+    /* Small dots bottom center (added) */
+    .dots {
+      position: absolute;
+      left: 50%;
+      bottom: 8px;
+      transform: translateX(-50%);
+      display: inline-flex;
+      gap: 6px;
+      z-index: 2;
+    }
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.18);
+      background: rgba(255,255,255,0.9);
+      padding: 0;
+      line-height: 0;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+    .dot.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      box-shadow: 0 2px 6px rgba(220,38,38,0.25);
     }
 
     .img-price {
@@ -199,6 +244,7 @@
       line-height: 1;
       box-shadow: 0 4px 10px rgba(2, 8, 23, 0.18);
       backdrop-filter: blur(2px);
+      z-index: 1;
     }
 
     /* CTA container bottom-right for multiple buttons */
@@ -208,6 +254,7 @@
       bottom: 10px;
       display: inline-flex;
       gap: 8px;
+      z-index: 1;
     }
     .img-cta {
       appearance: none;
@@ -384,11 +431,12 @@
       border-radius: 10px;
       border: 1px solid var(--border);
       background: #fff;
-      color: var(--text);
+      color: #fff;
       text-decoration: none;
       cursor: pointer;
       font-weight: 600;
       box-shadow: var(--shadow);
+      color: #0f172a;
     }
     .btn.primary {
       background: #dc2626;
@@ -465,7 +513,7 @@
     const CSV_URL = 'parts.csv';
     const currency = 'NZD';
 
-    // Use same directory as images for files (per your request)
+    // Use same directory as images for files
     const IMAGE_DIR = 'images/parts';
     const IMAGE_DEFAULT_EXT = 'png';
 
@@ -489,6 +537,7 @@
     // Modal refs
     const pdfModal = document.getElementById('pdfModal');
     const pdfFrame = document.getElementById('pdfFrame');
+    theTitle = document.getElementById('pdfTitle');
     const pdfClose = document.getElementById('pdfClose');
     const pdfDownload = document.getElementById('pdfDownload');
     const pdfOpen = document.getElementById('pdfOpen');
@@ -518,6 +567,15 @@
       if (!s) return [];
       return String(s)
         .split(/[;]+|,(?!\s)/g)
+        .map(v => v.trim())
+        .filter(Boolean);
+    }
+
+    // For images: only split on semicolons (as requested)
+    function splitImages(s) {
+      if (!s) return [];
+      return String(s)
+        .split(';')
         .map(v => v.trim())
         .filter(Boolean);
     }
@@ -610,16 +668,21 @@
         const code = pick(rec, ['code']);
         const description = pick(rec, ['description']);
         const price = parseFloat(pick(rec, ['price'])) || 0;
-        const image = pick(rec, ['image']);
+
+        // Images: support multiple, split by ';'
+        const imageRaw = pick(rec, ['image']);
+        const images = splitImages(imageRaw);
+        const image = images[0] || ''; // backward compatibility
+
         const models = splitList(pick(rec, ['model', 'models']));
         const keywords = splitList(pick(rec, ['keywords']));
         const linkRaw = pick(rec, ['link']);
         const link = parseLink(linkRaw);
 
-        // New: support "file" column
+        // Support "file" column
         const file = pick(rec, ['file', 'pdf', 'datasheet']);
 
-        return { name, code, description, price, image, models, keywords, link, file };
+        return { name, code, description, price, image, images, models, keywords, link, file };
       });
     }
 
@@ -688,9 +751,21 @@
           ? (p.models || []).map(m => `<span class="model-tag">${m}</span>`).join('')
           : '';
 
-        const imgCandidate = resolveImage(p.image);
+        // Resolve images (support multiple)
+        const rawImages = (Array.isArray(p.images) && p.images.length) ? p.images : (p.image ? [p.image] : []);
+        let resolved = rawImages.map(v => resolveImage(v)).filter(Boolean);
         const placeholder = `https://placehold.co/600x400/eee/666?text=${encodeURIComponent(p.name || 'Part')}`;
-        const imgSrc = imgCandidate || placeholder;
+        if (!resolved.length) resolved = [placeholder];
+
+        const slidesHTML = resolved.map((src, i) =>
+          `<div class="slide"><img src="${src}" alt="${(p.name || 'Part')} image ${i+1}" loading="lazy" decoding="async" /></div>`
+        ).join('');
+
+        const dotsHTML = resolved.length > 1
+          ? `<div class="dots">${resolved.map((_, i) =>
+              `<button class="dot ${i === 0 ? 'active' : ''}" type="button" aria-label="Go to image ${i+1}" data-i="${i}"></button>`
+            ).join('')}</div>`
+          : '';
 
         const linkCTA = p.link && p.link.url
           ? `<a class="img-cta" href="${p.link.url}" target="_blank" rel="noopener" aria-label="${p.link.label} for ${p.name}">${p.link.label}</a>`
@@ -706,10 +781,13 @@
           : '';
 
         card.innerHTML = `
-          <div class="media">
-            <img src="${imgSrc}" alt="${p.name}" loading="lazy" />
+          <div class="media" data-index="0">
+            <div class="carousel" role="group" aria-label="Images for ${p.name}">
+              ${slidesHTML}
+            </div>
             ${p.price > 0 ? `<div class="img-price" title="Price">${fmtPrice.format(p.price)}</div>` : ''}
             ${ctaGroup}
+            ${dotsHTML}
           </div>
           <div class="content">
             <div class="title-row">
@@ -721,14 +799,73 @@
           </div>
         `;
 
-        const img = card.querySelector('img');
-        img.addEventListener('error', () => { img.src = placeholder; });
+        // Fallback image if broken (for each slide)
+        const imgs = card.querySelectorAll('.slide img');
+        imgs.forEach(img => {
+          img.addEventListener('error', () => { img.src = placeholder; }, { once: true });
+        });
+
+        // Setup carousel interactions if multiple images
+        const mediaEl = card.querySelector('.media');
+        setupCarousel(mediaEl);
 
         grid.appendChild(card);
       });
 
       // Compact "X of Y" inside the search box
       countEl.textContent = `${list.length} of ${PARTS.length}`;
+    }
+
+    // Carousel behavior
+    function setupCarousel(mediaEl) {
+      const track = mediaEl.querySelector('.carousel');
+      if (!track) return;
+      const slides = track.children;
+      const dots = mediaEl.querySelectorAll('.dot');
+      const total = slides.length;
+      if (total <= 1) return;
+
+      let idx = 0;
+      let startX = 0, startY = 0;
+
+      function go(i) {
+        idx = (i + total) % total;
+        track.style.transform = `translateX(-${idx * 100}%)`;
+        dots.forEach((d, j) => d.classList.toggle('active', j === idx));
+        mediaEl.dataset.index = idx;
+      }
+
+      // Click on dots to jump
+      mediaEl.addEventListener('click', (e) => {
+        const dot = e.target.closest('.dot');
+        if (!dot) return;
+        e.stopPropagation();
+        const i = parseInt(dot.dataset.i || '0', 10);
+        go(i);
+      });
+
+      // Click on image to go next (ignore when clicking CTAs)
+      mediaEl.addEventListener('click', (e) => {
+        if (e.target.closest('.img-cta') || e.target.closest('.dots')) return;
+        go(idx + 1);
+      });
+
+      // Basic swipe support
+      mediaEl.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        startX = t.clientX;
+        startY = t.clientY;
+      }, { passive: true });
+
+      mediaEl.addEventListener('touchend', (e) => {
+        const t = e.changedTouches[0];
+        const dx = t.clientX - startX;
+        const dy = t.clientY - startY;
+        if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy)) {
+          if (dx < 0) go(idx + 1);
+          else go(idx - 1);
+        }
+      }, { passive: true });
     }
 
     // Relevance scoring
@@ -860,7 +997,7 @@
       pdfFrame.src = url;
       pdfOpen.href = url;
       pdfDownload.href = url;
-      document.getElementById('pdfTitle').textContent = title;
+      theTitle.textContent = title;
 
       pdfModal.classList.add('open');
       document.body.classList.add('modal-open');
