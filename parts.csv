@@ -1,3 +1,3 @@
-name,code,models,description,price,image,keywords
-Ladder Hinge P,AL-LHP,P30;FT30;FA30;FTW30,V shaped ladder hinge,15,/hinge-ladder-p,ladder;hinge;p
-Ladder Hinge D,AL-LHD,D28;D30;D36,Plate shaped ladder hinge,20,hinge-ladder-d,ladder;hinge;d
+name,code,models,description,price,image,keywords,cta
+Ladder Hinge P,AL-LHP,P30;FT30;FA30;FTW30,V shaped ladder hinge,15,/hinge-ladder-p,ladder;hinge;p,P30;https://www.sellwood.co.nz/product/premier-range/p30-attic-ladder
+Ladder Hinge D,AL-LHD,D28;D30;D36,Plate shaped ladder hinge,20,hinge-ladder-d,ladder;hinge;d,https://www.sellwood.co.nz/product/deluxe-range/D28-attic-ladder

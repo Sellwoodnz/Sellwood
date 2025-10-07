@@ -150,6 +150,7 @@
       aspect-ratio: 4 / 3;
       background: #eef2f7;
       overflow: hidden;
+      position: relative; /* allow overlays */
     }
     .media img {
       width: 100%;
@@ -157,6 +158,44 @@
       object-fit: cover;
       display: block;
     }
+
+.img-price {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.55);
+  color: #fff;
+  font-weight: 400;   /* was 800 */
+  font-size: 12px;    /* was 13px */
+  line-height: 1;
+  box-shadow: 0 4px 10px rgba(2, 8, 23, 0.18);
+  backdrop-filter: blur(2px);
+}
+.img-cta {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  appearance: none;
+  /* same pill dimensions + text as .img-price */
+  padding: 6px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+font-weight: 700;
+  border: none; /* remove to match height 1:1 with price pill */
+  background: rgba(255, 255, 255, 0.85);
+  color: #0b67c0;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(2px);
+}
 
     .content {
       display: flex;
@@ -209,39 +248,8 @@
       min-height: 3.6em;
     }
 
-    .price-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: auto;
-      padding-top: 6px;
-    }
-    .price {
-      font-weight: 800;
-      color: #111827;
-      font-size: 18px;
-      letter-spacing: -0.01em;
-    }
-    .cta {
-      appearance: none;
-      border: 1px solid #dbe3ef;
-      background: linear-gradient(180deg, #ffffff, #f7f9fc);
-      color: #0b67c0;
-      padding: 8px 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all .15s ease;
-    }
-    .cta:hover { border-color: #cdd6e4; transform: translateY(-1px); }
-
-    .empty {
-      display: none;
-      text-align: center;
-      padding: 36px 12px 48px;
-      color: var(--muted);
-    }
-    .empty.active { display: block; }
+    /* Old price-row + .cta not used anymore */
+    .price-row { display: none; }
   </style>
 </head>
 <body>
@@ -382,18 +390,57 @@
       return records;
     }
 
+    // Helper: pick the first non-empty field by possible names
+    function pick(rec, names) {
+      for (const n of names) {
+        if (rec[n] != null && String(rec[n]).trim() !== '') return rec[n];
+      }
+      return '';
+    }
+
+    function parseCta(raw) {
+      const s = String(raw || '').trim();
+      if (!s) return null;
+
+      // Split only on the first semicolon
+      const idx = s.indexOf(';');
+      let label = '';
+      let url = '';
+
+      if (idx === -1) {
+        // If no semicolon and it's a URL, use default label
+        if (/^https?:\/\//i.test(s)) {
+          label = 'View';
+          url = s;
+        } else {
+          // Label only without URL -> ignore
+          return null;
+        }
+      } else {
+        label = s.slice(0, idx).trim();
+        url = s.slice(idx + 1).trim();
+        if (!url) return null;
+        if (!label) label = 'View';
+      }
+
+      return { label, url };
+    }
+
     function recordsToParts(records) {
       return records.map(rec => {
-        const name = rec.name ?? rec['name'] ?? '';
-        const code = rec.code ?? rec['code'] ?? '';
-        const description = rec.description ?? rec['description'] ?? '';
-        const price = parseFloat(rec.price ?? rec['price'] ?? '0') || 0;
-        // CSV "image" should be just a filename (with or without extension), not a path.
-        const image = rec.image ?? rec['image'] ?? '';
-        const models = splitList(rec.models ?? rec['models']);
-        const keywords = splitList(rec.keywords ?? rec['keywords']);
+        const name = pick(rec, ['name']);
+        const code = pick(rec, ['code']);
+        const description = pick(rec, ['description']);
+        const price = parseFloat(pick(rec, ['price'])) || 0;
+        const image = pick(rec, ['image']);
+        const models = splitList(pick(rec, ['models']));
+        const keywords = splitList(pick(rec, ['keywords']));
 
-        return { name, code, description, price, image, models, keywords };
+        // Accept several possible headers for the CTA/link column
+        const ctaRaw = pick(rec, ['cta', 'link', 'button', 'buttonlink']);
+        const cta = parseCta(ctaRaw);
+
+        return { name, code, description, price, image, models, keywords, cta };
       });
     }
 
@@ -457,16 +504,14 @@
         card.innerHTML = `
           <div class="media">
             <img src="${imgSrc}" alt="${p.name}" loading="lazy" />
+            ${p.price > 0 ? `<div class="img-price" title="Price">${fmtPrice.format(p.price)}</div>` : ''}
+            ${p.cta && p.cta.url ? `<a class="img-cta" href="${p.cta.url}" target="_blank" rel="noopener" aria-label="${p.cta.label} for ${p.name}">${p.cta.label}</a>` : ''}
           </div>
           <div class="content">
             <div class="name">${p.name}</div>
             <div class="code">${p.code}</div>
             <div class="models" aria-label="Compatible models">${modelsHTML}</div>
             <div class="desc">${p.description}</div>
-            <div class="price-row">
-              <div class="price">${fmtPrice.format(p.price)}</div>
-              <button class="cta" type="button" aria-label="Details for ${p.name}">Details</button>
-            </div>
           </div>
         `;
 
