@@ -335,7 +335,7 @@
         border-radius: 5px;
         font-size: 12px;
         font-weight: 600;
-        line-height: 1;
+        line-line: 1;
         display: inline-flex;
         align-items: center;
         border: none;
@@ -562,6 +562,7 @@
       const IMAGE_DEFAULT_EXTS = ['png', 'jpg'];
       const FILE_DIR = IMAGE_DIR;
       const FILE_DEFAULT_EXT = 'pdf';
+      const MAX_IMAGES = 5;
       // Custom category ordering (others will follow alphabetically)
       const CATEGORY_PRIORITY = ['Attic Ladder', 'Roof Access', 'Roof Hatch', 'Natural Lighting', 'Fixings'];
       const CAT_PARAM = 'cat';
@@ -600,14 +601,42 @@
         return String(s || '').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[_/\\-]+/g, ' ').replace(/\s+/g, ' ').trim();
       }
 
+      function slugify(s) {
+        return norm(s).replace(/\s+/g, '-');
+      }
+
       function splitList(s) {
         if (!s) return [];
         return String(s).split(/[;]+|,(?!\s)/g).map(v => v.trim()).filter(Boolean);
       }
 
-      function splitImages(s) {
-        if (!s) return [];
-        return String(s).split(';').map(v => v.trim()).filter(Boolean);
+      async function resolveExistingImages(names) {
+        const checkOne = async (name) => {
+          for (const ext of IMAGE_DEFAULT_EXTS) {
+            const v = `${IMAGE_DIR.replace(/\/?$/,'/')}${name}.${ext}`;
+            try {
+              const res = await fetch(v, { method: 'HEAD', cache: 'no-store' });
+              if (res.ok) return v;
+            } catch (e) {
+              // ignore
+            }
+          }
+          return null;
+        };
+        const promises = names.map(checkOne);
+        const urls = await Promise.all(promises);
+        return urls.filter(url => url !== null);
+      }
+
+      async function checkFileExists(rawName) {
+        if (!rawName) return null;
+        const v = `${FILE_DIR.replace(/\/?$/,'/')}${rawName}.${FILE_DEFAULT_EXT}`;
+        try {
+          const res = await fetch(v, { method: 'HEAD', cache: 'no-store' });
+          return res.ok ? v : null;
+        } catch (e) {
+          return null;
+        }
       }
 
       function parseCSV(text) {
@@ -696,12 +725,15 @@
       function recordsToParts(records) {
         return records.map((rec, i) => {
           const name = pick(rec, ['name']);
+          const nameSlug = slugify(name);
+          const possibleImageNames = [];
+          for (let j = 1; j <= MAX_IMAGES; j++) {
+            const suffix = j > 1 ? `-${j}` : '';
+            possibleImageNames.push(`${nameSlug}${suffix}`);
+          }
           const code = pick(rec, ['code']);
           const description = pick(rec, ['description']);
           const price = parseFloat(pick(rec, ['price'])) || 0;
-          const imageRaw = pick(rec, ['image']);
-          const images = splitImages(imageRaw);
-          const image = images[0] || '';
           const models = splitList(pick(rec, ['model', 'models']));
           // NEW: categories (support 'catagory' typo and plural)
           const categories = splitList(pick(rec, ['category', 'categories', 'catagory']));
@@ -711,14 +743,13 @@
           const keywords = splitList(pick(rec, ['keywords']));
           const linkRaw = pick(rec, ['link']);
           const link = parseLink(linkRaw);
-          const file = pick(rec, ['file', 'pdf', 'datasheet']);
+          const file = nameSlug;
           return {
             name,
             code,
             description,
             price,
-            image,
-            images,
+            possibleImageNames,
             models,
             categories,
             material,
@@ -729,38 +760,6 @@
             order: i
           };
         });
-      }
-
-      function resolveImage(raw) {
-        let v = String(raw || '').trim();
-        if (!v) return null;
-        if (/^(https?:)?\/\//i.test(v) || /^data:/i.test(v)) return v;
-        v = v.replace(/\\/g, '/').replace(/^\/+/, '');
-        const hasSlash = v.includes('/');
-        const hasExt = /\.[a-z0-9]{2,5}(?:[#?].*)?$/i.test(v);
-        if (!hasSlash) {
-          if (!hasExt && IMAGE_DEFAULT_EXTS[0]) v += '.' + IMAGE_DEFAULT_EXTS[0];
-          v = `${IMAGE_DIR.replace(/\/?$/,'/')}${v}`;
-        } else {
-          if (!hasExt && IMAGE_DEFAULT_EXTS[0]) v += '.' + IMAGE_DEFAULT_EXTS[0];
-        }
-        return v;
-      }
-
-      function resolveFile(raw) {
-        let v = String(raw || '').trim();
-        if (!v) return null;
-        if (/^(https?:)?\/\//i.test(v) || /^data:/i.test(v)) return v;
-        v = v.replace(/\\/g, '/').replace(/^\/+/, '');
-        const hasSlash = v.includes('/');
-        const hasExt = /\.[a-z0-9]{2,5}(?:[#?].*)?$/i.test(v);
-        if (!hasSlash) {
-          if (!hasExt && FILE_DEFAULT_EXT) v += '.' + FILE_DEFAULT_EXT;
-          v = `${FILE_DIR.replace(/\/?$/,'/')}${v}`;
-        } else {
-          if (!hasExt && FILE_DEFAULT_EXT) v += '.' + FILE_DEFAULT_EXT;
-        }
-        return v;
       }
 
       function render(list) {
@@ -796,13 +795,13 @@
 							<span class="attr-pill finish-pill" title="Finish">${p.finish}</span>` : ''}
                
 						</div>` : '';
-          const rawImages = (Array.isArray(p.images) && p.images.length) ? p.images : (p.image ? [p.image] : []);
-          let resolved = rawImages.map(v => resolveImage(v)).filter(Boolean);
+          const rawImages = p.images || [];
           const placeholder = `https://placehold.jp/48/eee/666/600x400.png?text=${encodeURIComponent(p.name || 'Part')}`;
+          let resolved = rawImages;
           if (!resolved.length) resolved = [placeholder];
           const slidesHTML = resolved.map((src, i) => `
 						<div class="slide">
-							<img src="${src}" alt="${(p.name||'Part')} image ${i+1}" loading="lazy" decoding="async" data-original-src="${src}" data-tried-exts="[]" />
+							<img src="${src}" alt="${(p.name||'Part')} image ${i+1}" loading="lazy" decoding="async" />
 						</div>`).join('');
           const dotsHTML = resolved.length > 1 ? `
 						<div class="dots">${resolved.map((_,i)=>`
@@ -810,7 +809,7 @@
 						</div>` : '';
           const linkCTA = (p.link && p.link.url) ? `
 						<a class="img-cta" href="${p.link.url}" target="_blank" rel="noopener" aria-label="${p.link.label} for ${p.name}">${p.link.label}</a>` : '';
-          const fileUrl = resolveFile(p.file);
+          const fileUrl = p.file;
           const fileCTA = fileUrl ? `
 						<button class="img-cta pdf-cta" type="button" data-file="${fileUrl}" data-title="${p.name}">File</button>` : '';
           const ctaGroup = (linkCTA || fileCTA) ? `
@@ -841,27 +840,6 @@
 							<div class="desc">${p.description}</div>
 						</div>
           `;
-          card.querySelectorAll('.slide img').forEach(img => {
-            const originalSrc = img.dataset.originalSrc;
-            const handleImageError = (e, triedExts) => {
-              const currentExt = triedExts[triedExts.length - 1] || IMAGE_DEFAULT_EXTS[0];
-              const nextExtIndex = IMAGE_DEFAULT_EXTS.indexOf(currentExt) + 1;
-              if (nextExtIndex < IMAGE_DEFAULT_EXTS.length) {
-                const nextExt = IMAGE_DEFAULT_EXTS[nextExtIndex];
-                const baseSrc = originalSrc.replace(/\.(png|jpg)$/i, '');
-                const newSrc = baseSrc + '.' + nextExt;
-                triedExts.push(nextExt);
-                img.dataset.triedExts = JSON.stringify(triedExts);
-                img.src = newSrc;
-              } else {
-                img.src = placeholder;
-              }
-            };
-            img.addEventListener('error', (e) => {
-              let triedExts = JSON.parse(img.dataset.triedExts || '[]');
-              handleImageError(e, triedExts);
-            }, { once: true });
-          });
           setupCarousel(card.querySelector('.media'));
           grid.appendChild(card);
         });
@@ -1196,6 +1174,10 @@
         setClearXVisible();
         selectedCategory = cat;
         PARTS = await loadCSV(CSV_URL);
+        await Promise.all(PARTS.map(async (p) => {
+          p.images = await resolveExistingImages(p.possibleImageNames);
+          p.file = await checkFileExists(p.file);
+        }));
         buildCategoryBar();
         update();
       })();
