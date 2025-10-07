@@ -535,7 +535,6 @@
           </label>
           <select id="sort" class="sort-select" aria-label="Sort">
             <option value="relevance">Sort</option>
-            <option value="csv">CSV</option>
             <option value="name-asc">A–Z</option>
             <option value="name-desc">Z–A</option>
             <option value="price-asc">$ Low</option>
@@ -559,7 +558,7 @@
       const CSV_URL = 'catalogue.csv';
       const currency = 'NZD';
       const IMAGE_DIR = 'images/parts';
-      const IMAGE_DEFAULT_EXT = 'png';
+      const IMAGE_DEFAULT_EXTS = ['png', 'jpg'];
       const FILE_DIR = IMAGE_DIR;
       const FILE_DEFAULT_EXT = 'pdf';
       // Custom category ordering (others will follow alphabetically)
@@ -739,10 +738,10 @@
         const hasSlash = v.includes('/');
         const hasExt = /\.[a-z0-9]{2,5}(?:[#?].*)?$/i.test(v);
         if (!hasSlash) {
-          if (!hasExt && IMAGE_DEFAULT_EXT) v += '.' + IMAGE_DEFAULT_EXT;
+          if (!hasExt && IMAGE_DEFAULT_EXTS[0]) v += '.' + IMAGE_DEFAULT_EXTS[0];
           v = `${IMAGE_DIR.replace(/\/?$/,'/')}${v}`;
         } else {
-          if (!hasExt && IMAGE_DEFAULT_EXT) v += '.' + IMAGE_DEFAULT_EXT;
+          if (!hasExt && IMAGE_DEFAULT_EXTS[0]) v += '.' + IMAGE_DEFAULT_EXTS[0];
         }
         return v;
       }
@@ -802,7 +801,7 @@
           if (!resolved.length) resolved = [placeholder];
           const slidesHTML = resolved.map((src, i) => `
 						<div class="slide">
-							<img src="${src}" alt="${(p.name||'Part')} image ${i+1}" loading="lazy" decoding="async" />
+							<img src="${src}" alt="${(p.name||'Part')} image ${i+1}" loading="lazy" decoding="async" data-original-src="${src}" data-tried-exts="[]" />
 						</div>`).join('');
           const dotsHTML = resolved.length > 1 ? `
 						<div class="dots">${resolved.map((_,i)=>`
@@ -841,11 +840,27 @@
 							<div class="desc">${p.description}</div>
 						</div>
           `;
-          card.querySelectorAll('.slide img').forEach(img => img.addEventListener('error', () => {
-            img.src = placeholder;
-          }, {
-            once: true
-          }));
+          card.querySelectorAll('.slide img').forEach(img => {
+            const originalSrc = img.dataset.originalSrc;
+            const handleImageError = (e, triedExts) => {
+              const currentExt = triedExts[triedExts.length - 1] || IMAGE_DEFAULT_EXTS[0];
+              const nextExtIndex = IMAGE_DEFAULT_EXTS.indexOf(currentExt) + 1;
+              if (nextExtIndex < IMAGE_DEFAULT_EXTS.length) {
+                const nextExt = IMAGE_DEFAULT_EXTS[nextExtIndex];
+                const baseSrc = originalSrc.replace(/\.(png|jpg)$/i, '');
+                const newSrc = baseSrc + '.' + nextExt;
+                triedExts.push(nextExt);
+                img.dataset.triedExts = JSON.stringify(triedExts);
+                img.src = newSrc;
+              } else {
+                img.src = placeholder;
+              }
+            };
+            img.addEventListener('error', (e) => {
+              let triedExts = JSON.parse(img.dataset.triedExts || '[]');
+              handleImageError(e, triedExts);
+            }, { once: true });
+          });
           setupCarousel(card.querySelector('.media'));
           grid.appendChild(card);
         });
@@ -976,11 +991,15 @@
             return arr.sort((a, b) => b.name.localeCompare(a.name));
           case 'relevance':
           default:
-            return arr.sort((a, b) => {
-              const sa = SCORES.get(a.code) || 0,
-                sb = SCORES.get(b.code) || 0;
-              return (sb - sa) || (a.price - b.price) || a.name.localeCompare(b.name);
-            });
+            if (SCORES.size === 0) {
+              return arr.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+            } else {
+              return arr.sort((a, b) => {
+                const sa = SCORES.get(a.code) || 0,
+                  sb = SCORES.get(b.code) || 0;
+                return sb - sa || (a.order ?? 0) - (b.order ?? 0);
+              });
+            }
         }
       }
       // URL sync

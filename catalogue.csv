@@ -1,10 +1,11 @@
 catagory,name,code,material,finish,models,description,price,image,keywords,link,file
 Attic Ladder,Ladder Hinge P,AL-LHP,STEEL,POWDERCOAT,P30;FT30;FA30;FTW30,V shaped ladder hinge,15,hinge-ladder-p;ladder-hinge-p-2,,https://www.sellwood.co.nz/product/premier-range/p30-attic-ladder,ladder-hinge-p
-Attic Ladder,Ladder Hinge D,AL-LHD,,,D28;D30;D36,Plate shaped ladder hinge,20,hinge-ladder-d,,https://www.sellwood.co.nz/product/deluxe-range/D28-attic-ladder
-Attic Ladder,Ladder Hinge A,AL-LHA,,,Q24;P36;A25;A28;A36,Plate shaped ladder hinge,25,,,P30;https://www.sellwood.co.nz/product/premier-range/p30-attic-ladder
-Attic Ladder,Ladder Hinge Q,AL-LHQ,,,Q24;P36,Plate shaped ladder hinge,20,,,https://www.sellwood.co.nz/product/deluxe-range/D28-attic-ladder
-Attic Ladder,Handrail P,AL-HRP,,,P30;D28;FT30;FA30;FTW30,Red round tube handrail,20,handrail,,
-Attic Ladder,Lid P,AL-LP,,,P30;P36,36mm insulated lid,40,lid-p,,
-Attic Ladder,Operating Rod P,AL-ORP,,,P30;D28;A25;A28,1100mm long round rod with hook,15,operating-rod-p,,
-Attic Ladder,Ladder Section P,AL-LSP,,,P30;FT30;FTW30,1100mm ladder section dovetailed treads,40,ladder-section-p,,
-Roof Access;Roof Hatch,Gas Strut,RH-GS,STAINLESS STEEL,,SRH800800;SRH900700;SRH1200700,150n,80,,,
+Attic Ladder,Ladder Hinge D,AL-LHD,,,D28;D30;D36,Plate shaped ladder hinge,20,hinge-ladder-d,,https://www.sellwood.co.nz/product/deluxe-range/D28-attic-ladder,
+Attic Ladder,Ladder Hinge A,AL-LHA,,,Q24;P36;A25;A28;A36,Plate shaped ladder hinge,25,,,P30;https://www.sellwood.co.nz/product/premier-range/p30-attic-ladder,
+Attic Ladder,Ladder Hinge Q,AL-LHQ,,,Q24;P36,Plate shaped ladder hinge,20,,,https://www.sellwood.co.nz/product/deluxe-range/D28-attic-ladder,
+Attic Ladder,Handrail P,AL-HRP,,,P30;D28;FT30;FA30;FTW30,Red round tube handrail,20,handrail,,,
+Attic Ladder,Lid P,AL-LP,,,P30;P36,36mm insulated lid,40,lid-p,,,
+Attic Ladder,Operating Rod P,AL-ORP,,,P30;D28;A25;A28,1100mm long round rod with hook,15,operating-rod-p,,,
+Attic Ladder,Ladder Section P,AL-LSP,,,P30;FT30;FTW30,1100mm ladder section dovetailed treads,40,ladder-section-p,,,
+Roof Access;Roof Hatch,Gas Strut,RH-GS,STAINLESS STEEL,,SRH800800;SRH900700;SRH1200700,150n,80,,,,
+Fasteners,M8x25 Bolt,,Steel 8.8,Zinc,,Genral fastener,,M8x25-bolt,,,,
