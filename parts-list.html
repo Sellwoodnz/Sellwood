@@ -10,7 +10,7 @@
       --card-bg: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
-      --accent: #2563eb;
+      --accent: #dc2626; /* red */
       --border: #e5e7eb;
       --shadow: 0 10px 20px rgba(2, 8, 23, 0.06);
       --radius: 14px;
@@ -138,11 +138,12 @@
       overflow: clip;
       display: flex;
       flex-direction: column;
-      transition: transform .18s ease, box-shadow .18s ease;
+      transition: box-shadow .18s ease; /* removed transform transition */
     }
+    /* No hover enlarge */
     .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 16px 30px rgba(2, 8, 23, 0.09);
+      transform: none;
+      box-shadow: var(--shadow);
     }
 
     .media {
@@ -187,7 +188,7 @@
       align-items: center;
       border: none;
       background: rgba(255, 255, 255, 0.85);
-      color: #0b67c0;
+      color: #b91c1c; /* red text */
       text-decoration: none;
       cursor: pointer;
       transition: transform .15s ease, background .15s ease;
@@ -221,9 +222,9 @@
 
     .code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      color: #0b6bcd;
-      background: #eaf3ff;
-      border: 1px solid #d2e6ff;
+      color: #b91c1c;              /* red */
+      background: #fee2e2;         /* light red */
+      border: 1px solid #fecaca;   /* light red border */
       padding: 2px 8px;
       width: fit-content;
       border-radius: 999px;
@@ -320,7 +321,11 @@
     const IMAGE_DEFAULT_EXT = 'png';    // used if CSV image has no extension; set '' to disable
 
     // Formatting + DOM refs
-    const fmtPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency });
+    const fmtPrice = new Intl.NumberFormat('en-NZ', {
+      style: 'currency',
+      currency,
+      currencyDisplay: 'narrowSymbol' // show $ not NZ$
+    });
     const grid = document.getElementById('grid');
     const countEl = document.getElementById('count');
     const emptyEl = document.getElementById('empty');
@@ -418,8 +423,8 @@
       return '';
     }
 
-    // Support "Label;URL", "URL", or empty
-    function parseCta(raw) {
+    // Support "Label;URL", "URL", or empty, from CSV header: link
+    function parseLink(raw) {
       const s = String(raw || '').trim();
       if (!s) return null;
 
@@ -454,14 +459,14 @@
         const description = pick(rec, ['description']);
         const price = parseFloat(pick(rec, ['price'])) || 0;
         const image = pick(rec, ['image']);
-        const models = splitList(pick(rec, ['models']));
+        const models = splitList(pick(rec, ['model', 'models'])); // CSV header now "model" (singular)
         const keywords = splitList(pick(rec, ['keywords']));
 
-        // Accept several possible headers for the CTA/link column
-        const ctaRaw = pick(rec, ['cta', 'link', 'button', 'buttonlink']);
-        const cta = parseCta(ctaRaw);
+        // CSV header for button/link is "link"
+        const linkRaw = pick(rec, ['link']);
+        const link = parseLink(linkRaw);
 
-        return { name, code, description, price, image, models, keywords, cta };
+        return { name, code, description, price, image, models, keywords, link };
       });
     }
 
@@ -542,7 +547,7 @@
           <div class="media">
             <img src="${imgSrc}" alt="${p.name}" loading="lazy" />
             ${p.price > 0 ? `<div class="img-price" title="Price">${fmtPrice.format(p.price)}</div>` : ''}
-            ${p.cta && p.cta.url ? `<a class="img-cta" href="${p.cta.url}" target="_blank" rel="noopener" aria-label="${p.cta.label} for ${p.name}">${p.cta.label}</a>` : ''}
+            ${p.link && p.link.url ? `<a class="img-cta" href="${p.link.url}" target="_blank" rel="noopener" aria-label="${p.link.label} for ${p.name}">${p.link.label}</a>` : ''}
           </div>
           <div class="content">
             <div class="title-row">
