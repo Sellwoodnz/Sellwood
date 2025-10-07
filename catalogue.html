@@ -62,6 +62,7 @@
         top: 0;
         z-index: 10;
         padding: 12px 0 20px;
+
       }
 
       .toolbar::after {
@@ -161,6 +162,41 @@
         box-shadow: var(--shadow);
         font-size: 16px;
         margin-right: 15px;
+      }
+
+      /* Category filter bar */
+      .catbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 10px 15px 0 15px;
+      }
+
+      .cat-chip {
+        appearance: none;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        color: #0f172a;
+        font-size: 13px;
+        line-height: 1;
+        border-radius: 999px;
+        padding: 6px 10px;
+        cursor: pointer;
+        user-select: none;
+        transition: background .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
+      }
+
+      .cat-chip:hover {
+        background: #f1f5f9;
+      }
+
+      .cat-chip.active {
+        background: #fee2e2;
+        /* soft red tint */
+        color: #b91c1c;
+        border-color: #fecaca;
+        box-shadow: 0 2px 6px rgba(220, 38, 38, 0.12);
       }
 
       .grid {
@@ -265,7 +301,7 @@
         font-weight: 400;
         font-size: 12px;
         line-height: 1;
-        box-shadow: 0 4px 10px rgba(2, 8, 23, 0.18);
+        box-shadow: var(--shadow);
         backdrop-filter: blur(2px);
         z-index: 1;
       }
@@ -357,7 +393,7 @@
         width: fit-content;
       }
 
-      /* Material + Finish pills (lighter than model tags) */
+      /* Material + Finish pills */
       .attrs {
         display: flex;
         flex-wrap: wrap;
@@ -376,17 +412,14 @@
         width: fit-content;
       }
 
-      /* Slightly different tones: material darker, finish lighter */
       .material-pill {
         background: #eee;
       }
 
-      /* lighter than #eee */
       .finish-pill {
         background: #eee;
       }
 
-      /* even lighter */
       .desc {
         color: #334155;
         font-size: 14px;
@@ -457,6 +490,10 @@
           height: calc(100vh - 20px);
           border-radius: 10px;
         }
+
+        .catbar {
+          overflow-x: auto;
+        }
       }
 
       body.modal-open {
@@ -492,6 +529,8 @@
             <option value="price-desc">$ High</option>
           </select>
         </div>
+        <!-- Category filter bar -->
+        <div id="catBar" class="catbar" role="group" aria-label="Filter by category"></div>
       </div>
       <div id="grid" class="grid" aria-live="polite"></div>
       <div id="empty" class="empty" aria-live="polite"></div>
@@ -510,6 +549,9 @@
       const IMAGE_DEFAULT_EXT = 'png';
       const FILE_DIR = IMAGE_DIR;
       const FILE_DEFAULT_EXT = 'pdf';
+      // Custom category ordering (others will follow alphabetically)
+      const CATEGORY_PRIORITY = ['Attic Ladder', 'Roof Access', 'Roof Hatch', 'Natural Lighting', 'Fixings'];
+      const CAT_PARAM = 'cat';
       // DOM refs
       const grid = document.getElementById('grid');
       const countEl = document.getElementById('count');
@@ -520,6 +562,7 @@
       const searchLabel = document.getElementById('searchLabel');
       const pdfModal = document.getElementById('pdfModal');
       const pdfFrame = document.getElementById('pdfFrame');
+      const catBar = document.getElementById('catBar');
       const fmtPrice = new Intl.NumberFormat('en-NZ', {
         style: 'currency',
         currency,
@@ -529,6 +572,8 @@
       let PARTS = [];
       const SCORES = new Map();
       let lastFocused = null;
+      let selectedCategory = ''; // empty = All
+      let ALL_CATEGORIES = [];
       // Helpers
       function debounce(fn, wait = 180) {
         let t;
@@ -645,7 +690,9 @@
           const images = splitImages(imageRaw);
           const image = images[0] || '';
           const models = splitList(pick(rec, ['model', 'models']));
-          // NEW: material + finish (support typo 'finiah')
+          // NEW: categories (support 'catagory' typo and plural)
+          const categories = splitList(pick(rec, ['category', 'categories', 'catagory']));
+          // Material + Finish (support 'finiah' typo)
           const material = pick(rec, ['material']);
           const finish = pick(rec, ['finish', 'finiah']);
           const keywords = splitList(pick(rec, ['keywords']));
@@ -660,6 +707,7 @@
             image,
             images,
             models,
+            categories,
             material,
             finish,
             keywords,
@@ -708,7 +756,11 @@
         if (!list.length) {
           let msg = '';
           if (PARTS.length === 0) msg = 'No parts available.';
-          else if (q) msg = `No parts found for "${q}". Try different keywords.`;
+          else if (q || selectedCategory) {
+            const catTxt = selectedCategory ? ` in "${selectedCategory}"` : '';
+            const qTxt = q ? ` for "${q}"` : '';
+            msg = `No parts found${catTxt}${qTxt}.`;
+          }
           emptyEl.textContent = msg;
           if (msg) emptyEl.classList.add('active');
           else emptyEl.classList.remove('active');
@@ -720,16 +772,16 @@
           const hasModels = Array.isArray(p.models) && p.models.length > 0;
           const modelsHTML = hasModels ? p.models.map(m => `
 						<span class="model-tag">${m}</span>`).join('') : '';
-          // NEW: material/finish pills (same row)
+          // Material/Finish pills
           const hasMaterial = !!(p.material && String(p.material).trim());
           const hasFinish = !!(p.finish && String(p.finish).trim());
           const attrsHTML = (hasMaterial || hasFinish) ? `
 						<div class="attrs" aria-label="Material and finish">
-               ${hasMaterial ? `
+                ${hasMaterial ? `
 							<span class="attr-pill material-pill" title="Material">${p.material}</span>` : ''}
-               ${hasFinish ? `
+                ${hasFinish ? `
 							<span class="attr-pill finish-pill" title="Finish">${p.finish}</span>` : ''}
-             
+               
 						</div>` : '';
           const rawImages = (Array.isArray(p.images) && p.images.length) ? p.images : (p.image ? [p.image] : []);
           let resolved = rawImages.map(v => resolveImage(v)).filter(Boolean);
@@ -751,33 +803,31 @@
           const ctaGroup = (linkCTA || fileCTA) ? `
 						<div class="img-ctas">${linkCTA}${fileCTA}</div>` : '';
           card.innerHTML = `
-          
+            
 						<div class="media" data-index="0">
 							<div class="carousel" role="group" aria-label="Images for ${p.name}">
-              ${slidesHTML}
-            </div>
-            ${p.price>0 ? `
+                ${slidesHTML}
+              </div>
+              ${p.price>0 ? `
 							<div class="img-price" title="Price">${fmtPrice.format(p.price)}</div>` : ''}
-            ${ctaGroup}
-            ${dotsHTML}
-          
+              ${ctaGroup}
+              ${dotsHTML}
+            
 						</div>
 						<div class="content">
 							<div class="title-row">
 								<div class="name">${p.name}</div>
-              ${p.code ? `
+                ${p.code ? `
 								<div class="code">${p.code}</div>` : ''}
-            
+              
 							</div>
-            ${hasModels ? `
+              ${hasModels ? `
 							<div class="models" aria-label="Compatible models">${modelsHTML}</div>` : ''}
-
-            ${attrsHTML}
-
-            
+              ${attrsHTML}
+              
 							<div class="desc">${p.description}</div>
 						</div>
-        `;
+          `;
           card.querySelectorAll('.slide img').forEach(img => img.addEventListener('error', () => {
             img.src = placeholder;
           }, {
@@ -835,32 +885,42 @@
           passive: true
         });
       }
-      // Relevance scoring (include material/finish)
+      // Relevance scoring (include material/finish/categories)
       const WEIGHTS = {
         name: 3,
         code: 3,
         models: 2,
         material: 2,
         finish: 1,
+        categories: 2,
         keywords: 1,
         description: 1
       };
+
+      function partMatchesCategory(p, cat) {
+        if (!cat) return true;
+        const cats = (p.categories || []).map(norm);
+        return cats.includes(norm(cat));
+      }
 
       function filterParts(query) {
         const q = norm(query);
         if (!q) {
           SCORES.clear();
-          return PARTS.slice();
+          // Still apply category filter even when no search query
+          return PARTS.filter(p => partMatchesCategory(p, selectedCategory));
         }
         const tokens = q.split(' ');
         SCORES.clear();
         return PARTS.filter(p => {
+          if (!partMatchesCategory(p, selectedCategory)) return false;
           const f = {
             name: norm(p.name),
             code: norm(p.code),
             description: norm(p.description),
             material: norm(p.material),
             finish: norm(p.finish),
+            categories: (p.categories || []).map(norm),
             models: (p.models || []).map(norm),
             keywords: (p.keywords || []).map(norm)
           };
@@ -874,7 +934,7 @@
                 score += WEIGHTS[key] + ((key === 'name' || key === 'code') && val.startsWith(t) ? 1 : 0);
               }
             }
-            for (const key of ['models', 'keywords']) {
+            for (const key of ['models', 'keywords', 'categories']) {
               const arr = f[key];
               if (arr?.some(v => v.includes(t))) {
                 hit = true;
@@ -911,12 +971,14 @@
         }
       }
       // URL sync
-      function updateUrl(q, s) {
+      function updateUrl(q, s, cat) {
         const params = new URLSearchParams(location.search);
         if (q) params.set('q', q);
         else params.delete('q');
         if (s && s !== 'relevance') params.set('sort', s);
         else params.delete('sort');
+        if (cat) params.set(CAT_PARAM, cat);
+        else params.delete(CAT_PARAM);
         const qs = params.toString();
         history.replaceState(null, '', qs ? `${location.pathname}?${qs}` : location.pathname);
       }
@@ -926,6 +988,59 @@
         if (has) clearX.classList.add('visible');
         else clearX.classList.remove('visible');
         searchLabel.classList.toggle('has-value', has);
+      }
+      // Category bar build/update
+      function buildCategoryBar() {
+        // Gather unique categories from PARTS
+        const set = new Set();
+        PARTS.forEach(p => (p.categories || []).forEach(c => {
+          if (c && c.trim()) set.add(c.trim());
+        }));
+        const allCats = Array.from(set);
+        // Order: priority list first (if present), then remaining alpha
+        const lowerPriority = CATEGORY_PRIORITY.map(norm);
+        const pri = CATEGORY_PRIORITY.filter(c => allCats.some(x => norm(x) === norm(c)));
+        const rest = allCats.filter(c => !lowerPriority.includes(norm(c))).sort((a, b) => a.localeCompare(b));
+        ALL_CATEGORIES = [...pri, ...rest];
+        // Render chips
+        catBar.innerHTML = '';
+        const allChip = chipEl('All', selectedCategory === '' ? true : false, () => {
+          selectedCategory = '';
+          update();
+          updateCatChipActive();
+        });
+        catBar.appendChild(allChip);
+        ALL_CATEGORIES.forEach(c => {
+          const active = norm(c) === norm(selectedCategory);
+          const el = chipEl(c, active, () => {
+            selectedCategory = (norm(selectedCategory) === norm(c)) ? '' : c;
+            update();
+            updateCatChipActive();
+          });
+          catBar.appendChild(el);
+        });
+      }
+
+      function chipEl(label, active = false, onClick) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'cat-chip' + (active ? ' active' : '');
+        btn.textContent = label;
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        btn.addEventListener('click', onClick);
+        return btn;
+      }
+
+      function updateCatChipActive() {
+        // Update chip classes/aria and URL
+        const chips = catBar.querySelectorAll('.cat-chip');
+        chips.forEach(ch => {
+          const isAll = ch.textContent === 'All';
+          const isActive = isAll ? selectedCategory === '' : norm(ch.textContent) === norm(selectedCategory);
+          ch.classList.toggle('active', isActive);
+          ch.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+        updateUrl(searchInput.value, sortSelect.value, selectedCategory || '');
       }
       // Fit-to-page helper for PDFs
       function withPdfFit(url) {
@@ -952,7 +1067,7 @@
         const filtered = filterParts(q);
         const sorted = sortParts(filtered, s);
         render(sorted);
-        updateUrl(q, s);
+        updateUrl(q, s, selectedCategory || '');
       }
       const debouncedUpdate = debounce(update, 150);
       // Events
@@ -1029,10 +1144,13 @@
         const params = new URLSearchParams(location.search);
         const q = params.get('q') || '';
         const s = params.get('sort') || 'relevance';
+        const cat = params.get(CAT_PARAM) || '';
         searchInput.value = q;
         sortSelect.value = s;
         setClearXVisible();
+        selectedCategory = cat;
         PARTS = await loadCSV(CSV_URL);
+        buildCategoryBar();
         update();
       })();
       async function loadCSV(url) {
