@@ -159,49 +159,58 @@
       display: block;
     }
 
-.img-price {
-  position: absolute;
-  left: 10px;
-  bottom: 10px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.55);
-  color: #fff;
-  font-weight: 400;   /* was 800 */
-  font-size: 12px;    /* was 13px */
-  line-height: 1;
-  box-shadow: 0 4px 10px rgba(2, 8, 23, 0.18);
-  backdrop-filter: blur(2px);
-}
-.img-cta {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  appearance: none;
-  /* same pill dimensions + text as .img-price */
-  padding: 6px 10px;
-  border-radius: 5px;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-font-weight: 700;
-  border: none; /* remove to match height 1:1 with price pill */
-  background: rgba(255, 255, 255, 0.85);
-  color: #0b67c0;
-  text-decoration: none;
-  cursor: pointer;
-  transition: transform .15s ease, background .15s ease;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(2px);
-}
+    .img-price {
+      position: absolute;
+      left: 10px;
+      bottom: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.55);
+      color: #fff;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 1;
+      box-shadow: 0 4px 10px rgba(2, 8, 23, 0.18);
+      backdrop-filter: blur(2px);
+    }
+    .img-cta {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      appearance: none;
+      padding: 6px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      border: none;
+      background: rgba(255, 255, 255, 0.85);
+      color: #0b67c0;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .15s ease, background .15s ease;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(2px);
+    }
 
     .content {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px; /* reduced from 10px */
       padding: 14px;
+    }
+
+    /* Name + Code on one line, wrap only if needed */
+    .title-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .title-row .name { 
+      flex: 1 1 auto; 
     }
 
     .name {
@@ -219,13 +228,14 @@ font-weight: 700;
       width: fit-content;
       border-radius: 999px;
       font-size: 12px;
+      flex: 0 0 auto; /* keep code pill compact on the same line */
     }
 
     .models {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: 6px;
+      margin-top: 4px; /* reduced from 6px */
     }
     .model-tag {
       font-size: 12px;
@@ -242,11 +252,21 @@ font-weight: 700;
       font-size: 14px;
       line-height: 1.4;
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 2; /* reduced from 3 */
       -webkit-box-orient: vertical;
       overflow: hidden;
-      min-height: 3.6em;
+      /* removed min-height to reduce whitespace */
     }
+
+    /* Empty state: hidden by default, only shown when .active */
+    .empty {
+      display: none;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      margin: 24px 0;
+    }
+    .empty.active { display: block; }
 
     /* Old price-row + .cta not used anymore */
     .price-row { display: none; }
@@ -286,7 +306,7 @@ font-weight: 700;
     </div>
 
     <div id="grid" class="grid" aria-live="polite"></div>
-    <div id="empty" class="empty">No parts found. Try different keywords.</div>
+    <div id="empty" class="empty" aria-live="polite"></div>
   </div>
 
   <script>
@@ -296,7 +316,7 @@ font-weight: 700;
 
     // Images: only put the filename in your CSV (e.g., "part123.jpg" or "part123")
     // Place the actual files in this folder (relative to this HTML).
-    const IMAGE_DIR = 'images/parts';         // change if your folder is different (e.g., 'assets/images')
+    const IMAGE_DIR = 'images/parts';   // change if your folder is different (e.g., 'assets/images')
     const IMAGE_DEFAULT_EXT = 'png';    // used if CSV image has no extension; set '' to disable
 
     // Formatting + DOM refs
@@ -398,6 +418,7 @@ font-weight: 700;
       return '';
     }
 
+    // Support "Label;URL", "URL", or empty
     function parseCta(raw) {
       const s = String(raw || '').trim();
       if (!s) return null;
@@ -485,17 +506,33 @@ font-weight: 700;
     // Rendering
     function render(list) {
       grid.innerHTML = '';
-      if (!list.length) emptyEl.classList.add('active');
-      else emptyEl.classList.remove('active');
+
+      const q = searchInput.value.trim();
+
+      if (!list.length) {
+        // Only show a message when we actually have a reason
+        let msg = '';
+        if (PARTS.length === 0) {
+          msg = 'No parts available.';
+        } else if (q) {
+          msg = `No parts found for "${q}". Try different keywords.`;
+        }
+        emptyEl.textContent = msg;
+        if (msg) emptyEl.classList.add('active');
+        else emptyEl.classList.remove('active');
+      } else {
+        emptyEl.classList.remove('active');
+      }
 
       list.forEach(p => {
         const card = document.createElement('article');
         card.className = 'card';
         card.setAttribute('data-code', p.code);
 
-        const modelsHTML = (p.models || [])
-          .map(m => `<span class="model-tag">${m}</span>`)
-          .join('');
+        const hasModels = Array.isArray(p.models) && p.models.length > 0;
+        const modelsHTML = hasModels
+          ? (p.models || []).map(m => `<span class="model-tag">${m}</span>`).join('')
+          : '';
 
         const imgCandidate = resolveImage(p.image);
         const placeholder = `https://placehold.co/600x400?text=${encodeURIComponent(p.name || 'Part')}`;
@@ -508,9 +545,11 @@ font-weight: 700;
             ${p.cta && p.cta.url ? `<a class="img-cta" href="${p.cta.url}" target="_blank" rel="noopener" aria-label="${p.cta.label} for ${p.name}">${p.cta.label}</a>` : ''}
           </div>
           <div class="content">
-            <div class="name">${p.name}</div>
-            <div class="code">${p.code}</div>
-            <div class="models" aria-label="Compatible models">${modelsHTML}</div>
+            <div class="title-row">
+              <div class="name">${p.name}</div>
+              ${p.code ? `<div class="code">${p.code}</div>` : ''}
+            </div>
+            ${hasModels ? `<div class="models" aria-label="Compatible models">${modelsHTML}</div>` : ''}
             <div class="desc">${p.description}</div>
           </div>
         `;
