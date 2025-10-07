@@ -71,7 +71,7 @@
 
     .search-wrap {
       display: grid;
-      grid-template-columns: 1fr; /* only the search field now */
+      grid-template-columns: 1fr auto; /* search grows, sort hugs content */
       gap: 10px;
       align-items: center;
     }
@@ -85,6 +85,7 @@
       border-radius: 12px;
       padding: 10px 12px;
       box-shadow: var(--shadow);
+      min-width: 0; /* avoid overflow in grid */
     }
     .search input {
       width: 100%;
@@ -125,22 +126,19 @@
     .clear-x:hover { background: #f1f5f9; color: var(--text); }
     .clear-x svg { width: 16px; height: 16px; }
 
-    .meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
+    /* Count inside the search, far right */
+    .search .count {
+      margin-left: auto;
       color: var(--muted);
-      font-size: 14px;
-      gap: 10px;
+      font-size: 12px;
+      white-space: nowrap;
+      flex: 0 0 auto;
     }
-    .sort-wrap {
-      display: flex; align-items: center; gap: 8px;
-    }
+
     .sort-select {
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 8px 10px;
+      padding: 10px 12px;         /* match search height/feel */
       background: #fff;
       color: var(--text);
     }
@@ -307,25 +305,27 @@
           <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
-          <input id="search" type="search" placeholder="Search parts..." autocomplete="off" />
+
+          <input id="search" type="search" placeholder="Search parts..." autocomplete="off" aria-label="Search parts" />
+
           <button class="clear-x" id="clearX" type="button" aria-label="Clear search" title="Clear search">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             </svg>
           </button>
-        </label>
-      </div>
 
-      <div class="meta">
-        <div id="count" aria-live="polite">Showing 0 of 0 parts</div>
-          <select id="sort" class="sort-select">
-            <option value="relevance">Relevance</option>
-            <option value="price-asc">Price: Low</option>
-            <option value="price-desc">Price: High</option>
-            <option value="name-asc">Name: A–Z</option>
-            <option value="name-desc">Name: Z–A</option>
-          </select>
+          <!-- Count inside the search, on the far right -->
+          <span id="count" class="count" aria-live="polite">0 of 0</span>
         </label>
+
+        <!-- Sort to the right of the search -->
+        <select id="sort" class="sort-select">
+          <option value="relevance">Relevance</option>
+          <option value="price-asc">Price: Low</option>
+          <option value="price-desc">Price: High</option>
+          <option value="name-asc">Name: A–Z</option>
+          <option value="name-desc">Name: Z–A</option>
+        </select>
       </div>
     </div>
 
@@ -563,6 +563,7 @@
         grid.appendChild(card);
       });
 
+      // Compact "X of Y" inside the search box
       countEl.textContent = `${list.length} of ${PARTS.length}`;
     }
 
