@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sellwood Catalog</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #f7f8fa;
@@ -47,10 +47,6 @@
       font-weight: 800;
       letter-spacing: -0.02em;
       text-align: center;
-    }
-    .subtitle {
-      color: var(--muted);
-      font-size: 15px;
     }
 
     .toolbar {
@@ -204,10 +200,16 @@
       box-shadow: 0 4px 10px rgba(2, 8, 23, 0.18);
       backdrop-filter: blur(2px);
     }
-    .img-cta {
+
+    /* CTA container bottom-right for multiple buttons */
+    .img-ctas {
       position: absolute;
       right: 10px;
       bottom: 10px;
+      display: inline-flex;
+      gap: 8px;
+    }
+    .img-cta {
       appearance: none;
       padding: 6px 10px;
       border-radius: 5px;
@@ -217,7 +219,7 @@
       display: inline-flex;
       align-items: center;
       border: none;
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.88);
       color: #dc2626;
       text-decoration: none;
       cursor: pointer;
@@ -225,6 +227,8 @@
       box-shadow: var(--shadow);
       backdrop-filter: blur(2px);
     }
+    .img-cta:hover { background: rgba(255, 255, 255, 1); transform: translateY(-1px); }
+    .img-cta:active { transform: translateY(0); }
 
     .content {
       display: flex;
@@ -301,6 +305,102 @@
     .empty.active { display: block; }
 
     .price-row { display: none; }
+
+    /* Modal for PDF preview */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: grid;
+      place-items: center;
+      background: rgba(2, 8, 23, 0.55);
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .18s ease, visibility .18s ease;
+    }
+    .modal.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal .panel {
+      width: min(960px, 100%);
+      max-height: 90vh;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+    }
+    .modal-title {
+      font-weight: 700;
+      font-size: 16px;
+      margin: 0;
+    }
+    .modal-close {
+      appearance: none;
+      border: none;
+      background: transparent;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      color: #334155;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+    .modal-close:hover { background: #f1f5f9; }
+    .modal-body {
+      flex: 1 1 auto;
+      background: #111827;
+      display: grid;
+      place-items: center;
+    }
+    .modal-body iframe {
+      width: 100%;
+      height: 70vh;
+      background: #fff;
+      border: none;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-top: 1px solid var(--border);
+      background: #f8fafc;
+    }
+    .btn {
+      appearance: none;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+    }
+    .btn.primary {
+      background: #dc2626;
+      color: #fff;
+      border-color: #dc2626;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    body.modal-open { overflow: hidden; }
   </style>
 </head>
 <body>
@@ -345,13 +445,34 @@
     <div id="empty" class="empty" aria-live="polite"></div>
   </div>
 
+  <!-- PDF Modal -->
+  <div id="pdfModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pdfTitle">
+    <div class="panel">
+      <div class="modal-header">
+        <h2 id="pdfTitle" class="modal-title">PDF</h2>
+        <button class="modal-close" id="pdfClose" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <iframe id="pdfFrame" title="PDF preview"></iframe>
+      </div>
+      <div class="modal-actions">
+        <a id="pdfOpen" href="#" target="_blank" rel="noopener" class="btn">Open in new tab</a>
+        <a id="pdfDownload" href="#" download class="btn primary">Download PDF</a>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Configuration
     const CSV_URL = 'parts.csv';
     const currency = 'NZD';
 
+    // Use same directory as images for files (per your request)
     const IMAGE_DIR = 'images/parts';
     const IMAGE_DEFAULT_EXT = 'png';
+
+    const FILE_DIR = IMAGE_DIR;
+    const FILE_DEFAULT_EXT = 'pdf';
 
     // Formatting + DOM refs
     const fmtPrice = new Intl.NumberFormat('en-NZ', {
@@ -367,9 +488,17 @@
     const sortSelect = document.getElementById('sort');
     const searchLabel = document.getElementById('searchLabel');
 
+    // Modal refs
+    const pdfModal = document.getElementById('pdfModal');
+    const pdfFrame = document.getElementById('pdfFrame');
+    const pdfClose = document.getElementById('pdfClose');
+    const pdfDownload = document.getElementById('pdfDownload');
+    const pdfOpen = document.getElementById('pdfOpen');
+
     // State
     let PARTS = [];
     const SCORES = new Map(); // query-time relevance scores
+    let lastFocused = null;
 
     // Helpers
     function debounce(fn, wait = 180) {
@@ -395,6 +524,7 @@
         .filter(Boolean);
     }
 
+    // CSV parsing (handles quoted fields and escaped quotes)
     function parseCSV(text) {
       const rows = [];
       let i = 0, field = '', row = [], inQuotes = false;
@@ -449,16 +579,19 @@
       return '';
     }
 
+    // "Label;URL", "URL", or empty => returns {label, url}
+    // Default label is "Link" (overridable via CSV "link" field)
     function parseLink(raw) {
       const s = String(raw || '').trim();
       if (!s) return null;
+
       const idx = s.indexOf(';');
       let label = '';
       let url = '';
 
       if (idx === -1) {
         if (/^https?:\/\//i.test(s)) {
-          label = 'View';
+          label = 'Link';
           url = s;
         } else {
           return null;
@@ -467,7 +600,7 @@
         label = s.slice(0, idx).trim();
         url = s.slice(idx + 1).trim();
         if (!url) return null;
-        if (!label) label = 'View';
+        if (!label) label = 'Link';
       }
 
       return { label, url };
@@ -485,23 +618,14 @@
         const linkRaw = pick(rec, ['link']);
         const link = parseLink(linkRaw);
 
-        return { name, code, description, price, image, models, keywords, link };
+        // New: support "file" column
+        const file = pick(rec, ['file', 'pdf', 'datasheet']);
+
+        return { name, code, description, price, image, models, keywords, link, file };
       });
     }
 
-    async function loadCSV(url) {
-      try {
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const text = await res.text();
-        const records = parseCSV(text);
-        return recordsToParts(records);
-      } catch (err) {
-        console.error('Failed to load CSV:', err);
-        return [];
-      }
-    }
-
+    // Build an image URL from CSV value (filename only)
     function resolveImage(raw) {
       let v = String(raw || '').trim();
       if (!v) return null;
@@ -520,6 +644,25 @@
       return v;
     }
 
+    // Build a file URL from CSV value (filename only)
+    function resolveFile(raw) {
+      let v = String(raw || '').trim();
+      if (!v) return null;
+      if (/^(https?:)?\/\//i.test(v) || /^data:/i.test(v)) return v;
+
+      v = v.replace(/\\/g, '/').replace(/^\/+/, '');
+      const hasSlash = v.includes('/');
+      const hasExt = /\.[a-z0-9]{2,5}(?:[#?].*)?$/i.test(v);
+
+      if (!hasSlash) {
+        if (!hasExt && FILE_DEFAULT_EXT) v += '.' + FILE_DEFAULT_EXT;
+        v = `${FILE_DIR.replace(/\/?$/, '/')}${v}`;
+      } else {
+        if (!hasExt && FILE_DEFAULT_EXT) v += '.' + FILE_DEFAULT_EXT;
+      }
+      return v;
+    }
+
     function render(list) {
       grid.innerHTML = '';
       const q = searchInput.value.trim();
@@ -532,8 +675,7 @@
           msg = `No parts found for "${q}". Try different keywords.`;
         }
         emptyEl.textContent = msg;
-        if (msg) emptyEl.classList.add('active');
-        else emptyEl.classList.remove('active');
+        if (msg) emptyEl.classList.add('active'); else emptyEl.classList.remove('active');
       } else {
         emptyEl.classList.remove('active');
       }
@@ -552,11 +694,24 @@
         const placeholder = `https://placehold.co/600x400/eee/666?text=${encodeURIComponent(p.name || 'Part')}`;
         const imgSrc = imgCandidate || placeholder;
 
+        const linkCTA = p.link && p.link.url
+          ? `<a class="img-cta" href="${p.link.url}" target="_blank" rel="noopener" aria-label="${p.link.label} for ${p.name}">${p.link.label}</a>`
+          : '';
+
+        const fileUrl = resolveFile(p.file);
+        const fileCTA = fileUrl
+          ? `<button class="img-cta pdf-cta" type="button" data-file="${fileUrl}" data-title="${p.name}">PDF</button>`
+          : '';
+
+        const ctaGroup = (linkCTA || fileCTA)
+          ? `<div class="img-ctas">${linkCTA}${fileCTA}</div>`
+          : '';
+
         card.innerHTML = `
           <div class="media">
             <img src="${imgSrc}" alt="${p.name}" loading="lazy" />
             ${p.price > 0 ? `<div class="img-price" title="Price">${fmtPrice.format(p.price)}</div>` : ''}
-            ${p.link && p.link.url ? `<a class="img-cta" href="${p.link.url}" target="_blank" rel="noopener" aria-label="${p.link.label} for ${p.name}">${p.link.label}</a>` : ''}
+            ${ctaGroup}
           </div>
           <div class="content">
             <div class="title-row">
@@ -569,9 +724,7 @@
         `;
 
         const img = card.querySelector('img');
-        img.addEventListener('error', () => {
-          img.src = placeholder;
-        });
+        img.addEventListener('error', () => { img.src = placeholder; });
 
         grid.appendChild(card);
       });
@@ -694,13 +847,68 @@
       update();
     });
 
+    // Delegated handler for PDF CTA buttons
+    grid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.pdf-cta');
+      if (!btn) return;
+      const url = btn.getAttribute('data-file');
+      const title = btn.getAttribute('data-title') || 'PDF';
+      openPdfModal(url, title);
+    });
+
+    // Modal behavior
+    function openPdfModal(url, title = 'PDF') {
+      lastFocused = document.activeElement;
+      pdfFrame.src = url;
+      pdfOpen.href = url;
+      pdfDownload.href = url;
+      document.getElementById('pdfTitle').textContent = title;
+
+      pdfModal.classList.add('open');
+      document.body.classList.add('modal-open');
+      pdfClose.focus();
+
+      document.addEventListener('keydown', onModalKeydown);
+      pdfModal.addEventListener('click', onModalBackdrop);
+    }
+
+    function closePdfModal() {
+      pdfModal.classList.remove('open');
+      document.body.classList.remove('modal-open');
+      pdfFrame.src = 'about:blank';
+      document.removeEventListener('keydown', onModalKeydown);
+      pdfModal.removeEventListener('click', onModalBackdrop);
+      if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+    }
+
+    function onModalKeydown(e) {
+      if (e.key === 'Escape') closePdfModal();
+      // Basic focus trap
+      if (e.key === 'Tab') {
+        const focusables = pdfModal.querySelectorAll('a, button, iframe, [tabindex]:not([tabindex="-1"])');
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }
+
+    function onModalBackdrop(e) {
+      // Close if clicking outside the panel
+      const panel = pdfModal.querySelector('.panel');
+      if (!panel.contains(e.target)) closePdfModal();
+    }
+
+    pdfClose.addEventListener('click', closePdfModal);
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         searchInput.focus();
       }
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' && pdfModal.classList.contains('open') === false) {
         if (searchInput.value) {
           searchInput.value = '';
           setClearXVisible();
@@ -721,6 +929,19 @@
       PARTS = await loadCSV(CSV_URL);
       update();
     })();
+
+    async function loadCSV(url) {
+      try {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        const records = parseCSV(text);
+        return recordsToParts(records);
+      } catch (err) {
+        console.error('Failed to load CSV:', err);
+        return [];
+      }
+    }
   </script>
 </body>
 </html>
