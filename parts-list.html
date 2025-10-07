@@ -52,13 +52,26 @@
       top: 0;
       z-index: 10;
       padding: 12px 0 20px;
-      background: linear-gradient(180deg, rgba(248,250,252,0.85), rgba(248,250,252,0));
-      backdrop-filter: blur(6px);
+
+      /* Soft frosted background with smooth bottom fade */
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.75);
+    }
+    .toolbar::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -16px;
+      height: 16px;
+      pointer-events: none;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.75), rgba(255,255,255,0));
     }
 
     .search-wrap {
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 1fr; /* only the search field now */
       gap: 10px;
       align-items: center;
     }
@@ -80,28 +93,37 @@
       background: transparent;
       font-size: 16px;
       color: var(--text);
+      flex: 1 1 auto;
+      min-width: 0;
     }
+    /* Hide native Safari/Chrome search cancel so it doesn't double with the new X */
+    .search input::-webkit-search-cancel-button { -webkit-appearance: none; }
+
     .search .icon {
       width: 22px;
       height: 22px;
       color: var(--muted);
       flex: 0 0 auto;
     }
-    .clear-btn {
+
+    /* Inline clear "X" button inside the search */
+    .clear-x {
       appearance: none;
-      border: 1px solid var(--border);
-      background: #fff;
+      border: none;
+      background: transparent;
       color: var(--muted);
-      padding: 10px 14px;
-      border-radius: 10px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: none;             /* hidden until there's text */
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      transition: all .15s ease;
+      flex: 0 0 auto;
     }
-    .clear-btn:hover {
-      color: var(--text);
-      border-color: #cdd3da;
-      transform: translateY(-1px);
-    }
+    .clear-x.visible { display: inline-flex; }
+    .clear-x:hover { background: #f1f5f9; color: var(--text); }
+    .clear-x svg { width: 16px; height: 16px; }
 
     .meta {
       display: flex;
@@ -138,9 +160,8 @@
       overflow: clip;
       display: flex;
       flex-direction: column;
-      transition: box-shadow .18s ease; /* removed transform transition */
+      transition: box-shadow .18s ease;
     }
-    /* No hover enlarge */
     .card:hover {
       transform: none;
       box-shadow: var(--shadow);
@@ -151,7 +172,7 @@
       aspect-ratio: 4 / 3;
       background: #eee;
       overflow: hidden;
-      position: relative; /* allow overlays */
+      position: relative;
     }
     .media img {
       width: 100%;
@@ -188,7 +209,7 @@
       align-items: center;
       border: none;
       background: rgba(255, 255, 255, 0.85);
-      color: #dc2626; /* red text */
+      color: #dc2626;
       text-decoration: none;
       cursor: pointer;
       transition: transform .15s ease, background .15s ease;
@@ -199,19 +220,22 @@
     .content {
       display: flex;
       flex-direction: column;
-      gap: 8px; /* reduced from 10px */
+      gap: 8px;
       padding: 14px;
     }
 
-    /* Name + Code on one line, wrap only if needed */
+    /* Name + Code always on the same line */
     .title-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
+      display: grid;
+      grid-template-columns: 1fr auto; /* name grows, code stays compact */
+      align-items: center;
       gap: 8px;
     }
-    .title-row .name { 
-      flex: 1 1 auto; 
+    .title-row .name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .name {
@@ -222,21 +246,21 @@
 
     .code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      color: #b91c1c;              /* red */
-      background: #fee2e2;         /* light red */
-      border: 1px solid #fecaca;   /* light red border */
+      color: #b91c1c;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
       padding: 2px 8px;
       width: fit-content;
       border-radius: 999px;
       font-size: 12px;
-      flex: 0 0 auto; /* keep code pill compact on the same line */
+      flex: 0 0 auto;
     }
 
     .models {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: 4px; /* reduced from 6px */
+      margin-top: 4px;
     }
     .model-tag {
       font-size: 12px;
@@ -253,13 +277,11 @@
       font-size: 14px;
       line-height: 1.4;
       display: -webkit-box;
-      -webkit-line-clamp: 2; /* reduced from 3 */
+      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      /* removed min-height to reduce whitespace */
     }
 
-    /* Empty state: hidden by default, only shown when .active */
     .empty {
       display: none;
       text-align: center;
@@ -269,7 +291,6 @@
     }
     .empty.active { display: block; }
 
-    /* Old price-row + .cta not used anymore */
     .price-row { display: none; }
   </style>
 </head>
@@ -287,8 +308,12 @@
             <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
           <input id="search" type="search" placeholder="Search parts..." autocomplete="off" />
+          <button class="clear-x" id="clearX" type="button" aria-label="Clear search" title="Clear search">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </button>
         </label>
-        <button class="clear-btn" id="clearBtn" title="Clear search">Clear</button>
       </div>
 
       <div class="meta">
@@ -312,25 +337,23 @@
 
   <script>
     // Configuration
-    const CSV_URL = 'parts.csv';        // CSV file in the same folder as this HTML
+    const CSV_URL = 'parts.csv';
     const currency = 'NZD';
 
-    // Images: only put the filename in your CSV (e.g., "part123.jpg" or "part123")
-    // Place the actual files in this folder (relative to this HTML).
-    const IMAGE_DIR = 'images/parts';   // change if your folder is different (e.g., 'assets/images')
-    const IMAGE_DEFAULT_EXT = 'png';    // used if CSV image has no extension; set '' to disable
+    const IMAGE_DIR = 'images/parts';
+    const IMAGE_DEFAULT_EXT = 'png';
 
     // Formatting + DOM refs
     const fmtPrice = new Intl.NumberFormat('en-NZ', {
       style: 'currency',
       currency,
-      currencyDisplay: 'narrowSymbol' // show $ not NZ$
+      currencyDisplay: 'narrowSymbol'
     });
     const grid = document.getElementById('grid');
     const countEl = document.getElementById('count');
     const emptyEl = document.getElementById('empty');
     const searchInput = document.getElementById('search');
-    const clearBtn = document.getElementById('clearBtn');
+    const clearX = document.getElementById('clearX');
     const sortSelect = document.getElementById('sort');
 
     // State
@@ -343,7 +366,6 @@
       return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
     }
 
-    // Normalize: lowercase, fold accents, normalize separators
     function norm(s) {
       return String(s || '')
         .toLowerCase()
@@ -355,7 +377,6 @@
     }
 
     function splitList(s) {
-      // Split on semicolons primarily; also allow commas
       if (!s) return [];
       return String(s)
         .split(/[;]+|,(?!\s)/g)
@@ -363,7 +384,6 @@
         .filter(Boolean);
     }
 
-    // CSV parsing (handles quoted fields and escaped quotes)
     function parseCSV(text) {
       const rows = [];
       let i = 0, field = '', row = [], inQuotes = false;
@@ -376,7 +396,7 @@
 
         if (inQuotes) {
           if (c === '"') {
-            if (text[i + 1] === '"') { field += '"'; i++; } // escaped quote
+            if (text[i + 1] === '"') { field += '"'; i++; }
             else { inQuotes = false; }
           } else {
             field += c;
@@ -389,21 +409,17 @@
           } else if (c === '\n') {
             pushField(); pushRow();
           } else if (c === '\r') {
-            // ignore, handle \r\n by letting \n close the row
+            // ignore
           } else {
             field += c;
           }
         }
         i++;
       }
-      // flush last field/row if needed
       if (field.length > 0 || row.length) { pushField(); pushRow(); }
-
-      // Trim empty trailing rows
       while (rows.length && rows[rows.length - 1].every(v => v === '')) rows.pop();
       if (!rows.length) return [];
 
-      // Map to objects using header row (case-insensitive)
       const header = rows[0].map(h => norm(h).replace(/\s+/g, ''));
       const records = rows.slice(1).map(r => {
         const o = {};
@@ -415,7 +431,6 @@
       return records;
     }
 
-    // Helper: pick the first non-empty field by possible names
     function pick(rec, names) {
       for (const n of names) {
         if (rec[n] != null && String(rec[n]).trim() !== '') return rec[n];
@@ -423,23 +438,18 @@
       return '';
     }
 
-    // Support "Label;URL", "URL", or empty, from CSV header: link
     function parseLink(raw) {
       const s = String(raw || '').trim();
       if (!s) return null;
-
-      // Split only on the first semicolon
       const idx = s.indexOf(';');
       let label = '';
       let url = '';
 
       if (idx === -1) {
-        // If no semicolon and it's a URL, use default label
         if (/^https?:\/\//i.test(s)) {
           label = 'View';
           url = s;
         } else {
-          // Label only without URL -> ignore
           return null;
         }
       } else {
@@ -459,10 +469,8 @@
         const description = pick(rec, ['description']);
         const price = parseFloat(pick(rec, ['price'])) || 0;
         const image = pick(rec, ['image']);
-        const models = splitList(pick(rec, ['model', 'models'])); // CSV header now "model" (singular)
+        const models = splitList(pick(rec, ['model', 'models']));
         const keywords = splitList(pick(rec, ['keywords']));
-
-        // CSV header for button/link is "link"
         const linkRaw = pick(rec, ['link']);
         const link = parseLink(linkRaw);
 
@@ -483,39 +491,29 @@
       }
     }
 
-    // Build an image URL from a CSV value (filename only is expected)
     function resolveImage(raw) {
       let v = String(raw || '').trim();
       if (!v) return null;
-
-      // If absolute or data URL, allow as-is
       if (/^(https?:)?\/\//i.test(v) || /^data:/i.test(v)) return v;
 
-      // Normalize slashes and strip leading slash to avoid GH Pages root issues
       v = v.replace(/\\/g, '/').replace(/^\/+/, '');
-
       const hasSlash = v.includes('/');
       const hasExt = /\.[a-z0-9]{2,5}(?:[#?].*)?$/i.test(v);
 
-      // If it's just a filename, prefix with IMAGE_DIR
       if (!hasSlash) {
         if (!hasExt && IMAGE_DEFAULT_EXT) v += '.' + IMAGE_DEFAULT_EXT;
         v = `${IMAGE_DIR.replace(/\/?$/, '/')}${v}`;
       } else {
-        // If they provided a relative path in CSV, keep it, but add default ext if missing
         if (!hasExt && IMAGE_DEFAULT_EXT) v += '.' + IMAGE_DEFAULT_EXT;
       }
       return v;
     }
 
-    // Rendering
     function render(list) {
       grid.innerHTML = '';
-
       const q = searchInput.value.trim();
 
       if (!list.length) {
-        // Only show a message when we actually have a reason
         let msg = '';
         if (PARTS.length === 0) {
           msg = 'No parts available.';
@@ -559,7 +557,6 @@
           </div>
         `;
 
-        // Fallback image if broken
         const img = card.querySelector('img');
         img.addEventListener('error', () => {
           img.src = placeholder;
@@ -648,6 +645,11 @@
       history.replaceState(null, '', qs ? `${location.pathname}?${qs}` : location.pathname);
     }
 
+    function setClearXVisible() {
+      if (searchInput.value.trim()) clearX.classList.add('visible');
+      else clearX.classList.remove('visible');
+    }
+
     // Central update
     function update() {
       const q = searchInput.value;
@@ -661,11 +663,17 @@
     const debouncedUpdate = debounce(update, 150);
 
     // Events
-    searchInput.addEventListener('input', debouncedUpdate);
+    searchInput.addEventListener('input', () => {
+      setClearXVisible();
+      debouncedUpdate();
+    });
     sortSelect.addEventListener('change', update);
 
-    clearBtn.addEventListener('click', () => {
+    clearX.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       searchInput.value = '';
+      setClearXVisible();
       searchInput.focus();
       update();
     });
@@ -679,18 +687,20 @@
       if (e.key === 'Escape') {
         if (searchInput.value) {
           searchInput.value = '';
+          setClearXVisible();
           update();
         }
       }
     });
 
-    // Init: read URL, then load CSV and render
+    // Init
     (async function init() {
       const params = new URLSearchParams(location.search);
       const q = params.get('q') || '';
       const s = params.get('sort') || 'relevance';
       searchInput.value = q;
       sortSelect.value = s;
+      setClearXVisible();
 
       PARTS = await loadCSV(CSV_URL);
       update();
