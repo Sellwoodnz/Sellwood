@@ -17,6 +17,7 @@
         --radius: 14px;
         --maxw: 1200px;
         --control-h: 46px; /* shared height for search/sort */
+        --pill-h: 26px;    /* uniform height for price pill and CTAs */
       }
 
       * { box-sizing: border-box; }
@@ -47,7 +48,7 @@
         z-index: 10;
         padding: 12px 0 20px;
         margin-left: 20px;   /* 20px inset on both sides */
-        margin-right: 20px;  /* (applies on mobile and desktop) */
+        margin-right: 20px;
       }
       .toolbar::after { content: none; display: none; }
 
@@ -62,9 +63,9 @@
       }
 
       /* Let the gap handle spacing (remove ad-hoc margins) */
-      .toolbar .search { margin: 0 !important; }    /* overrides earlier margin-left */
-      .toolbar .sort-select { margin: 0 !important; }
-      .toolbar .view-toggle { margin: 0 !important; }
+      .toolbar .search { margin: 0; }
+      .toolbar .sort-select { margin: 0; }
+      .toolbar .view-toggle { margin: 0; }
 
       /* Hide Sort + Tiles/List on small screens */
       @media (max-width: 640px) {
@@ -223,16 +224,27 @@
 
       .img-price {
         position: absolute; left: 10px; bottom: 10px;
-        padding: 6px 10px; border-radius: 999px; background: #dc2626; color: #fff; font-weight: 400; font-size: 12px; line-height: 1;
-        box-shadow: var(--shadow); backdrop-filter: blur(2px); z-index: 1;
+        height: var(--pill-h);
+        padding: 0 10px;                 /* same horizontal padding */
+        border-radius: 999px;
+        background: #dc2626; color: #fff; font-weight: 400; font-size: 12px; line-height: 1;
+        display: inline-flex; align-items: center;  /* center vertically */
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(2px);
+        z-index: 1;
       }
 
       .img-ctas {
         position: absolute; right: 10px; bottom: 10px; display: inline-flex; gap: 8px; z-index: 1; -webkit-tap-highlight-color: transparent;
       }
       .img-cta {
-        appearance: none; padding: 6px 10px; border-radius: 5px; font-size: 12px; font-weight: 600; line-line: 1;
-        display: inline-flex; align-items: center; border: none; background: rgba(255, 255, 255, 0.88); color: #000000;
+        appearance: none;
+        height: var(--pill-h);           /* match price pill height */
+        padding: 0 10px;                 /* same horizontal padding */
+        border-radius: 5px;
+        font-size: 12px; font-weight: 600; line-height: 1;
+        display: inline-flex; align-items: center;
+        border: none; background: rgba(255, 255, 255, 0.88); color: #000000;
         text-decoration: none; cursor: pointer; transition: transform .15s ease, background .15s ease;
         box-shadow: var(--shadow); backdrop-filter: blur(2px); -webkit-tap-highlight-color: transparent;
       }
@@ -310,7 +322,7 @@
       }
       body[data-view="list"] .content {
         padding: 12px 14px;
-        gap: 10px;
+        gap: 8px;
         justify-content: center;
       }
       body[data-view="list"] .desc {
@@ -319,24 +331,17 @@
         -webkit-box-orient: initial;
         overflow: visible;
       }
-      /* One-line meta row: name, code, models, material, finish */
-      body[data-view="list"] .meta-line {
-        display: flex;
-        align-items: center;
-        gap: 10px 12px;
-        flex-wrap: wrap; /* will wrap on very small screens */
-      }
-      body[data-view="list"] .meta-line .name {
-        font-size: 16px;
-        font-weight: 700;
-        white-space: nowrap;
-      }
-      body[data-view="list"] .models,
-      body[data-view="list"] .attrs {
-        margin: 0; /* flatten vertical spacing inside the line */
-      }
       body[data-view="list"] .title-row { display: none; } /* not used in list layout */
       body[data-view="list"] .dots { display: none; }      /* optional: hide image dots in list */
+
+      /* Stacked rows for list view */
+      body[data-view="list"] .name-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      body[data-view="list"] .content > .models { margin: 0; }
+      body[data-view="list"] .content > .attrs { margin: 0; }
     </style>
   </head>
   <body data-view="tiles">
@@ -413,7 +418,7 @@
       const FILE_DEFAULT_EXT = 'pdf';
       const MAX_IMAGES = 5;
 
-      // Custom category ordering (others will follow alphabetically)
+      // Custom category ordering
       const CATEGORY_PRIORITY = ['Attic Ladder', 'Roof Access', 'Roof Hatch', 'Natural Lighting', 'Fixings'];
       const CAT_PARAM = 'cat';
 
@@ -456,7 +461,11 @@
         return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), wait); };
       }
       function norm(s) {
-        return String(s || '').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[_/\\-]+/g, ' ').replace(/\s+/g, ' ').trim();
+        return String(s || '').toLowerCase().normalize('NFKD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[_/\\-]+/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
       }
       function slugify(s) { return norm(s).replace(/\s+/g, '-'); }
       function splitList(s) {
@@ -471,13 +480,12 @@
             try {
               const res = await fetch(v, { method: 'HEAD', cache: 'no-store' });
               if (res.ok) return v;
-            } catch (e) {}
+            } catch {}
           }
           return null;
         };
-        const promises = names.map(checkOne);
-        const urls = await Promise.all(promises);
-        return urls.filter(url => url !== null);
+        const urls = await Promise.all(names.map(checkOne));
+        return urls.filter(Boolean);
       }
 
       async function checkFileExists(rawName) {
@@ -486,7 +494,7 @@
         try {
           const res = await fetch(v, { method: 'HEAD', cache: 'no-store' });
           return res.ok ? v : null;
-        } catch (e) {
+        } catch {
           return null;
         }
       }
@@ -548,7 +556,7 @@
           const name = pick(rec, ['name']);
           const nameSlug = slugify(name);
           const possibleImageNames = [];
-          for (let j=1; j<=MAX_IMAGES; j++) {
+          for (let j=1; j<=5; j++) {
             const suffix = j > 1 ? `-${j}` : '';
             possibleImageNames.push(`${nameSlug}${suffix}`);
           }
@@ -608,7 +616,7 @@
 
           const rawImages = p.images || [];
           const placeholder = `https://placehold.jp/48/eee/666/600x400.png?text=${encodeURIComponent(p.name || 'Part')}`;
-          let resolved = rawImages.length ? rawImages : [placeholder];
+          const resolved = rawImages.length ? rawImages : [placeholder];
 
           const slidesHTML = resolved.map((src, i) => `
             <div class="slide">
@@ -628,7 +636,7 @@
           const ctaGroup = (linkCTA || fileCTA) ? `<div class="img-ctas">${linkCTA}${fileCTA}</div>` : '';
 
           if (viewMode === VIEW_LIST) {
-            // List view markup
+            // List view: Name+Code, then Models, then Material/Finish, then Description
             card.innerHTML = `
               <div class="media" data-index="0">
                 <div class="carousel" role="group" aria-label="Images for ${p.name}">
@@ -639,17 +647,17 @@
                 ${dotsHTML}
               </div>
               <div class="content">
-                <div class="meta-line">
+                <div class="name-row">
                   <div class="name">${p.name}</div>
                   ${p.code ? `<div class="code">${p.code}</div>` : ''}
-                  ${hasModels ? `<div class="models" aria-label="Compatible models">${modelsHTML}</div>` : ''}
-                  ${attrsHTML}
                 </div>
+                ${hasModels ? `<div class="models" aria-label="Compatible models">${modelsHTML}</div>` : ''}
+                ${attrsHTML}
                 <div class="desc">${p.description}</div>
               </div>
             `;
           } else {
-            // Tiles view markup
+            // Tiles view
             card.innerHTML = `
               <div class="media" data-index="0">
                 <div class="carousel" role="group" aria-label="Images for ${p.name}">
@@ -710,7 +718,7 @@
         }, { passive: true });
       }
 
-      // Relevance scoring (include material/finish/categories)
+      // Relevance scoring
       const WEIGHTS = { name: 3, code: 3, models: 2, material: 2, finish: 1, categories: 2, keywords: 1, description: 1 };
 
       function partMatchesCategory(p, cat) {
@@ -766,7 +774,7 @@
         switch (mode) {
           case 'csv':        return arr.sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
           case 'price-asc':  return arr.sort((a,b) => a.price - b.price || a.name.localeCompare(b.name));
-          case 'price-desc': return arr.sort((a,b) => b.price - a.price || a.name.localeCompare(a.name));
+          case 'price-desc': return arr.sort((a,b) => b.price - a.price || a.name.localeCompare(b.name));
           case 'name-asc':   return arr.sort((a,b) => a.name.localeCompare(b.name));
           case 'name-desc':  return arr.sort((a,b) => b.name.localeCompare(a.name));
           case 'relevance':
@@ -802,7 +810,6 @@
         const set = new Set();
         PARTS.forEach(p => (p.categories || []).forEach(c => { if (c && c.trim()) set.add(c.trim()); }));
         const allCats = Array.from(set);
-
         const lowerPriority = CATEGORY_PRIORITY.map(norm);
         const pri = CATEGORY_PRIORITY.filter(c => allCats.some(x => norm(x) === norm(c)));
         const rest = allCats.filter(c => !lowerPriority.includes(norm(c))).sort((a,b) => a.localeCompare(b));
