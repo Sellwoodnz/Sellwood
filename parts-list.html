@@ -227,8 +227,6 @@
       box-shadow: var(--shadow);
       backdrop-filter: blur(2px);
     }
-    .img-cta:hover { background: rgba(255, 255, 255, 1); transform: translateY(-1px); }
-    .img-cta:active { transform: translateY(0); }
 
     .content {
       display: flex;
@@ -700,7 +698,7 @@
 
         const fileUrl = resolveFile(p.file);
         const fileCTA = fileUrl
-          ? `<button class="img-cta pdf-cta" type="button" data-file="${fileUrl}" data-title="${p.name}">PDF</button>`
+          ? `<button class="img-cta pdf-cta" type="button" data-file="${fileUrl}" data-title="${p.name}">File</button>`
           : '';
 
         const ctaGroup = (linkCTA || fileCTA)
