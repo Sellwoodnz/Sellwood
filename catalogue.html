@@ -171,6 +171,11 @@
         gap: 8px;
         flex-wrap: wrap;
         margin: 10px 15px 0 15px;
+        transition: transform 0.3s ease-out;
+      }
+
+      .catbar.hidden {
+        display: none;
       }
 
       .cat-chip {
@@ -195,7 +200,7 @@
         background: #fee2e2;
         /* soft red tint */
         color: #b91c1c;
-        border-color: #ffbebe;
+        border-color: #fecaca;
         box-shadow: 0 2px 6px rgba(220, 38, 38, 0.12);
       }
 
@@ -1139,6 +1144,19 @@
           }
         }
       });
+
+      // Hide category bar when not at top
+      let ticking = false;
+      function updateCatbarVisibility() {
+        catBar.classList.toggle('hidden', window.scrollY > 0);
+        ticking = false;
+      }
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(updateCatbarVisibility);
+          ticking = true;
+        }
+      }, { passive: true });
       // Init
       (async function init() {
         const params = new URLSearchParams(location.search);
