@@ -56,7 +56,6 @@
       padding: 12px 0 20px;
     }
     .toolbar::after {
-      /* Remove the fade overlay */
       content: none;
       display: none;
     }
@@ -82,7 +81,7 @@
       /* Ensure search is at least the shared control height */
       min-height: var(--control-h);
 
-      /* Small left margin for padding from container edge */
+      /* Small left/right spacing */
       margin-left: 15px;
     }
     .search input {
@@ -95,7 +94,6 @@
       flex: 1 1 auto;
       min-width: 0;
     }
-    /* Hide native Safari/Chrome search cancel so it doesn't double with the new X */
     .search input::-webkit-search-cancel-button { -webkit-appearance: none; }
 
     .search .icon {
@@ -114,7 +112,7 @@
       width: 24px;
       height: 24px;
       border-radius: 50%;
-      display: none;             /* hidden until there's text */
+      display: none; /* hidden until there's text */
       align-items: center;
       justify-content: center;
       cursor: pointer;
@@ -145,8 +143,6 @@
       color: var(--text);
       box-shadow: var(--shadow); /* match .search */
       font-size: 16px;
-
-      /* Small right margin for padding from container edge */
       margin-right: 15px;
     }
 
@@ -167,10 +163,7 @@
       flex-direction: column;
       transition: box-shadow .18s ease;
     }
-    .card:hover {
-      transform: none;
-      box-shadow: var(--shadow);
-    }
+    .card:hover { box-shadow: var(--shadow); }
 
     .media {
       width: 100%;
@@ -179,9 +172,14 @@
       overflow: hidden;
       position: relative;
       user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+
+      /* Remove tap highlight on iOS when tapping to advance */
+      -webkit-tap-highlight-color: transparent;
     }
 
-    /* Carousel (added) */
+    /* Carousel */
     .carousel {
       display: flex;
       width: 100%;
@@ -189,12 +187,14 @@
       transition: transform .3s ease;
       will-change: transform;
       cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
     }
     .slide {
       width: 100%;
       height: 100%;
       flex: 0 0 100%;
       position: relative;
+      -webkit-tap-highlight-color: transparent;
     }
     .slide img {
       width: 100%;
@@ -204,7 +204,7 @@
       pointer-events: none; /* so clicks go to carousel for next */
     }
 
-    /* Small dots bottom center (added) */
+    /* Small dots bottom center */
     .dots {
       position: absolute;
       left: 50%;
@@ -213,6 +213,7 @@
       display: inline-flex;
       gap: 6px;
       z-index: 2;
+      -webkit-tap-highlight-color: transparent;
     }
     .dot {
       width: 6px;
@@ -224,6 +225,10 @@
       line-height: 0;
       cursor: pointer;
       box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
     }
     .dot.active {
       border-color: var(--accent);
@@ -255,6 +260,7 @@
       display: inline-flex;
       gap: 8px;
       z-index: 1;
+      -webkit-tap-highlight-color: transparent;
     }
     .img-cta {
       appearance: none;
@@ -273,6 +279,7 @@
       transition: transform .15s ease, background .15s ease;
       box-shadow: var(--shadow);
       backdrop-filter: blur(2px);
+      -webkit-tap-highlight-color: transparent;
     }
 
     .content {
@@ -351,7 +358,7 @@
 
     .price-row { display: none; }
 
-    /* Modal for PDF preview */
+    /* Simpler modal: just the PDF */
     .modal {
       position: fixed;
       inset: 0;
@@ -369,82 +376,21 @@
       visibility: visible;
     }
     .modal .panel {
-      width: min(960px, 100%);
-      max-height: 90vh;
+      width: min(960px, 96vw);
+      height: min(90vh, 90vh);
       background: #fff;
       border: 1px solid var(--border);
       border-radius: 12px;
       box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
       overflow: hidden;
-    }
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-      background: #f8fafc;
-    }
-    .modal-title {
-      font-weight: 700;
-      font-size: 16px;
-      margin: 0;
-    }
-    .modal-close {
-      appearance: none;
-      border: none;
-      background: transparent;
-      font-size: 22px;
-      line-height: 1;
-      cursor: pointer;
-      color: #334155;
-      padding: 4px 8px;
-      border-radius: 8px;
-    }
-    .modal-close:hover { background: #f1f5f9; }
-    .modal-body {
-      flex: 1 1 auto;
-      background: #111827;
       display: grid;
-      place-items: center;
     }
-    .modal-body iframe {
+    .modal .panel iframe {
       width: 100%;
-      height: 70vh;
-      background: #fff;
-      border: none;
+      height: 100%;
+      border: 0;
+      display: block;
     }
-    .modal-actions {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 10px 12px;
-      border-top: 1px solid var(--border);
-      background: #f8fafc;
-    }
-    .btn {
-      appearance: none;
-      padding: 8px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: #fff;
-      color: #fff;
-      text-decoration: none;
-      cursor: pointer;
-      font-weight: 600;
-      box-shadow: var(--shadow);
-      color: #0f172a;
-    }
-    .btn.primary {
-      background: #dc2626;
-      color: #fff;
-      border-color: #dc2626;
-    }
-    .btn:hover { transform: translateY(-1px); }
-    .btn:active { transform: translateY(0); }
 
     body.modal-open { overflow: hidden; }
   </style>
@@ -491,20 +437,10 @@
     <div id="empty" class="empty" aria-live="polite"></div>
   </div>
 
-  <!-- PDF Modal -->
-  <div id="pdfModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pdfTitle">
+  <!-- Simple PDF Modal (just the iframe) -->
+  <div id="pdfModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="panel">
-      <div class="modal-header">
-        <h2 id="pdfTitle" class="modal-title">PDF</h2>
-        <button class="modal-close" id="pdfClose" aria-label="Close">×</button>
-      </div>
-      <div class="modal-body">
-        <iframe id="pdfFrame" title="PDF preview"></iframe>
-      </div>
-      <div class="modal-actions">
-        <a id="pdfOpen" href="#" target="_blank" rel="noopener" class="btn">Open in new tab</a>
-        <a id="pdfDownload" href="#" download class="btn primary">Download PDF</a>
-      </div>
+      <iframe id="pdfFrame" title="PDF"></iframe>
     </div>
   </div>
 
@@ -537,10 +473,6 @@
     // Modal refs
     const pdfModal = document.getElementById('pdfModal');
     const pdfFrame = document.getElementById('pdfFrame');
-    theTitle = document.getElementById('pdfTitle');
-    const pdfClose = document.getElementById('pdfClose');
-    const pdfDownload = document.getElementById('pdfDownload');
-    const pdfOpen = document.getElementById('pdfOpen');
 
     // State
     let PARTS = [];
@@ -571,7 +503,7 @@
         .filter(Boolean);
     }
 
-    // For images: only split on semicolons (as requested)
+    // For images: only split on semicolons
     function splitImages(s) {
       if (!s) return [];
       return String(s)
@@ -773,7 +705,7 @@
 
         const fileUrl = resolveFile(p.file);
         const fileCTA = fileUrl
-          ? `<button class="img-cta pdf-cta" type="button" data-file="${fileUrl}" data-title="${p.name}">File</button>`
+          ? `<button class="img-cta pdf-cta" type="button" data-file="${fileUrl}" data-title="${p.name}">PDF</button>`
           : '';
 
         const ctaGroup = (linkCTA || fileCTA)
@@ -844,7 +776,7 @@
         go(i);
       });
 
-      // Click on image to go next (ignore when clicking CTAs)
+      // Click on image to go next (ignore when clicking CTAs or dots)
       mediaEl.addEventListener('click', (e) => {
         if (e.target.closest('.img-cta') || e.target.closest('.dots')) return;
         go(idx + 1);
@@ -947,9 +879,7 @@
 
     function setClearXVisible() {
       const has = searchInput.value.trim().length > 0;
-      // Existing visibility toggle (redundant with CSS swap but keeps compatibility)
       if (has) clearX.classList.add('visible'); else clearX.classList.remove('visible');
-      // Swap icon <-> X by toggling class on the search container
       searchLabel.classList.toggle('has-value', has);
     }
 
@@ -987,21 +917,15 @@
       const btn = e.target.closest('.pdf-cta');
       if (!btn) return;
       const url = btn.getAttribute('data-file');
-      const title = btn.getAttribute('data-title') || 'PDF';
-      openPdfModal(url, title);
+      openPdfModal(url);
     });
 
-    // Modal behavior
-    function openPdfModal(url, title = 'PDF') {
+    // Modal behavior (simplified)
+    function openPdfModal(url) {
       lastFocused = document.activeElement;
       pdfFrame.src = url;
-      pdfOpen.href = url;
-      pdfDownload.href = url;
-      theTitle.textContent = title;
-
       pdfModal.classList.add('open');
       document.body.classList.add('modal-open');
-      pdfClose.focus();
 
       document.addEventListener('keydown', onModalKeydown);
       pdfModal.addEventListener('click', onModalBackdrop);
@@ -1018,24 +942,12 @@
 
     function onModalKeydown(e) {
       if (e.key === 'Escape') closePdfModal();
-      // Basic focus trap
-      if (e.key === 'Tab') {
-        const focusables = pdfModal.querySelectorAll('a, button, iframe, [tabindex]:not([tabindex="-1"])');
-        if (!focusables.length) return;
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
-        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-      }
     }
 
     function onModalBackdrop(e) {
-      // Close if clicking outside the panel
       const panel = pdfModal.querySelector('.panel');
       if (!panel.contains(e.target)) closePdfModal();
     }
-
-    pdfClose.addEventListener('click', closePdfModal);
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
@@ -1043,7 +955,7 @@
         e.preventDefault();
         searchInput.focus();
       }
-      if (e.key === 'Escape' && pdfModal.classList.contains('open') === false) {
+      if (e.key === 'Escape' && !pdfModal.classList.contains('open')) {
         if (searchInput.value) {
           searchInput.value = '';
           setClearXVisible();
