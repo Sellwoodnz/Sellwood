@@ -340,7 +340,7 @@
 
         const linkCTA = (p.link && p.link.url) ? `<a class="img-cta" href="${p.link.url}" target="_blank" rel="noopener" aria-label="${p.link.label} for ${p.name}">${p.link.label}</a>` : '';
         const fileUrl = resolveFile(p.file);
-        const fileCTA = fileUrl ? `<button class="img-cta pdf-cta" type="button" data-file="${fileUrl}" data-title="${p.name}">PDF</button>` : '';
+        const fileCTA = fileUrl ? `<button class="img-cta pdf-cta" type="button" data-file="${fileUrl}" data-title="${p.name}">File</button>` : '';
         const ctaGroup = (linkCTA||fileCTA) ? `<div class="img-ctas">${linkCTA}${fileCTA}</div>` : '';
 
         card.innerHTML = `
