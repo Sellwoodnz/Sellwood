@@ -55,10 +55,7 @@
       z-index: 10;
       padding: 12px 0 20px;
     }
-    .toolbar::after {
-      content: none;
-      display: none;
-    }
+    .toolbar::after { content: none; display: none; }
 
     .search-wrap {
       display: grid;
@@ -77,11 +74,7 @@
       padding: 10px 12px;
       box-shadow: var(--shadow);
       min-width: 0; /* avoid overflow in grid */
-
-      /* Ensure search is at least the shared control height */
       min-height: var(--control-h);
-
-      /* Small left/right spacing */
       margin-left: 15px;
     }
     .search input {
@@ -174,9 +167,7 @@
       user-select: none;
       -webkit-user-select: none;
       -webkit-touch-callout: none;
-
-      /* Remove tap highlight on iOS when tapping to advance */
-      -webkit-tap-highlight-color: transparent;
+      -webkit-tap-highlight-color: transparent; /* prevent blue flash on iOS */
     }
 
     /* Carousel */
@@ -358,7 +349,7 @@
 
     .price-row { display: none; }
 
-    /* Simpler modal: just the PDF */
+    /* Simple modal: fully centered and contained on mobile */
     .modal {
       position: fixed;
       inset: 0;
@@ -366,7 +357,7 @@
       display: grid;
       place-items: center;
       background: rgba(2, 8, 23, 0.55);
-      padding: 20px;
+      padding: 12px; /* tighter to ensure it never overflows on small screens */
       opacity: 0;
       visibility: hidden;
       transition: opacity .18s ease, visibility .18s ease;
@@ -376,11 +367,12 @@
       visibility: visible;
     }
     .modal .panel {
-      width: min(960px, 96vw);
-      height: min(90vh, 90vh);
+      box-sizing: border-box;
+      width: min(960px, calc(100vw - 24px));
+      height: min(92vh, calc(100vh - 24px));
       background: #fff;
       border: 1px solid var(--border);
-      border-radius: 5px;
+      border-radius: 12px;
       box-shadow: var(--shadow);
       overflow: hidden;
       display: grid;
@@ -390,6 +382,15 @@
       height: 100%;
       border: 0;
       display: block;
+    }
+
+    @media (max-width: 640px) {
+      .modal { padding: 10px; }
+      .modal .panel {
+        width: calc(100vw - 20px);
+        height: calc(100vh - 20px);
+        border-radius: 10px;
+      }
     }
 
     body.modal-open { overflow: hidden; }
@@ -404,7 +405,7 @@
     <div class="toolbar">
       <div class="search-wrap">
         <label class="search" for="search" id="searchLabel">
-          <!-- Clear X (left) replaces the search icon when typing -->
+          <!-- Clear X (left) replaces the search icon when typing) -->
           <button class="clear-x" id="clearX" type="button" aria-label="Clear search" title="Clear search">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -417,8 +418,6 @@
           </svg>
 
           <input id="search" type="search" placeholder="Search parts..." autocomplete="off" aria-label="Search parts" />
-
-          <!-- Count inside the search, on the far right -->
           <span id="count" class="count" aria-live="polite">0 of 0</span>
         </label>
 
@@ -883,6 +882,15 @@
       searchLabel.classList.toggle('has-value', has);
     }
 
+    // Ensure PDF opens "fit to page"
+    function withPdfFit(url) {
+      const hasHash = url.includes('#');
+      if (!hasHash) return url + '#page=1&zoom=page-fit';
+      if (/zoom=/i.test(url)) return url; // respect existing zoom
+      // append zoom param to existing hash
+      return url + (url.endsWith('#') ? '' : '&') + 'zoom=page-fit';
+    }
+
     // Central update
     function update() {
       const q = searchInput.value;
@@ -908,8 +916,9 @@
       e.stopPropagation();
       searchInput.value = '';
       setClearXVisible();
-      searchInput.focus();
       update();
+      // Hide keyboard + cursor (mobile and desktop)
+      searchInput.blur();
     });
 
     // Delegated handler for PDF CTA buttons
@@ -920,13 +929,12 @@
       openPdfModal(url);
     });
 
-    // Modal behavior (simplified)
+    // Modal behavior (centered and constrained)
     function openPdfModal(url) {
       lastFocused = document.activeElement;
-      pdfFrame.src = url;
+      pdfFrame.src = withPdfFit(url);
       pdfModal.classList.add('open');
       document.body.classList.add('modal-open');
-
       document.addEventListener('keydown', onModalKeydown);
       pdfModal.addEventListener('click', onModalBackdrop);
     }
@@ -960,6 +968,7 @@
           searchInput.value = '';
           setClearXVisible();
           update();
+          searchInput.blur(); // ensure keyboard hides if open
         }
       }
     });
