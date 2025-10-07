@@ -70,20 +70,23 @@
       align-items: center;
     }
 
-    .search {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
-      box-shadow: var(--shadow);
-      min-width: 0; /* avoid overflow in grid */
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: var(--shadow);
+  min-width: 0; /* avoid overflow in grid */
 
-      /* Ensure search is at least the shared control height */
-      min-height: var(--control-h);
-    }
+  /* Ensure search is at least the shared control height */
+  min-height: var(--control-h);
+
+  /* Add: small left margin for padding from container edge */
+  margin-left: 15px;
+}
     .search input {
       width: 100%;
       border: none;
@@ -132,16 +135,19 @@
       flex: 0 0 auto;
     }
 
-    .sort-select {
-      border: 1px solid var(--border);
-      border-radius: 12px;       /* match .search */
-      padding: 0 12px;           /* let height control vertical size */
-      height: var(--control-h);  /* match search height */
-      background: #fff;
-      color: var(--text);
-      box-shadow: var(--shadow); /* match .search */
-      font-size: 16px;
-    }
+.sort-select {
+  border: 1px solid var(--border);
+  border-radius: 12px;       /* match .search */
+  padding: 0 12px;           /* let height control vertical size */
+  height: var(--control-h);  /* match search height */
+  background: #fff;
+  color: var(--text);
+  box-shadow: var(--shadow); /* match .search */
+  font-size: 16px;
+
+  /* Add: small right margin for padding from container edge */
+  margin-right: 15px;
+}
 
     .grid {
       display: grid;
