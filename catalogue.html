@@ -49,12 +49,32 @@
       }
       .toolbar::after { content: none; display: none; }
 
-      .search-wrap {
-        display: grid;
-        grid-template-columns: 1fr auto auto; /* NEW: extra column for view toggle */
-        gap: 10px;
-        align-items: center;
-      }
+/* Consistent spacing on tablet/desktop */
+.search-wrap {
+  display: grid;
+  grid-template-columns: 1fr auto auto; /* search | sort | view */
+  align-items: center;
+  gap: 15px;       /* same gap between search, sort, tile/list */
+
+}
+
+/* Let the gap handle spacing (remove ad-hoc margins) */
+.search { margin: 0; }
+.sort-select { margin: 0; }
+.view-toggle { margin: 0; }
+
+/* Hide Sort + Tiles/List on small screens */
+@media (max-width: 640px) {
+  .search-wrap {
+    grid-template-columns: 1fr; /* only search visible */
+    gap: 15px;
+    padding-right: 15px;
+  }
+  .sort-select,
+  .view-toggle {
+    display: none !important; /* hide on mobile */
+  }
+}
 
       .search {
         display: flex;
@@ -978,6 +998,12 @@
           return [];
         }
       }
+      function enforceMobileTiles() {
+  const small = window.matchMedia('(max-width: 640px)').matches;
+  if (small && viewMode !== 'tiles') setView('tiles');
+}
+window.addEventListener('resize', enforceMobileTiles, { passive: true });
+enforceMobileTiles(); // call once on load
     </script>
   </body>
 </html>
