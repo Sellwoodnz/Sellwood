@@ -411,8 +411,9 @@
           <span id="count" class="count" aria-live="polite">0 of 0</span>
         </label>
 
-        <select id="sort" class="sort-select">
-          <option value="relevance">Sort</option>
+        <select id="sort" class="sort-select" aria-label="Sort">
+          <option value="relevance">Relevance</option>
+          <option value="csv">CSV</option>
           <option value="name-asc">A–Z</option>
           <option value="name-desc">Z–A</option>
           <option value="price-asc">$ Low</option>
@@ -566,8 +567,9 @@
       return { label, url };
     }
 
+    // Capture CSV row order as `order`
     function recordsToParts(records) {
-      return records.map(rec => {
+      return records.map((rec, i) => {
         const name = pick(rec, ['name']);
         const code = pick(rec, ['code']);
         const description = pick(rec, ['description']);
@@ -586,7 +588,7 @@
         // File
         const file = pick(rec, ['file', 'pdf', 'datasheet']);
 
-        return { name, code, description, price, image, images, models, keywords, link, file };
+        return { name, code, description, price, image, images, models, keywords, link, file, order: i };
       });
     }
 
@@ -752,7 +754,7 @@
       }, { passive: true });
     }
 
-    // Relevance scoring
+    // Relevance scoring (used for "Relevance" sort)
     const WEIGHTS = { name: 3, code: 3, models: 2, keywords: 1, description: 1 };
 
     function filterParts(query) {
@@ -792,13 +794,20 @@
       });
     }
 
+    // Sorting: Relevance uses SCORES; CSV uses original row order
     function sortParts(list, mode) {
       const arr = list.slice();
       switch (mode) {
-        case 'price-asc': return arr.sort((a, b) => a.price - b.price || a.name.localeCompare(b.name));
-        case 'price-desc': return arr.sort((a, b) => b.price - a.price || a.name.localeCompare(b.name));
-        case 'name-asc': return arr.sort((a, b) => a.name.localeCompare(b.name));
-        case 'name-desc': return arr.sort((a, b) => b.name.localeCompare(a.name));
+        case 'csv':
+          return arr.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        case 'price-asc':
+          return arr.sort((a, b) => a.price - b.price || a.name.localeCompare(b.name));
+        case 'price-desc':
+          return arr.sort((a, b) => b.price - a.price || a.name.localeCompare(b.name));
+        case 'name-asc':
+          return arr.sort((a, b) => a.name.localeCompare(b.name));
+        case 'name-desc':
+          return arr.sort((a, b) => b.name.localeCompare(a.name));
         case 'relevance':
         default:
           return arr.sort((a, b) => {
@@ -825,15 +834,10 @@
     }
 
     // Try to force "fit to page" across viewers:
-    // - PDF.js (Firefox) honors zoom=page-fit
-    // - Chrome often honors zoom=page-width; Fit is not fully supported
-    // - Acrobat honors view=Fit
     function withPdfFit(url) {
       const [base, hash = ''] = url.split('#');
       const params = new URLSearchParams(hash);
       if (!params.has('page')) params.set('page', '1');
-
-      // Add both view=Fit and a zoom fallback based on browser
       if (!params.has('view')) params.set('view', 'Fit');
 
       if (!params.has('zoom')) {
