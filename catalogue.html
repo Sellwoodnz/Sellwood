@@ -46,35 +46,39 @@
         top: 0;
         z-index: 10;
         padding: 12px 0 20px;
+        margin-left: 20px;   /* 20px inset on both sides */
+        margin-right: 20px;  /* (applies on mobile and desktop) */
       }
       .toolbar::after { content: none; display: none; }
 
-/* Consistent spacing on tablet/desktop */
-.search-wrap {
-  display: grid;
-  grid-template-columns: 1fr auto auto; /* search | sort | view */
-  align-items: center;
-  gap: 15px;       /* same gap between search, sort, tile/list */
+      /* Equal gaps between Search | Sort | Tiles/List */
+      .toolbar .search-wrap {
+        display: grid;
+        grid-template-columns: 1fr auto auto; /* search | sort | view */
+        align-items: center;
+        gap: 15px; /* the only spacing between the three controls */
+        padding-left: 0;
+        padding-right: 0;
+      }
 
-}
+      /* Let the gap handle spacing (remove ad-hoc margins) */
+      .toolbar .search { margin: 0 !important; }    /* overrides earlier margin-left */
+      .toolbar .sort-select { margin: 0 !important; }
+      .toolbar .view-toggle { margin: 0 !important; }
 
-/* Let the gap handle spacing (remove ad-hoc margins) */
-.search { margin: 0; }
-.sort-select { margin: 0; }
-.view-toggle { margin: 0; }
-
-/* Hide Sort + Tiles/List on small screens */
-@media (max-width: 640px) {
-  .search-wrap {
-    grid-template-columns: 1fr; /* only search visible */
-    gap: 15px;
-    padding-right: 15px;
-  }
-  .sort-select,
-  .view-toggle {
-    display: none !important; /* hide on mobile */
-  }
-}
+      /* Hide Sort + Tiles/List on small screens */
+      @media (max-width: 640px) {
+        .toolbar .search-wrap {
+          grid-template-columns: 1fr; /* only search visible */
+          gap: 15px;
+          padding-left: 0;
+          padding-right: 0;
+        }
+        .toolbar .sort-select,
+        .toolbar .view-toggle {
+          display: none !important; /* hide on mobile */
+        }
+      }
 
       .search {
         display: flex;
@@ -87,7 +91,6 @@
         box-shadow: var(--shadow);
         min-width: 0;
         min-height: var(--control-h);
-        margin-left: 15px;
       }
       .search input {
         width: 100%;
@@ -121,15 +124,13 @@
         color: var(--muted);
         box-shadow: var(--shadow);
         font-size: 16px;
-        margin-right: 15px;
       }
 
-      /* NEW: View toggle buttons */
+      /* View toggle buttons */
       .view-toggle {
         display: inline-flex;
         gap: 6px;
         justify-self: end;
-        margin-right: 15px;
       }
       .view-btn {
         appearance: none;
@@ -154,10 +155,10 @@
       }
       .view-btn svg { width: 18px; height: 18px; }
 
-      /* Category filter bar */
+      /* Category filter bar (align to toolbar inset via .toolbar margin) */
       .catbar {
         display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-        margin: 10px 15px 0 15px;
+        margin: 10px 0 0 0;  /* no L/R margin; toolbar provides the inset */
         transition: opacity 0.3s ease-out, max-height 0.3s ease-out, margin-top 0.3s ease-out;
         max-height: 40px; opacity: 1; overflow: hidden;
       }
@@ -287,7 +288,7 @@
       body.modal-open { overflow: hidden; }
 
       /* ========================= */
-      /* NEW: List view overrides  */
+      /* List view overrides       */
       /* ========================= */
       body[data-view="list"] .grid {
         display: flex;
@@ -338,7 +339,7 @@
       body[data-view="list"] .dots { display: none; }      /* optional: hide image dots in list */
     </style>
   </head>
-  <body data-view="tiles"><!-- NEW: data-view attribute -->
+  <body data-view="tiles">
     <div class="container">
       <header>
         <div class="title">Sellwood Catalog</div>
@@ -366,7 +367,6 @@
             <option value="price-desc">$ High</option>
           </select>
 
-          <!-- NEW: View toggle -->
           <div class="view-toggle" role="group" aria-label="Change layout">
             <button id="viewTilesBtn" class="view-btn" type="button" aria-pressed="true" title="Tiles view">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -417,7 +417,7 @@
       const CATEGORY_PRIORITY = ['Attic Ladder', 'Roof Access', 'Roof Hatch', 'Natural Lighting', 'Fixings'];
       const CAT_PARAM = 'cat';
 
-      // NEW: view param constants
+      // view param constants
       const VIEW_PARAM = 'view';
       const VIEW_TILES = 'tiles';
       const VIEW_LIST = 'list';
@@ -434,7 +434,7 @@
       const pdfFrame = document.getElementById('pdfFrame');
       const catBar = document.getElementById('catBar');
 
-      // NEW: view buttons
+      // view buttons
       const viewTilesBtn = document.getElementById('viewTilesBtn');
       const viewListBtn  = document.getElementById('viewListBtn');
 
@@ -448,7 +448,6 @@
       let lastFocused = null;
       let selectedCategory = ''; // empty = All
       let ALL_CATEGORIES = [];
-      // NEW: current view (tiles is default)
       let viewMode = VIEW_TILES;
 
       // Helpers
@@ -629,7 +628,7 @@
           const ctaGroup = (linkCTA || fileCTA) ? `<div class="img-ctas">${linkCTA}${fileCTA}</div>` : '';
 
           if (viewMode === VIEW_LIST) {
-            // NEW: List view markup
+            // List view markup
             card.innerHTML = `
               <div class="media" data-index="0">
                 <div class="carousel" role="group" aria-label="Images for ${p.name}">
@@ -650,7 +649,7 @@
               </div>
             `;
           } else {
-            // Existing tiles view markup
+            // Tiles view markup
             card.innerHTML = `
               <div class="media" data-index="0">
                 <div class="carousel" role="group" aria-label="Images for ${p.name}">
@@ -767,7 +766,7 @@
         switch (mode) {
           case 'csv':        return arr.sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
           case 'price-asc':  return arr.sort((a,b) => a.price - b.price || a.name.localeCompare(b.name));
-          case 'price-desc': return arr.sort((a,b) => b.price - a.price || a.name.localeCompare(b.name));
+          case 'price-desc': return arr.sort((a,b) => b.price - a.price || a.name.localeCompare(a.name));
           case 'name-asc':   return arr.sort((a,b) => a.name.localeCompare(b.name));
           case 'name-desc':  return arr.sort((a,b) => b.name.localeCompare(a.name));
           case 'relevance':
@@ -786,7 +785,6 @@
         if (q) params.set('q', q); else params.delete('q');
         if (s && s !== 'relevance') params.set('sort', s); else params.delete('sort');
         if (cat) params.set(CAT_PARAM, cat); else params.delete(CAT_PARAM);
-        // NEW: view
         if (view && view !== VIEW_TILES) params.set(VIEW_PARAM, view); else params.delete(VIEW_PARAM);
 
         const qs = params.toString();
@@ -867,10 +865,9 @@
         return window.matchMedia('(max-width: 640px)').matches || /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
       }
 
-      // NEW: view helpers
+      // view helpers
       function applyViewToDOM() {
         document.body.dataset.view = viewMode;
-        // Update pressed states
         const isTiles = viewMode === VIEW_TILES;
         viewTilesBtn.setAttribute('aria-pressed', isTiles ? 'true' : 'false');
         viewListBtn.setAttribute('aria-pressed', isTiles ? 'false' : 'true');
@@ -880,7 +877,6 @@
         viewMode = mode;
         localStorage.setItem('catalogView', viewMode);
         applyViewToDOM();
-        // keep URL in sync
         updateUrl(searchInput.value, sortSelect.value, selectedCategory || '', viewMode);
         if (!opts.noUpdate) update();
       }
@@ -904,7 +900,7 @@
         searchInput.value = ''; setClearXVisible(); update(); searchInput.blur();
       });
 
-      // NEW: view toggle events
+      // view toggle events
       viewTilesBtn.addEventListener('click', () => setView(VIEW_TILES));
       viewListBtn.addEventListener('click',  () => setView(VIEW_LIST));
 
@@ -941,14 +937,6 @@
         if (!panel.contains(e.target)) closePdfModal();
       }
 
-      // Keyboard shortcuts
-      document.addEventListener('keydown', (e) => {
-        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); searchInput.focus(); }
-        if (e.key === 'Escape' && !pdfModal.classList.contains('open')) {
-          if (searchInput.value) { searchInput.value = ''; setClearXVisible(); update(); searchInput.blur(); }
-        }
-      });
-
       // Hide category bar when not at top
       let ticking = false;
       function updateCatbarVisibility() { catBar.classList.toggle('hidden', window.scrollY > 0); ticking = false; }
@@ -963,7 +951,7 @@
         const s = params.get('sort') || 'relevance';
         const cat = params.get(CAT_PARAM) || '';
 
-        // NEW: pick view from URL or localStorage (default tiles)
+        // pick view from URL or localStorage (default tiles)
         const urlView = params.get(VIEW_PARAM);
         const savedView = localStorage.getItem('catalogView');
         const initialView = (urlView === VIEW_LIST || urlView === VIEW_TILES) ? urlView
@@ -998,12 +986,14 @@
           return [];
         }
       }
+
+      // Force tiles on small screens so list view can't appear on mobile
       function enforceMobileTiles() {
-  const small = window.matchMedia('(max-width: 640px)').matches;
-  if (small && viewMode !== 'tiles') setView('tiles');
-}
-window.addEventListener('resize', enforceMobileTiles, { passive: true });
-enforceMobileTiles(); // call once on load
+        const small = window.matchMedia('(max-width: 640px)').matches;
+        if (small && viewMode !== 'tiles') setView('tiles');
+      }
+      window.addEventListener('resize', enforceMobileTiles, { passive: true });
+      enforceMobileTiles(); // call once on load
     </script>
   </body>
 </html>
