@@ -1414,18 +1414,15 @@
       }
 
       // Search bar count text (shows category counts when a category is selected)
-      function updateCountText(listLen) {
-        const total = PARTS.length;
-        const q = searchInput.value.trim();
-        if (selectedCategory) {
-          const inCat = PARTS.filter(p => partMatchesCategory(p, selectedCategory)).length;
-          countEl.textContent = q
-            ? `${listLen} of ${inCat} in ${selectedCategory}`
-            : `${inCat} in ${selectedCategory}`;
-        } else {
-          countEl.textContent = `${listLen} of ${total}`;
-        }
-      }
+function updateCountText(listLen) {
+  const total = PARTS.length;
+  if (selectedCategory) {
+    const inCat = PARTS.filter(p => partMatchesCategory(p, selectedCategory)).length;
+    countEl.textContent = `${listLen} of ${inCat}`;
+  } else {
+    countEl.textContent = `${listLen} of ${total}`;
+  }
+}
 
       // Central update
       function update() {
