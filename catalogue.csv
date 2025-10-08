@@ -24,7 +24,7 @@ Attic Ladder,Operating Rod P,AL-ORP,,,P30;D28;A25;A28,1100mm long round rod with
 Attic Ladder,Ladder Section P,AL-LSP,,,P30;FT30;FTW30,1100mm ladder section dovetailed treads,40,,
 ,,,,,,,,,
 # Roof Hatch Parts,,,,,,,,,
-Roof Hatch,Gas Strut,RH-GS,STAINLESS STEEL,,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,150n,80,,
+Roof Hatch,Gas Strut,RH-GS,STAINLESS STEEL,,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,150n,80,Pneumatic Stay,
 ,,,,,,,,,
 # Fasteners,,,,,,,,,
 Fasteners,M8x25 Bolt,,STEEL 8.8,ZINC,,General fastener typically used for connecting ladder stay arms together,,,
