@@ -1,152 +1,159 @@
-catagory,name,code,material,finish,models,description,price,keywords,link
-# Products,,,,,,,,,
-Attic Ladder,PN30 Attic Ladder,PN30,PINE;STEEL,FACTORY,PN30,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 550mm,699,Pull Down;Folding;Loft,https://www.sellwood.com.au/products/pn30-attic-ladder
-Attic Ladder,P30 Attic Ladder,P30,PINE;STEEL,FACTORY,P30,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 600mm,699,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/premier-range/p30-attic-ladder
-Attic Ladder,P36 Attic Ladder,P36,PINE;STEEL,FACTORY,P36,Heights: 3050mm - 3660mm<br>Opening: 1300mm x 600mm,1599,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/premier-range/p3-attic-ladder
-Attic Ladder,D28 Attic Ladder,D28,PINE;STEEL,FACTORY,D28,Heights: 2250mm - 2800mm<br>Opening: 1400mm x 650mm,1499,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/deluxe-range/d28-attic-ladder
-Attic Ladder,D30 Attic Ladder,D30,PINE;STEEL,FACTORY,D30,Heights: 2800mm - 3100mm<br>Opening: 1450mm x 650mm,1799,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/deluxe-range/d30-attic-ladder
-Attic Ladder,D36 Attic Ladder,D36,PINE;STEEL,FACTORY,D36,Heights: 3100mm - 3660mm<br>Opening: 1450mm x 650mm,2199,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/deluxe-range/d36-attic-ladder
-Attic Ladder,Q24 Attic Ladder,Q24,PINE;STEEL,FACTORY,Q24,Heights: 2250mm - 2440mm<br>Opening: 835mm x 650mm,899,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/truss-range/q24-attic-ladder
-Attic Ladder,Q27 Attic Ladder,Q27,PINE;STEEL,FACTORY,Q27,Heights: 2300mm - 2700mm<br>Opening: 835mm x 650mm,999,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/truss-range/q27-attic-ladder
-Attic Ladder,A25 Attic Ladder,A25,PINE;STEEL,FACTORY,A25,Heights: 2300mm - 2450mm<br>Opening: 1400mm x 650mm,2199,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/commercial-range/a25-attic-ladder
-Attic Ladder,A28 Attic Ladder,A28,PINE;STEEL,FACTORY,A28,Heights: 2550mm - 2700mm<br>Opening: 1400mm x 650mm,2299,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/commercial-range/a28-attic-ladder
-Attic Ladder,A36 Attic Ladder,A36,PINE;STEEL,FACTORY,A36,Heights: 2700mm - 3660mm<br>Opening: 1400mm x 650mm,3499,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/commercial-range/a36-attic-ladder
-Attic Ladder,FT30 Attic Ladder,FT30,PINE;STEEL,FACTORY,FT30,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 600mm,499,,https://www.sellwood.co.nz/product/foldaway-range/ft30-attic-ladder
-Attic Ladder,FA30 Attic Ladder,FA30,PINE;STEEL,FACTORY,FA30,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 600mm,649,,https://www.sellwood.co.nz/product/foldaway-range/fa30-attic-ladder
-Attic Ladder,FTW Attic Ladder,FTW30,PINE;STEEL,FACTORY,FTW30,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 700mm,849,,https://www.sellwood.co.nz/product/foldaway-range/ftw30-attic-ladder
-,,,,,,,,,
-Roof Access,SRH900700 Roof Hatch,SRH900700,ALUMINIUM,P/C Gull Grey,SRH900700,Opening: 900mm x 700mm,1890,,https://www.sellwood.co.nz/product/roof-hatch/srh900700-roof-hatch
-Roof Access,SRH800800 Roof Hatch,SRH800800,ALUMINIUM,P/C Gull Grey,SRH800800,Opening: 800mm x 800mm,1890,,https://www.sellwood.co.nz/product/roof-hatch/srh800800-roof-hatch
-Roof Access,SRH1200700 Roof Hatch,SRH1200700,ALUMINIUM,P/C Gull Grey,SRH1200700,Opening: 1200mm x 700mm,2090,,https://www.sellwood.co.nz/product/roof-hatch/srh1200700-roof-hatch
-Roof Access,SRH1200900 Roof Hatch,SRH1200900,ALUMINIUM,P/C Gull Grey,SRH1200900,Opening: 1200mm x 900mm,2290,,https://www.sellwood.co.nz/product/roof-hatch/srh1200900-roof-hatch
-Roof Access,SRH1500700 Roof Hatch,SRH1500700,ALUMINIUM,P/C Gull Grey,SRH1500700,Opening: 1500mm x 700mm,2290,,https://www.sellwood.co.nz/product/roof-hatch/srh1500700-roof-hatch
-,,,,,,,,,
-Roof Access,RHG1000 Grab Rail,RHG1000,STEEL,STAINLESS;GALV,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,1000mm high,222,Grab Rail; Round;Handle,https://www.sellwood.co.nz/product/roof-hatch-grabrail/rhg1000-roof-hatch-grabrail
-Roof Access,RHB900700 Roof Hatch Barrier,RHB900700,STEEL,STAINLESS;GALV,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,For SRH900700 Roof Hatch,999,Grab Rail; Round;Handle;Fall Protection,https://www.sellwood.co.nz/product/roof-hatch-barrier/rhb900700-roof-hatch-barrier
-Roof Access,RHB800800 Roof Hatch Barrier,RHB800800,STEEL,STAINLESS;GALV,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,For SRH800800 Roof Hatch,999,Grab Rail; Round;Handle;Fall Protection,https://www.sellwood.co.nz/product/roof-hatch-barrier/rhb800800-roof-hatch-barriers
-Roof Access,RHB1200700 Roof Hatch Barrier,RHB1200700,STEEL,STAINLESS;GALV,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,For SRH1200700 Roof Hatch,999,Grab Rail; Round;Handle;Fall Protection,https://www.sellwood.co.nz/product/roof-hatch-barrier/rhb1200700-roof-hatch-barrier
-Roof Access,RHB1200900 Roof Hatch Barrier,RHB1200900,STEEL,STAINLESS;GALV,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,For SRH1200900 Roof Hatch,999,Grab Rail; Round;Handle;Fall Protection,https://www.sellwood.co.nz/product/roof-hatch-barrier/rhb1200900-roof-hatch-barrier
-Roof Access,RHB1500700 Roof Hatch Barrier,RHB1500700,STEEL,STAINLESS;GALV,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,For SRH1500700 Roof Hatch,999,Grab Rail; Round;Handle;Fall Protection,https://www.sellwood.co.nz/product/roof-hatch-barrier/rhb1500700-roof-hatch-barrier
-,,,,,,,,,
-Roof Access,FLA1000 Fixed Ladder,FLA1000,ALUMINIUM,ANODISE,FLA1000,Up to 1000mm,450,Fixed Ladder,https://www.sellwood.co.nz/product/fixed-ladder/fla1000-fixed-ladder
-Roof Access,FLA1000-2000 Fixed Ladder,FLA1000-2000,ALUMINIUM,ANODISE,FLA1000-2000,1000mm - 2000mm,550,Fixed Ladder,https://www.sellwood.co.nz/product/fixed-ladder/fla1000-2000-fixed-ladder
-Roof Access,FLA2000-3000 Fixed Ladder,FLA2000-3000,ALUMINIUM,ANODISE,FLA2000-3000,2000mm - 3000mm,1600,Fixed Ladder,https://www.sellwood.co.nz/product/fixed-ladder/fla2000-3000-fixed-ladder
-Roof Access,FLA3000-4000 Fixed Ladder,FLA3000-4000,ALUMINIUM,ANODISE,FLA3000-4000,3000mm - 4000mm,1800,Fixed Ladder,https://www.sellwood.co.nz/product/fixed-ladder/fla3000-4000-fixed-ladder
-Roof Access,FLA4000-5000 Fixed Ladder,FLA4000-5000,ALUMINIUM,ANODISE,FLA4000-5000,4000mm - 5000mm,2200,Fixed Ladder,https://www.sellwood.co.nz/product/fixed-ladder/fla4000-5000-fixed-ladder
-, ,,,,,,,,
-Roof Access,PLA1000 Pivotal Ladder,PLA1000,ALUMINIUM,ANODISE,PLA1000,Up to 1000mm,550,Pivotal Ladder,https://www.sellwood.co.nz/product/pivotal-ladder/pla1000-pivotal-ladder
-Roof Access,PLA1000-2000 Pivotal Ladder,PLA1000-2000,ALUMINIUM,ANODISE,PLA1000-2000,1000mm - 2000mm,650,Pivotal Ladder,https://www.sellwood.co.nz/product/pivotal-ladder/pla1000-2000-pivotal-ladder
-Roof Access,PLA2000-3000 Pivotal Ladder,PLA2000-3000,ALUMINIUM,ANODISE,PLA2000-3000,2000mm - 3000mm,1700,Pivotal Ladder,https://www.sellwood.co.nz/product/pivotal-ladder/pla2000-3000-pivotal-ladder
-Roof Access,PLA3000-4000 Pivotal Ladder,PLA3000-4000,ALUMINIUM,ANODISE,PLA3000-4000,3000mm - 4000mm,1900,Pivotal Ladder,https://www.sellwood.co.nz/product/pivotal-ladder/pla3000-4000-pivotal-ladder
-Roof Access,PLA4000-5000 Pivotal Ladder,PLA4000-5000,ALUMINIUM,ANODISE,PLA4000-5000,4000mm - 5000mm,2300,Pivotal Ladder,https://www.sellwood.co.nz/product/pivotal-ladder/pla4000-5000-pivotal-ladder
-,,,,,,,,,
-Roof Access,HLA1000 Hook Ladder,HLA1000,ALUMINIUM,ANODISE,HLA1000,Up to 1000mm,550,Hook Ladder,https://www.sellwood.co.nz/product/hook-ladder/hla1000-hook-ladder
-Roof Access,HLA1000-2000 Hook Ladder,HLA1000-2000,ALUMINIUM,ANODISE,HLA1000-2000,1000mm - 2000mm,650,Hook Ladder,https://www.sellwood.co.nz/product/hook-ladder/hla1000-2000-hook-ladder
-Roof Access,HLA2000-3000 Hook Ladder,HLA2000-3000,ALUMINIUM,ANODISE,HLA2000-3000,2000mm - 3000mm,1700,Hook Ladder,https://www.sellwood.co.nz/product/hook-ladder/hla2000-3000-hook-ladder
-Roof Access,HLA3000-4000 Hook Ladder,HLA3000-4000,ALUMINIUM,ANODISE,HLA3000-4000,3000mm - 4000mm,1900,Hook Ladder,https://www.sellwood.co.nz/product/hook-ladder/hla3000-4000-hook-ladder
-Roof Access,HLA4000-5000 Hook Ladder,HLA4000-5000,ALUMINIUM,ANODISE,HLA4000-5000,4000mm - 5000mm,2300,Hook Ladder,https://www.sellwood.co.nz/product/hook-ladder/hla4000-5000-hook-ladder
-,,,,,,,,,
-Roof Access,VLA1000 Vertical Ladder,VLA1000,ALUMINIUM,ANODISE,VLA1000,Up to 1000mm,550,Vertical Ladder,https://www.sellwood.co.nz/product/vertical-ladder/vla1000
-Roof Access,VLA1000-2000 Vertical Ladder,VLA1000-2000,ALUMINIUM,ANODISE,VLA1000-2000,1000mm - 2000mm,750,Vertical Ladder,https://www.sellwood.co.nz/product/vertical-ladder/vla1000-2000-vertical-ladder
-Roof Access,VLA2000-3000 Vertical Ladder,VLA2000-3000,ALUMINIUM,ANODISE,VLA2000-3000,2000mm - 3000mm,950,Vertical Ladder,https://www.sellwood.co.nz/product/vertical-ladder/vla2000-3000-vertical-ladder
-Roof Access,VLA3000-4000 Vertical Ladder,VLA3000-4000,ALUMINIUM,ANODISE,VLA3000-4000,3000mm - 4000mm,1250,Vertical Ladder,https://www.sellwood.co.nz/product/vertical-ladder/vla3000-4000-vertical-ladder
-Roof Access,VLA4000-5000 Vertical Ladder,VLA4000-5000,ALUMINIUM,ANODISE,VLA4000-5000,4000mm - 5000mm,1450,Vertical Ladder,https://www.sellwood.co.nz/product/vertical-ladder/vla4000-5000-vertical-ladder
-,,,,,,,,,
-# Parts,,,,,,,,,
-# Attic Ladders Parts,,,,,,,,,
-Attic Ladder;Parts,Lid PN,,PINE;HDF;POLYSTYRENE,MILL,PN30,Insulated Lid R-Value 0.73. 1240mm x 530mm,60,Door,
-Attic Ladder;Parts,Lid P,,PINE;HDF;POLYSTYRENE,MILL,P30;P36,Insulated Lid R-Value 0.73. 1240mm x 560mm,60,Door,
-Attic Ladder;Parts,Lid D28,,PINE;HDF;POLYSTYRENE,MILL,D28;A25;A28;A36,Insulated Lid R-Value 0.73. 1340mm x 610mm,60,Door,
-Attic Ladder;Parts,Lid D30,,PINE;HDF;POLYSTYRENE,MILL,D30;D36,Insulated Lid R-Value 0.73. 1390mm x 610mm,60,Door,
-Attic Ladder;Parts,Lid Q,,PINE;HDF;POLYSTYRENE,MILL,Q24;Q27,Insulated Lid R-Value 0.73. 790mm x 610mm,60,Door,
-Attic Ladder;Parts,Lid FT,,PINE;HDF;POLYSTYRENE,MILL,FT30;FA30,Insulated Lid R-Value 0.73. 1260mm x 560mm,60,Door,
-Attic Ladder;Parts,Lid FTW,,PINE;HDF;POLYSTYRENE,MILL,FTW30,Insulated Lid R-Value 0.73. 1260mm x 660mm,60,Door,
-,,,,,,,,,
-Attic Ladder;Parts,Ladder Section P,,PINE,MILL,PN30;P30;P36;FT30;FTW30,1100mm x 380mm x 80mm,40,Steps,
-Attic Ladder;Parts,Replacement Section D,,PINE,MILL,D28,1150mm x 430mm x 115mm,40,Steps,
-Attic Ladder;Parts,Replacement Section D30,,PINE,MILL,D30;D36,1350mm x 430mm x 80mm,40,Steps,
-Attic Ladder;Parts,Replacement Section Q,,PINE,MILL,Q24,1100mm x 380mm x 80mm,40,Steps,
-Attic Ladder;Parts,Ladder Section FA,,ALUMINIUM,MILL,FA30,1100mm x 380mm x 80mm,40,Steps,
-Attic Ladder;Parts,Ladder Sections A,,ALUMINIUM,MILL,A25;A28;A36,Custom made to suit model,150,Steps,
-,,,,,,,,,
-Attic Ladder;Parts,Pull Down Rod P,,PINE,MILL,PN30;P30;D28;A25;A28;Q24;Q27,1150mm with screw hook,15,Operating Rod;Handle;Round,
-Attic Ladder;Parts,Pull Down Rod 3.6,,PINE;ALUMINIUM,MILL,P36;D30;D36;A36,1150mm 2pc with with bolt,15,Operating Rod;Handle;Round,
-Attic Ladder;Parts,Pull Down Rod F,,STEEL,MILL,FT30;FA30;FTW30,L shape with square key,15,Operating Rod;Handle;Round,
-,,,,,,,,,
-Attic Ladder;Parts,Foot P,,RUBBER,MILL,PN30;P30;P36;Q24;FT30;FA30;FTW30,2pc with screws 80mm x 20mm profile,20,Feet;Shoe,
-Attic Ladder;Parts,Foot D,,RUBBER,MILL,D28;D30;D36,2pc with screws 115mm x 20mm profile,20,Feet;Shoe,
-Attic Ladder;Parts,Foot Q27,,RUBBER,MILL,Q27,2pc 40mm x 20mm profile,20,Feet;Shoe,
-Attic Ladder;Parts,Foot A,,RUBBER,MILL,A25;A28;A36,Ea 100mm x 20mm profile,10,Feet;Shoe,
-,,,,,,,,,
-Attic Ladder;Parts,Handrail P,,STEEL,P/C RED,P30;D28;FT30;FA30;FTW30,750mm with 2 fixings,20,Grab Rail;Handle;Rail;Round,
-Attic Ladder;Parts,Handrail P36,,ALUMINIUM;STEEL,P/C RED,PN30;P36;D30;D36;A25;A28,800mm with 2 brackets & 4 fixings,20,Grab Rail;Handle;Rail;Flat,
-Attic Ladder;Parts,Handrail P36 2nd,,ALUMINIUM;STEEL,P/C RED,P36,495mm with 2 brackets & 4 fixings,20,Grab Rail;Handle;Rail;Flat,
-Attic Ladder;Parts,Handrail D36 2nd,,ALUMINIUM;STEEL,P/C RED,D36,570mm with 2 brackets & 4 fixings,20,Grab Rail;Handle;Rail;Flat,
-Attic Ladder;Parts,Handrail Q24,,ALUMINIUM;STEEL,P/C RED,Q24,650mm with 2 brackets & 4 fixings,20,Grab Rail;Handle;Rail;Flat,
-Attic Ladder;Parts,Handrail Q27,,ALUMINIUM;STEEL,P/C RED,Q27,650mm with 2 brackets & 4 fixings,20,Grab Rail;Handle;Rail;Flat,
-Attic Ladder;Parts,Handrail A36,,ALUMINIUM;STEEL,P/C RED,A36,800mm with 2 brackets & 4 fixings,20,Grab Rail;Handle;Rail;Flat,
-,,,,,,,,,
-Attic Ladder;Parts,Main Hinge PN,,STEEL,P/C White,PN30,Piano hinge 530mm ,40,Pivot;Joint;Swivel,
-Attic Ladder;Parts,Main Hinge P,,STEEL,P/C White,P30;P36,Piano hinge 560mm ,40,Pivot;Joint;Swivel,
-Attic Ladder;Parts,Main Hinge D,,STEEL,P/C White,D28;D30;D36;Q24;Q27;A25;A28;A36,Piano hinge 610mm ,40,Pivot;Joint;Swivel,
-Attic Ladder;Parts,Main Hinge F LH,,STEEL,P/C MATT CHARCOAL,FT30;FA30;FTW30,Left hand riveted offset hinge,20,Pivot;Joint;Swivel,
-Attic Ladder;Parts,Main Hinge F RH,,STEEL,P/C MATT CHARCOAL,FT30;FA30;FTW30,Right hand riveted offset hinge,20,Pivot;Joint;Swivel,
-,,,,,,,,,
-Attic Ladder;Parts,Spring P,,KOREAN STEEL,ZINC,PN30;P30;P36;D28;D30;D36;A25;A28;A36,"190mm, 40mm O/D",20,Coil;Stretch;,
-Attic Ladder;Parts,Spring Q,,KOREAN STEEL,ZINC,Q24;Q27,"145mm, 40mm OD",20,Coil;Stretch;,
-Attic Ladder;Parts,Spring 2nd Stage,,KOREAN STEEL,ZINC,P36;D28;D30;D36;A36,*UPDATE,20,Coil;Stretch;,
-Attic Ladder;Parts,Spring F,,KOREAN STEEL,ZINC,FT30;FA30;FTW30,*UPDATE,20,Coil;Stretch;,
-,,,,,,,,,
-Attic Ladder;Parts,Con Rod P,,STEEL,P/C MATT CHARCOAL,PN30;P30;P36,260mm hole to hole,10,Connecting Rod,
-Attic Ladder;Parts,Con Rod D,,STEEL,P/C MATT CHARCOAL,D28;D30;D36;A25;A28;A36,282mm hole to hole,10,Connecting Rod,
-Attic Ladder;Parts,Con Rod Q,,STEEL,P/C MATT CHARCOAL,Q24;Q27,175mm hole to hole,10,Connecting Rod,
-,,,,,,,,,
-Attic Ladder;Parts,Upper Stay P,,STEEL,P/C MATT CHARCOAL,PN30;P30;P36,530mm hole to hole,30,Arm,
-Attic Ladder;Parts,Upper Stay D,,STEEL,P/C MATT CHARCOAL,D28;D30;D36;A25;A28;A36,550mm hole to hole,30,Arm,
-Attic Ladder;Parts,Upper Stay Q,,STEEL,P/C MATT CHARCOAL,Q24;Q27,350mm hole to hole,30,Arm,
-,,,,,,,,,
-Attic Ladder;Parts,Lower Stay P,,STEEL,P/C MATT CHARCOAL,PN30;P30;P36,290mm hole to hole,20,Arm,
-Attic Ladder;Parts,Lower Stay D,,STEEL,P/C MATT CHARCOAL,D28;D30;D36;A25;A28;A36,350mm hole to hole,20,Arm,
-Attic Ladder;Parts,Lower Stay Q,,STEEL,P/C MATT CHARCOAL,Q24;Q27,220mm hole to hole,20,Arm,
-,,,,,,,,,
-Attic Ladder;Parts,Stay F LH,,STEEL,P/C MATT CHARCOAL,FT30;FA30;FTW30,Left hand,20,Foldaway,
-Attic Ladder;Parts,Stay F RH,,STEEL,P/C MATT CHARCOAL,FT30;FA30;FTW30,Right hand,20,Foldaway,
-,,,,,,,,,
-Attic Ladder;Parts,Upper Anchor P,,STEEL,P/C MATT CHARCOAL,PN30;P30;P36;D28;D30;D36;Q24;Q27;A25;A28;A36,75mm x 70mm M10 hole,20,Fixed,
-Attic Ladder;Parts,Upper Anchor Replacement,,STEEL,P/C MATT CHARCOAL,OE,94mm x 50mm M10 hole,20,Fixed,
-Attic Ladder;Parts,Lower Anchor  P,,STEEL,P/C MATT CHARCOAL,PN30;P30;P36;D28;D30;D36;Q24;Q27;A25;A28;A36,M10 Hole,20,Fixed,
-,,,,,,,,,
-Attic Ladder;Parts,Ladder Hinge P,,STEEL,P/C MATT CHARCOAL,PN30;P30;FT30;FTW30,V hinge with rivet,15,Pivot;Joint;Swivel,
-Attic Ladder;Parts,Ladder Hinge D,,STEEL,P/C MATT CHARCOAL,D28;D30;D36,Plate hinge with rivet,15,Pivot;Joint;Swivel,
-Attic Ladder;Parts,Ladder Hinge Q,,STEEL,P/C MATT CHARCOAL,P36;Q24;A36,Plate hinge with rivet Offset foldback,15,Pivot;Joint;Swivel,
-Attic Ladder;Parts,Ladder Hinge A,,STEEL,P/C MATT CHARCOAL,P36;Q24;A25;A28;A36,Plate hinge with rivet,15,Pivot;Joint;Swivel,
-Attic Ladder;Parts,Ladder Hinge DQ,,STEEL,P/C MATT CHARCOAL,D36,Plate hinge with rivet Offset foldback,15,Pivot;Joint;Swivel,
-Attic Ladder;Parts,Ladder Hinge FA,,STEEL,P/C MATT CHARCOAL,FA30,Plate hinge with rivet,15,Pivot;Joint;Swivel,
-,,,,,,,,,
-Attic Ladder;Parts,Tread P,,PINE,MILL,PN30;P30;P36;FT30;FTW30,Dovetailed tread 340mm x 80mm x 20mm,5,Step,
-Attic Ladder;Parts,Tread D,,PINE,MILL,D28;D30;D36,Dovetailed tread 390mm x 120mm x 20mm,5,Step,
-Attic Ladder;Parts,Tread Q,,PINE,MILL,Q24,Dovetailed tread 390mm x 80mm x 20mm,5,Step,
-Attic Ladder;Parts,Tread Q27,,PINE,MILL,Q27,Bolt on tread 386mm x 80mm x 20mm,5,Step,
-Attic Ladder;Parts,Tread A,,ALUMINIUM,MILL,A25;A28;A36,Aluminium tread,10,Step,
-,,,,,,,,,
-# Roof Access Parts,,,,,,,,,
-Roof Access;Parts,Gas Strut 150N,,STAINLESS STEEL,,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,150n,80,Pneumatic Stay;Pressure;Newton Force,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-# Fasteners,,,,,,,,,
-Fasteners,M8x25 Bolt,,STEEL 8.8,ZINC,,Typically used for connecting ladder stay arms together,,,
-Fasteners,D Shackle 6mm,,STEEL,GALV,,General fastener 6mm dia,,,
+catagory,name,code,models,manufacturer,material,finish,description,price,keywords,link
+# Products,,,,,,,,,,
+Attic Ladder,PN30 Attic Ladder,PN30,PN30,Hangzhou Timeswood,PINE;STEEL,FACTORY,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 550mm,699,Pull Down;Folding;Loft,https://www.sellwood.com.au/products/pn30-attic-ladder
+Attic Ladder,P30 Attic Ladder,P30,P30,Hangzhou Timeswood,PINE;STEEL,FACTORY,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 600mm,699,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/premier-range/p30-attic-ladder
+Attic Ladder,P36 Attic Ladder,P36,P36,Hangzhou Timeswood,PINE;STEEL,FACTORY,Heights: 3050mm - 3660mm<br>Opening: 1300mm x 600mm,1599,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/premier-range/p3-attic-ladder
+Attic Ladder,D28 Attic Ladder,D28,D28,Hangzhou Timeswood,PINE;STEEL,FACTORY,Heights: 2250mm - 2800mm<br>Opening: 1400mm x 650mm,1499,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/deluxe-range/d28-attic-ladder
+Attic Ladder,D30 Attic Ladder,D30,D30,Hangzhou Timeswood,PINE;STEEL,FACTORY,Heights: 2800mm - 3100mm<br>Opening: 1450mm x 650mm,1799,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/deluxe-range/d30-attic-ladder
+Attic Ladder,D36 Attic Ladder,D36,D36,Hangzhou Timeswood,PINE;STEEL,FACTORY,Heights: 3100mm - 3660mm<br>Opening: 1450mm x 650mm,2199,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/deluxe-range/d36-attic-ladder
+Attic Ladder,Q24 Attic Ladder,Q24,Q24,Hangzhou Timeswood,PINE;STEEL,FACTORY,Heights: 2250mm - 2440mm<br>Opening: 835mm x 650mm,899,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/truss-range/q24-attic-ladder
+Attic Ladder,Q27 Attic Ladder,Q27,Q27,Hangzhou Timeswood,PINE;STEEL,FACTORY,Heights: 2300mm - 2700mm<br>Opening: 835mm x 650mm,999,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/truss-range/q27-attic-ladder
+Attic Ladder,A25 Attic Ladder,A25,A25,Hangzhou Timeswood,PINE;STEEL,FACTORY,Heights: 2300mm - 2450mm<br>Opening: 1400mm x 650mm,2199,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/commercial-range/a25-attic-ladder
+Attic Ladder,A28 Attic Ladder,A28,A28,Hangzhou Timeswood,PINE;STEEL,FACTORY,Heights: 2550mm - 2700mm<br>Opening: 1400mm x 650mm,2299,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/commercial-range/a28-attic-ladder
+Attic Ladder,A36 Attic Ladder,A36,A36,Hangzhou Timeswood,PINE;STEEL,FACTORY,Heights: 2700mm - 3660mm<br>Opening: 1400mm x 650mm,3499,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/commercial-range/a36-attic-ladder
+Attic Ladder,FT30 Attic Ladder,FT30,FT30,Hangzhou Timeswood,PINE;STEEL,FACTORY,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 600mm,499,,https://www.sellwood.co.nz/product/foldaway-range/ft30-attic-ladder
+Attic Ladder,FA30 Attic Ladder,FA30,FA30,Hangzhou Timeswood,PINE;STEEL,FACTORY,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 600mm,649,,https://www.sellwood.co.nz/product/foldaway-range/fa30-attic-ladder
+Attic Ladder,FTW Attic Ladder,FTW30,FTW30,Hangzhou Timeswood,PINE;STEEL,FACTORY,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 700mm,849,,https://www.sellwood.co.nz/product/foldaway-range/ftw30-attic-ladder
+,,,,,,,,,,
+Roof Access,SRH900700 Roof Hatch,SRH900700,SRH900700,Zhejiang Shunshi,ALUMINIUM,P/C Gull Grey,Opening: 900mm x 700mm,1890,,https://www.sellwood.co.nz/product/roof-hatch/srh900700-roof-hatch
+Roof Access,SRH800800 Roof Hatch,SRH800800,SRH800800,Zhejiang Shunshi,ALUMINIUM,P/C Gull Grey,Opening: 800mm x 800mm,1890,,https://www.sellwood.co.nz/product/roof-hatch/srh800800-roof-hatch
+Roof Access,SRH1200700 Roof Hatch,SRH1200700,SRH1200700,Zhejiang Shunshi,ALUMINIUM,P/C Gull Grey,Opening: 1200mm x 700mm,2090,,https://www.sellwood.co.nz/product/roof-hatch/srh1200700-roof-hatch
+Roof Access,SRH1200900 Roof Hatch,SRH1200900,SRH1200900,Zhejiang Shunshi,ALUMINIUM,P/C Gull Grey,Opening: 1200mm x 900mm,2290,,https://www.sellwood.co.nz/product/roof-hatch/srh1200900-roof-hatch
+Roof Access,SRH1500700 Roof Hatch,SRH1500700,SRH1500700,Zhejiang Shunshi,ALUMINIUM,P/C Gull Grey,Opening: 1500mm x 700mm,2290,,https://www.sellwood.co.nz/product/roof-hatch/srh1500700-roof-hatch
+,,,,,,,,,,
+Roof Access,RHG1000 Grab Rail,RHG1000,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,,STEEL,STAINLESS;GALV,1000mm high,222,Grab Rail; Round;Handle,https://www.sellwood.co.nz/product/roof-hatch-grabrail/rhg1000-roof-hatch-grabrail
+Roof Access,RHB900700 Roof Hatch Barrier,RHB900700,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,,STEEL,STAINLESS;GALV,For SRH900700 Roof Hatch,999,Grab Rail; Round;Handle;Fall Protection,https://www.sellwood.co.nz/product/roof-hatch-barrier/rhb900700-roof-hatch-barrier
+Roof Access,RHB800800 Roof Hatch Barrier,RHB800800,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,,STEEL,STAINLESS;GALV,For SRH800800 Roof Hatch,999,Grab Rail; Round;Handle;Fall Protection,https://www.sellwood.co.nz/product/roof-hatch-barrier/rhb800800-roof-hatch-barriers
+Roof Access,RHB1200700 Roof Hatch Barrier,RHB1200700,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,,STEEL,STAINLESS;GALV,For SRH1200700 Roof Hatch,999,Grab Rail; Round;Handle;Fall Protection,https://www.sellwood.co.nz/product/roof-hatch-barrier/rhb1200700-roof-hatch-barrier
+Roof Access,RHB1200900 Roof Hatch Barrier,RHB1200900,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,,STEEL,STAINLESS;GALV,For SRH1200900 Roof Hatch,999,Grab Rail; Round;Handle;Fall Protection,https://www.sellwood.co.nz/product/roof-hatch-barrier/rhb1200900-roof-hatch-barrier
+Roof Access,RHB1500700 Roof Hatch Barrier,RHB1500700,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,,STEEL,STAINLESS;GALV,For SRH1500700 Roof Hatch,999,Grab Rail; Round;Handle;Fall Protection,https://www.sellwood.co.nz/product/roof-hatch-barrier/rhb1500700-roof-hatch-barrier
+,,,,,,,,,,
+Roof Access,FLA1000 Fixed Ladder,FLA1000,FLA1000,Hangzhou Timeswood,ALUMINIUM,ANODISE,Up to 1000mm,450,Fixed Ladder,https://www.sellwood.co.nz/product/fixed-ladder/fla1000-fixed-ladder
+Roof Access,FLA1000-2000 Fixed Ladder,FLA1000-2000,FLA1000-2000,Hangzhou Timeswood,ALUMINIUM,ANODISE,1000mm - 2000mm,550,Fixed Ladder,https://www.sellwood.co.nz/product/fixed-ladder/fla1000-2000-fixed-ladder
+Roof Access,FLA2000-3000 Fixed Ladder,FLA2000-3000,FLA2000-3000,Hangzhou Timeswood,ALUMINIUM,ANODISE,2000mm - 3000mm,1600,Fixed Ladder,https://www.sellwood.co.nz/product/fixed-ladder/fla2000-3000-fixed-ladder
+Roof Access,FLA3000-4000 Fixed Ladder,FLA3000-4000,FLA3000-4000,Hangzhou Timeswood,ALUMINIUM,ANODISE,3000mm - 4000mm,1800,Fixed Ladder,https://www.sellwood.co.nz/product/fixed-ladder/fla3000-4000-fixed-ladder
+Roof Access,FLA4000-5000 Fixed Ladder,FLA4000-5000,FLA4000-5000,Hangzhou Timeswood,ALUMINIUM,ANODISE,4000mm - 5000mm,2200,Fixed Ladder,https://www.sellwood.co.nz/product/fixed-ladder/fla4000-5000-fixed-ladder
+, ,,,,,,,,,
+Roof Access,PLA1000 Pivotal Ladder,PLA1000,PLA1000,Hangzhou Timeswood,ALUMINIUM,ANODISE,Up to 1000mm,550,Pivotal Ladder,https://www.sellwood.co.nz/product/pivotal-ladder/pla1000-pivotal-ladder
+Roof Access,PLA1000-2000 Pivotal Ladder,PLA1000-2000,PLA1000-2000,Hangzhou Timeswood,ALUMINIUM,ANODISE,1000mm - 2000mm,650,Pivotal Ladder,https://www.sellwood.co.nz/product/pivotal-ladder/pla1000-2000-pivotal-ladder
+Roof Access,PLA2000-3000 Pivotal Ladder,PLA2000-3000,PLA2000-3000,Hangzhou Timeswood,ALUMINIUM,ANODISE,2000mm - 3000mm,1700,Pivotal Ladder,https://www.sellwood.co.nz/product/pivotal-ladder/pla2000-3000-pivotal-ladder
+Roof Access,PLA3000-4000 Pivotal Ladder,PLA3000-4000,PLA3000-4000,Hangzhou Timeswood,ALUMINIUM,ANODISE,3000mm - 4000mm,1900,Pivotal Ladder,https://www.sellwood.co.nz/product/pivotal-ladder/pla3000-4000-pivotal-ladder
+Roof Access,PLA4000-5000 Pivotal Ladder,PLA4000-5000,PLA4000-5000,Hangzhou Timeswood,ALUMINIUM,ANODISE,4000mm - 5000mm,2300,Pivotal Ladder,https://www.sellwood.co.nz/product/pivotal-ladder/pla4000-5000-pivotal-ladder
+,,,,,,,,,,
+Roof Access,HLA1000 Hook Ladder,HLA1000,HLA1000,Hangzhou Timeswood,ALUMINIUM,ANODISE,Up to 1000mm,550,Hook Ladder,https://www.sellwood.co.nz/product/hook-ladder/hla1000-hook-ladder
+Roof Access,HLA1000-2000 Hook Ladder,HLA1000-2000,HLA1000-2000,Hangzhou Timeswood,ALUMINIUM,ANODISE,1000mm - 2000mm,650,Hook Ladder,https://www.sellwood.co.nz/product/hook-ladder/hla1000-2000-hook-ladder
+Roof Access,HLA2000-3000 Hook Ladder,HLA2000-3000,HLA2000-3000,Hangzhou Timeswood,ALUMINIUM,ANODISE,2000mm - 3000mm,1700,Hook Ladder,https://www.sellwood.co.nz/product/hook-ladder/hla2000-3000-hook-ladder
+Roof Access,HLA3000-4000 Hook Ladder,HLA3000-4000,HLA3000-4000,Hangzhou Timeswood,ALUMINIUM,ANODISE,3000mm - 4000mm,1900,Hook Ladder,https://www.sellwood.co.nz/product/hook-ladder/hla3000-4000-hook-ladder
+Roof Access,HLA4000-5000 Hook Ladder,HLA4000-5000,HLA4000-5000,Hangzhou Timeswood,ALUMINIUM,ANODISE,4000mm - 5000mm,2300,Hook Ladder,https://www.sellwood.co.nz/product/hook-ladder/hla4000-5000-hook-ladder
+,,,,,,,,,,
+Roof Access,VLA1000 Vertical Ladder,VLA1000,VLA1000,Hangzhou Timeswood,ALUMINIUM,ANODISE,Up to 1000mm,550,Vertical Ladder,https://www.sellwood.co.nz/product/vertical-ladder/vla1000
+Roof Access,VLA1000-2000 Vertical Ladder,VLA1000-2000,VLA1000-2000,Hangzhou Timeswood,ALUMINIUM,ANODISE,1000mm - 2000mm,750,Vertical Ladder,https://www.sellwood.co.nz/product/vertical-ladder/vla1000-2000-vertical-ladder
+Roof Access,VLA2000-3000 Vertical Ladder,VLA2000-3000,VLA2000-3000,Hangzhou Timeswood,ALUMINIUM,ANODISE,2000mm - 3000mm,950,Vertical Ladder,https://www.sellwood.co.nz/product/vertical-ladder/vla2000-3000-vertical-ladder
+Roof Access,VLA3000-4000 Vertical Ladder,VLA3000-4000,VLA3000-4000,Hangzhou Timeswood,ALUMINIUM,ANODISE,3000mm - 4000mm,1250,Vertical Ladder,https://www.sellwood.co.nz/product/vertical-ladder/vla3000-4000-vertical-ladder
+Roof Access,VLA4000-5000 Vertical Ladder,VLA4000-5000,VLA4000-5000,Hangzhou Timeswood,ALUMINIUM,ANODISE,4000mm - 5000mm,1450,Vertical Ladder,https://www.sellwood.co.nz/product/vertical-ladder/vla4000-5000-vertical-ladder
+,,,,,,,,,,
+# Part,,,,,,,,,,
+# Attic Ladders Part,,,,,,,,,,
+Attic Ladder;Part,Lid PN,,PN30,Hangzhou Timeswood,PINE;HDF;POLYSTYRENE,MILL,Insulated Lid R-Value 0.73. 1240mm x 530mm,60,Door,
+Attic Ladder;Part,Lid P,,P30;P36,Hangzhou Timeswood,PINE;HDF;POLYSTYRENE,MILL,Insulated Lid R-Value 0.73. 1240mm x 560mm,60,Door,
+Attic Ladder;Part,Lid D28,,D28;A25;A28;A36,Hangzhou Timeswood,PINE;HDF;POLYSTYRENE,MILL,Insulated Lid R-Value 0.73. 1340mm x 610mm,60,Door,
+Attic Ladder;Part,Lid D30,,D30;D36,Hangzhou Timeswood,PINE;HDF;POLYSTYRENE,MILL,Insulated Lid R-Value 0.73. 1390mm x 610mm,60,Door,
+Attic Ladder;Part,Lid Q,,Q24;Q27,Hangzhou Timeswood,PINE;HDF;POLYSTYRENE,MILL,Insulated Lid R-Value 0.73. 790mm x 610mm,60,Door,
+Attic Ladder;Part,Lid FT,,FT30;FA30,Hangzhou Timeswood,PINE;HDF;POLYSTYRENE,MILL,Insulated Lid R-Value 0.73. 1260mm x 560mm,60,Door,
+Attic Ladder;Part,Lid FTW,,FTW30,Hangzhou Timeswood,PINE;HDF;POLYSTYRENE,MILL,Insulated Lid R-Value 0.73. 1260mm x 660mm,60,Door,
+,,,,,,,,,,
+Attic Ladder;Part,Ladder Section P,,PN30;P30;P36;FT30;FTW30,Hangzhou Timeswood,PINE,MILL,1100mm x 380mm x 80mm,40,Steps,
+Attic Ladder;Part,Replacement Section D,,D28,Hangzhou Timeswood,PINE,MILL,1150mm x 430mm x 115mm,40,Steps,
+Attic Ladder;Part,Replacement Section D30,,D30;D36,Hangzhou Timeswood,PINE,MILL,1350mm x 430mm x 80mm,40,Steps,
+Attic Ladder;Part,Replacement Section Q,,Q24,Hangzhou Timeswood,PINE,MILL,1100mm x 380mm x 80mm,40,Steps,
+Attic Ladder;Part,Ladder Section FA,,FA30,Hangzhou Timeswood,ALUMINIUM,MILL,1100mm x 380mm x 80mm,40,Steps,
+Attic Ladder;Part,Ladder Sections A,,A25;A28;A36,Hangzhou Timeswood,ALUMINIUM,MILL,Custom made to suit model,150,Steps,
+,,,,,,,,,,
+Attic Ladder;Part,Pull Down Rod P,,PN30;P30;D28;A25;A28;Q24;Q27,Hangzhou Timeswood,PINE,MILL,1150mm with screw hook,15,Operating Rod;Handle;Round,
+Attic Ladder;Part,Pull Down Rod 3.6,,P36;D30;D36;A36,Hangzhou Timeswood,PINE;ALUMINIUM,MILL,1150mm 2pc with with bolt,15,Operating Rod;Handle;Round,
+Attic Ladder;Part,Pull Down Rod F,,FT30;FA30;FTW30,Hangzhou Timeswood,STEEL,MILL,L shape with square key,15,Operating Rod;Handle;Round,
+,,,,,,,,,,
+Attic Ladder;Part,Foot P,,PN30;P30;P36;Q24;FT30;FA30;FTW30,Hangzhou Timeswood,RUBBER,MILL,2pc with screws 80mm x 20mm profile,20,Feet;Shoe,
+Attic Ladder;Part,Foot D,,D28;D30;D36,Hangzhou Timeswood,RUBBER,MILL,2pc with screws 115mm x 20mm profile,20,Feet;Shoe,
+Attic Ladder;Part,Foot Q27,,Q27,Hangzhou Timeswood,RUBBER,MILL,2pc 40mm x 20mm profile,20,Feet;Shoe,
+Attic Ladder;Part,Foot A,,A25;A28;A36,Hangzhou Timeswood,RUBBER,MILL,Ea 100mm x 20mm profile,10,Feet;Shoe,
+,,,,,,,,,,
+Attic Ladder;Part,Handrail P,,P30;D28;FT30;FA30;FTW30,Hangzhou Timeswood,STEEL,P/C RED,750mm with 2 fixings,20,Grab Rail;Handle;Rail;Round,
+Attic Ladder;Part,Handrail P36,,PN30;P36;D30;D36;A25;A28,Hangzhou Timeswood,ALUMINIUM;STEEL,P/C RED,800mm with 2 brackets & 4 fixings,20,Grab Rail;Handle;Rail;Flat,
+Attic Ladder;Part,Handrail P36 2nd,,P36,Hangzhou Timeswood,ALUMINIUM;STEEL,P/C RED,495mm with 2 brackets & 4 fixings,20,Grab Rail;Handle;Rail;Flat,
+Attic Ladder;Part,Handrail D36 2nd,,D36,Hangzhou Timeswood,ALUMINIUM;STEEL,P/C RED,570mm with 2 brackets & 4 fixings,20,Grab Rail;Handle;Rail;Flat,
+Attic Ladder;Part,Handrail Q24,,Q24,Hangzhou Timeswood,ALUMINIUM;STEEL,P/C RED,650mm with 2 brackets & 4 fixings,20,Grab Rail;Handle;Rail;Flat,
+Attic Ladder;Part,Handrail Q27,,Q27,Hangzhou Timeswood,ALUMINIUM;STEEL,P/C RED,650mm with 2 brackets & 4 fixings,20,Grab Rail;Handle;Rail;Flat,
+Attic Ladder;Part,Handrail A36,,A36,Hangzhou Timeswood,ALUMINIUM;STEEL,P/C RED,800mm with 2 brackets & 4 fixings,20,Grab Rail;Handle;Rail;Flat,
+,,,,,,,,,,
+Attic Ladder;Part,Main Hinge PN,,PN30,Hangzhou Timeswood,STEEL,P/C White,Piano hinge 530mm ,40,Pivot;Joint;Swivel,
+Attic Ladder;Part,Main Hinge P,,P30;P36,Hangzhou Timeswood,STEEL,P/C White,Piano hinge 560mm ,40,Pivot;Joint;Swivel,
+Attic Ladder;Part,Main Hinge D,,D28;D30;D36;Q24;Q27;A25;A28;A36,Hangzhou Timeswood,STEEL,P/C White,Piano hinge 610mm ,40,Pivot;Joint;Swivel,
+Attic Ladder;Part,Main Hinge F LH,,FT30;FA30;FTW30,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,Left hand riveted offset hinge,20,Pivot;Joint;Swivel,
+Attic Ladder;Part,Main Hinge F RH,,FT30;FA30;FTW30,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,Right hand riveted offset hinge,20,Pivot;Joint;Swivel,
+,,,,,,,,,,
+Attic Ladder;Part,Spring P,,PN30;P30;P36;D28;D30;D36;A25;A28;A36,Hangzhou Timeswood,KOREAN STEEL,ZINC,"190mm, 40mm O/D",20,Coil;Stretch;,
+Attic Ladder;Part,Spring Q,,Q24;Q27,Hangzhou Timeswood,KOREAN STEEL,ZINC,"145mm, 40mm OD",20,Coil;Stretch;,
+Attic Ladder;Part,Spring 2nd Stage,,P36;D28;D30;D36;A36,Hangzhou Timeswood,KOREAN STEEL,ZINC,*UPDATE,20,Coil;Stretch;,
+Attic Ladder;Part,Spring F,,FT30;FA30;FTW30,Hangzhou Timeswood,KOREAN STEEL,ZINC,*UPDATE,20,Coil;Stretch;,
+,,,,,,,,,,
+Attic Ladder;Part,Con Rod P,,PN30;P30;P36,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,260mm hole to hole,10,Connecting Rod,
+Attic Ladder;Part,Con Rod D,,D28;D30;D36;A25;A28;A36,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,282mm hole to hole,10,Connecting Rod,
+Attic Ladder;Part,Con Rod Q,,Q24;Q27,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,175mm hole to hole,10,Connecting Rod,
+,,,,,,,,,,
+Attic Ladder;Part,Upper Stay P,,PN30;P30;P36,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,530mm hole to hole,30,Arm,
+Attic Ladder;Part,Upper Stay D,,D28;D30;D36;A25;A28;A36,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,550mm hole to hole,30,Arm,
+Attic Ladder;Part,Upper Stay Q,,Q24;Q27,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,350mm hole to hole,30,Arm,
+,,,,,,,,,,
+Attic Ladder;Part,Lower Stay P,,PN30;P30;P36,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,290mm hole to hole,20,Arm,
+Attic Ladder;Part,Lower Stay D,,D28;D30;D36;A25;A28;A36,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,350mm hole to hole,20,Arm,
+Attic Ladder;Part,Lower Stay Q,,Q24;Q27,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,220mm hole to hole,20,Arm,
+,,,,,,,,,,
+Attic Ladder;Part,Stay F LH,,FT30;FA30;FTW30,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,Left hand,20,Foldaway,
+Attic Ladder;Part,Stay F RH,,FT30;FA30;FTW30,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,Right hand,20,Foldaway,
+,,,,Hangzhou Timeswood,,,,,,
+Attic Ladder;Part,Upper Anchor P,,PN30;P30;P36;D28;D30;D36;Q24;Q27;A25;A28;A36,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,75mm x 70mm M10 hole,20,Fixed,
+Attic Ladder;Part,Upper Anchor Replacement,,OE,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,94mm x 50mm M10 hole,20,Fixed,
+Attic Ladder;Part,Lower Anchor  P,,PN30;P30;P36;D28;D30;D36;Q24;Q27;A25;A28;A36,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,M10 Hole,20,Fixed,
+,,,,,,,,,,
+Attic Ladder;Part,Ladder Hinge P,,PN30;P30;FT30;FTW30,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,V hinge with rivet,15,Pivot;Joint;Swivel,
+Attic Ladder;Part,Ladder Hinge D,,D28;D30;D36,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,Plate hinge with rivet,15,Pivot;Joint;Swivel,
+Attic Ladder;Part,Ladder Hinge Q,,P36;Q24;A36,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,Plate hinge with rivet Offset foldback,15,Pivot;Joint;Swivel,
+Attic Ladder;Part,Ladder Hinge A,,P36;Q24;A25;A28;A36,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,Plate hinge with rivet,15,Pivot;Joint;Swivel,
+Attic Ladder;Part,Ladder Hinge DQ,,D36,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,Plate hinge with rivet Offset foldback,15,Pivot;Joint;Swivel,
+Attic Ladder;Part,Ladder Hinge FA,,FA30,Hangzhou Timeswood,STEEL,P/C MATT CHARCOAL,Plate hinge with rivet,15,Pivot;Joint;Swivel,
+,,,,,,,,,,
+Attic Ladder;Part,Tread P,,PN30;P30;P36;FT30;FTW30,Hangzhou Timeswood,PINE,MILL,Dovetailed tread 340mm x 80mm x 20mm,5,Step,
+Attic Ladder;Part,Tread D,,D28;D30;D36,Hangzhou Timeswood,PINE,MILL,Dovetailed tread 390mm x 120mm x 20mm,5,Step,
+Attic Ladder;Part,Tread Q,,Q24,Hangzhou Timeswood,PINE,MILL,Dovetailed tread 390mm x 80mm x 20mm,5,Step,
+Attic Ladder;Part,Tread Q27,,Q27,Hangzhou Timeswood,PINE,MILL,Bolt on tread 386mm x 80mm x 20mm,5,Step,
+Attic Ladder;Part,Tread A,,A25;A28;A36,Hangzhou Timeswood,ALUMINIUM,MILL,Aluminium tread,10,Step,
+,,,,,,,,,,
+Attic Ladder;Roof Access;Part,Gusset,,A25;A28;A36;FLA;PLA;HLA,Hangzhou Timeswood,ALUMINIUM,MILL,164mm hole to hole,5,Brace,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+# Roof Access Part,,,,,,,,,,
+Roof Access;Part,Gas Strut 150N,,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,Zhejiang Shunshi,STAINLESS STEEL,,150n,80,Pneumatic Stay;Pressure;Newton Force,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+# Fasteners,,,,,,,,,,
+Fasteners,M8x25 Bolt,,,,STEEL 8.8,ZINC,Typically used for connecting ladder stay arms together,,,
+Fasteners,D Shackle 6mm,,,,STEEL,GALV,General fastener 6mm dia,,,

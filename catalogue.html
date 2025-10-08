@@ -366,7 +366,7 @@
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        border: 1px solid rgba(0, 0, 0, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.18);
         background: rgba(255, 255, 255, 0.9);
         padding: 0;
         line-height: 0;
@@ -572,6 +572,13 @@
 
       .finish-pill {
         background: #eee;
+      }
+
+      /* Manufacturer pill */
+      .manufacturer-pill {
+        background: #eef6ff;
+        border: 1px solid #cfe8ff;
+        color: #0b5394;
       }
 
       .desc {
@@ -794,6 +801,31 @@
       const VIEW_PARAM = 'view';
       const VIEW_TILES = 'tiles';
       const VIEW_LIST = 'list';
+
+      // Existence cache (for images and files) to speed up refreshes
+      const EXISTS_CACHE_KEY = 'catalog.exists.v1';
+      const EXISTS_CACHE_TTL = 1000 * 60 * 60 * 24 * 7; // 7 days
+      let existsCache;
+      try {
+        existsCache = JSON.parse(localStorage.getItem(EXISTS_CACHE_KEY)) || { images: {}, file: {} };
+      } catch {
+        existsCache = { images: {}, file: {} };
+      }
+      function getCached(type, key) {
+        const bucket = existsCache[type] || {};
+        const entry = bucket[key];
+        if (!entry) return null;
+        if ((Date.now() - (entry.ts || 0)) > EXISTS_CACHE_TTL) return null;
+        return entry.value;
+      }
+      function setCached(type, key, value) {
+        if (!existsCache[type]) existsCache[type] = {};
+        existsCache[type][key] = { ts: Date.now(), value };
+        try {
+          localStorage.setItem(EXISTS_CACHE_KEY, JSON.stringify(existsCache));
+        } catch {}
+      }
+
       // DOM refs
       const grid = document.getElementById('grid');
       const countEl = document.getElementById('count');
@@ -808,11 +840,13 @@
       // view buttons
       const viewTilesBtn = document.getElementById('viewTilesBtn');
       const viewListBtn = document.getElementById('viewListBtn');
+
       const fmtPrice = new Intl.NumberFormat('en-NZ', {
         style: 'currency',
         currency,
         currencyDisplay: 'narrowSymbol'
       });
+
       // State
       let PARTS = [];
       const SCORES = new Map();
@@ -820,6 +854,7 @@
       let selectedCategory = ''; // empty = All
       let ALL_CATEGORIES = [];
       let viewMode = VIEW_TILES;
+
       // Helpers
       function debounce(fn, wait = 180) {
         let t;
@@ -830,7 +865,11 @@
       }
 
       function norm(s) {
-        return String(s || '').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[_/\\-]+/g, ' ').replace(/\s+/g, ' ').trim();
+        return String(s || '').toLowerCase().normalize('NFKD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[_/\\-]+/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
       }
 
       function slugify(s) {
@@ -841,32 +880,38 @@
         if (!s) return [];
         return String(s).split(/[;]+|,(?!\s)/g).map(v => v.trim()).filter(Boolean);
       }
-      async function resolveExistingImages(names) {
+
+      // Cached image resolution for a part (tries common extensions)
+      async function resolveExistingImages(p) {
+        const cached = getCached('images', p.slug);
+        if (cached) return cached;
+
         const checkOne = async (name) => {
           for (const ext of IMAGE_DEFAULT_EXTS) {
             const v = `${IMAGE_DIR.replace(/\/?$/,'/')}${name}.${ext}`;
             try {
-              const res = await fetch(v, {
-                method: 'HEAD',
-                cache: 'no-store'
-              });
+              const res = await fetch(v, { method: 'HEAD', cache: 'force-cache' });
               if (res.ok) return v;
             } catch {}
           }
           return null;
         };
-        const urls = await Promise.all(names.map(checkOne));
-        return urls.filter(Boolean);
+        const urls = (await Promise.all(p.possibleImageNames.map(checkOne))).filter(Boolean);
+        setCached('images', p.slug, urls);
+        return urls;
       }
-      async function checkFileExists(rawName) {
-        if (!rawName) return null;
-        const v = `${FILE_DIR.replace(/\/?$/,'/')}${rawName}.${FILE_DEFAULT_EXT}`;
+
+      async function checkFileExists(slug) {
+        if (!slug) return null;
+        const cached = getCached('file', slug);
+        if (cached !== null) return cached; // may be null if known missing
+
+        const v = `${FILE_DIR.replace(/\/?$/,'/')}${slug}.${FILE_DEFAULT_EXT}`;
         try {
-          const res = await fetch(v, {
-            method: 'HEAD',
-            cache: 'no-store'
-          });
-          return res.ok ? v : null;
+          const res = await fetch(v, { method: 'HEAD', cache: 'force-cache' });
+          const ok = res.ok ? v : null;
+          setCached('file', slug, ok);
+          return ok;
         } catch {
           return null;
         }
@@ -876,16 +921,12 @@
         // Strip BOM if present
         if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
         const rows = [];
-        let i = 0,
-          f = '',
-          row = [],
-          q = false;
+        let i = 0, f = '', row = [], q = false;
 
         function pushF() {
           row.push(f);
           f = '';
         }
-
         function pushR() {
           rows.push(row);
           row = [];
@@ -894,38 +935,27 @@
           const c = text[i];
           if (q) {
             if (c === '"') {
-              if (text[i + 1] === '"') {
-                f += '"';
-                i++;
-              } else {
-                q = false;
-              }
+              if (text[i + 1] === '"') { f += '"'; i++; }
+              else { q = false; }
             } else {
               f += c;
             }
           } else {
             if (c === '"') q = true;
             else if (c === ',') pushF();
-            else if (c === '\n') {
-              pushF();
-              pushR();
-            } else if (c === '\r') {
-              /* ignore */ } else {
-              f += c;
-            }
+            else if (c === '\n') { pushF(); pushR(); }
+            else if (c === '\r') { /* ignore */ }
+            else { f += c; }
           }
           i++;
         }
-        if (f.length > 0 || row.length) {
-          pushF();
-          pushR();
-        }
+        if (f.length > 0 || row.length) { pushF(); pushR(); }
+
         // Drop blank rows and single-cell comment/header rows (except the first header row)
         const cleaned = rows.filter((r, idx) => {
           if (idx === 0) return true; // keep the CSV header row
           const nonEmpty = r.filter(v => String(v).trim() !== '');
           if (nonEmpty.length === 0) return false; // blank row
-          // comment/header row = exactly one non-empty cell starting with #, ;, or //
           const first = String(nonEmpty[0]).trim();
           if (nonEmpty.length === 1 && (/^(#|;|\/\/)/.test(first))) return false;
           return true;
@@ -950,8 +980,7 @@
         const s = String(raw || '').trim();
         if (!s) return null;
         const idx = s.indexOf(';');
-        let label = '',
-          url = '';
+        let label = '', url = '';
         if (idx === -1) {
           if (/^https?:\/\//i.test(s)) {
             label = 'Link';
@@ -963,10 +992,7 @@
           if (!url) return null;
           if (!label) label = 'Link';
         }
-        return {
-          label,
-          url
-        };
+        return { label, url };
       }
 
       function recordsToParts(records) {
@@ -983,14 +1009,15 @@
           const price = parseFloat(pick(rec, ['price'])) || 0;
           const models = splitList(pick(rec, ['model', 'models']));
           const categories = splitList(pick(rec, ['category', 'categories', 'catagory']));
-          // MULTI values for materials and finishes
           const materials = splitList(pick(rec, ['material']));
           const finishes = splitList(pick(rec, ['finish', 'finiah']));
           const keywords = splitList(pick(rec, ['keywords']));
+          const manufacturer = pick(rec, ['manufacturer', 'brand', 'make']); // NEW
           const linkRaw = pick(rec, ['link']);
           const link = parseLink(linkRaw);
-          const file = nameSlug;
+
           return {
+            slug: nameSlug, // NEW
             name,
             code,
             description,
@@ -1001,8 +1028,9 @@
             materials,
             finishes,
             keywords,
+            manufacturer,  // NEW
             link,
-            file,
+            file: null,     // will be set after existence check
             order: i
           };
         });
@@ -1022,122 +1050,122 @@
           emptyEl.textContent = msg;
           if (msg) emptyEl.classList.add('active');
           else emptyEl.classList.remove('active');
-          countEl.textContent = `0 of ${PARTS.length}`;
+          updateCountText(0);
           return;
         } else {
           emptyEl.classList.remove('active');
         }
+
         list.forEach(p => {
           const card = document.createElement('article');
           card.className = 'card';
           card.setAttribute('data-code', p.code);
+
           const hasModels = Array.isArray(p.models) && p.models.length > 0;
           const modelsHTML = hasModels ? p.models.map(m => `
 				<span class="model-tag">${m}</span>`).join('') : '';
-          // Material/Finish pills (support multiple)
+
+          // Manufacturer + Material/Finish pills (manufacturer first)
+          const hasManufacturer = !!(p.manufacturer && String(p.manufacturer).trim());
+          const manufacturerHTML = hasManufacturer ? `
+            <span class="attr-pill manufacturer-pill" title="Manufacturer">${p.manufacturer}</span>` : '';
+
           const hasMaterials = Array.isArray(p.materials) && p.materials.length > 0;
           const hasFinishes = Array.isArray(p.finishes) && p.finishes.length > 0;
           const materialsHTML = hasMaterials ? p.materials.map(mat => `
 				<span class="attr-pill material-pill" title="Material">${mat}</span>`).join('') : '';
           const finishesHTML = hasFinishes ? p.finishes.map(fin => `
 				<span class="attr-pill finish-pill" title="Finish">${fin}</span>`).join('') : '';
-          const attrsHTML = (hasMaterials || hasFinishes) ? `
-            
-				<div class="attrs" aria-label="Material and finish">
-              ${materialsHTML}${finishesHTML}
-            </div>` : '';
+
+          const attrsHTML = (hasManufacturer || hasMaterials || hasFinishes) ? `
+				<div class="attrs" aria-label="Manufacturer, material and finish">
+              ${manufacturerHTML}${materialsHTML}${finishesHTML}
+        </div>` : '';
+
           const rawImages = p.images || [];
           const placeholder = `https://placehold.jp/48/eee/666/600x400.png?text=${encodeURIComponent(p.name || 'Part')}`;
           const resolved = rawImages.length ? rawImages : [placeholder];
+
           const slidesHTML = resolved.map((src, i) => `
-            
 				<div class="slide">
 					<img src="${src}" alt="${(p.name||'Part')} image ${i+1}" loading="lazy" decoding="async" />
 				</div>`).join('');
+
           const dotsHTML = resolved.length > 1 ? `
-            
 				<div class="dots">${resolved.map((_,i)=>`
-              
 					<button class="dot ${i===0?'active':''}" type="button" aria-label="Go to image ${i+1}" data-i="${i}"></button>`).join('')}
-            
 				</div>` : '';
+
           const arrowsHTML = resolved.length > 1 ? `
-            
 				<button class="nav-arrow nav-prev" type="button" aria-label="Previous image" title="Previous">‹</button>
 				<button class="nav-arrow nav-next" type="button" aria-label="Next image" title="Next">›</button>
           ` : '';
+
           const linkCTA = (p.link && p.link.url) ? `
-            
 				<a class="img-cta" href="${p.link.url}" target="_blank" rel="noopener" aria-label="${p.link.label} for ${p.name}">${p.link.label}</a>` : '';
-          const fileUrl = p.file;
+
+          const fileUrl = p.file; // filled after hydration
           const fileCTA = fileUrl ? `
 				<button class="img-cta pdf-cta" type="button" data-file="${fileUrl}" data-title="${p.name}">File</button>` : '';
+
           const ctaGroup = (linkCTA || fileCTA) ? `
 				<div class="img-ctas">${linkCTA}${fileCTA}</div>` : '';
+
           if (viewMode === VIEW_LIST) {
-            // List view: Name+Code, then Models, then Material/Finish, then Description
+            // List view: Name+Code, then Models, then Manufacturer/Material/Finish, then Description
             card.innerHTML = `
-              
 				<div class="media" data-index="0">
 					<div class="carousel" role="group" aria-label="Images for ${p.name}">
-                  ${slidesHTML}
-                </div>
-                ${p.price>0 ? `
+              ${slidesHTML}
+            </div>
+            ${p.price>0 ? `
 					<div class="img-price" title="Price">${fmtPrice.format(p.price)}</div>` : ''}
-                ${ctaGroup}
-                ${dotsHTML}
-                ${arrowsHTML}
-              
+            ${ctaGroup}
+            ${dotsHTML}
+            ${arrowsHTML}
 				</div>
 				<div class="content">
 					<div class="name-row">
 						<div class="name">${p.name}</div>
-                  ${p.code ? `
-						<div class="code">${p.code}</div>` : ''}
-                
+            ${p.code ? `<div class="code">${p.code}</div>` : ''}
 					</div>
-                ${hasModels ? `
-					<div class="models" aria-label="Compatible models">${modelsHTML}</div>` : ''}
-                ${attrsHTML}
-                
+          ${hasModels ? `<div class="models" aria-label="Compatible models">${modelsHTML}</div>` : ''}
+          ${attrsHTML}
 					<div class="desc">${p.description}</div>
 				</div>
             `;
           } else {
             // Tiles view
             card.innerHTML = `
-              
 				<div class="media" data-index="0">
 					<div class="carousel" role="group" aria-label="Images for ${p.name}">
-                  ${slidesHTML}
-                </div>
-                ${p.price>0 ? `
+              ${slidesHTML}
+            </div>
+            ${p.price>0 ? `
 					<div class="img-price" title="Price">${fmtPrice.format(p.price)}</div>` : ''}
-                ${ctaGroup}
-                ${dotsHTML}
-                ${arrowsHTML}
-              
+            ${ctaGroup}
+            ${dotsHTML}
+            ${arrowsHTML}
 				</div>
 				<div class="content">
 					<div class="title-row">
 						<div class="name">${p.name}</div>
-                  ${p.code ? `
-						<div class="code">${p.code}</div>` : ''}
-                
+            ${p.code ? `<div class="code">${p.code}</div>` : ''}
 					</div>
-                ${hasModels ? `
-					<div class="models" aria-label="Compatible models">${modelsHTML}</div>` : ''}
-                ${attrsHTML}
-                
+          ${hasModels ? `<div class="models" aria-label="Compatible models">${modelsHTML}</div>` : ''}
+          ${attrsHTML}
 					<div class="desc">${p.description}</div>
 				</div>
             `;
           }
+
           setupCarousel(card.querySelector('.media'));
           grid.appendChild(card);
         });
-        countEl.textContent = `${list.length} of ${PARTS.length}`;
+
+        updateCountText(list.length);
       }
+
       // Carousel
       function setupCarousel(mediaEl) {
         const track = mediaEl.querySelector('.carousel');
@@ -1146,11 +1174,10 @@
         const dots = mediaEl.querySelectorAll('.dot');
         const total = slides.length;
         if (total <= 1) return;
+
         const prevBtn = mediaEl.querySelector('.nav-prev');
         const nextBtn = mediaEl.querySelector('.nav-next');
-        let idx = 0,
-          startX = 0,
-          startY = 0;
+        let idx = 0, startX = 0, startY = 0;
 
         function go(i) {
           idx = (i + total) % total;
@@ -1158,6 +1185,7 @@
           dots.forEach((d, j) => d.classList.toggle('active', j === idx));
           mediaEl.dataset.index = idx;
         }
+
         // Click anywhere on image cycles forward, dots go to index, arrows prev/next
         mediaEl.addEventListener('click', (e) => {
           if (e.target.closest('.img-cta') || e.target.closest('.dots') || e.target.closest('.nav-arrow')) return;
@@ -1171,13 +1199,13 @@
           e.stopPropagation();
           go(idx + 1);
         });
+
         mediaEl.addEventListener('touchstart', (e) => {
           const t = e.touches[0];
           startX = t.clientX;
           startY = t.clientY;
-        }, {
-          passive: true
-        });
+        }, { passive: true });
+
         mediaEl.addEventListener('touchend', (e) => {
           const t = e.changedTouches[0];
           const dx = t.clientX - startX;
@@ -1186,10 +1214,9 @@
             if (dx < 0) go(idx + 1);
             else go(idx - 1);
           }
-        }, {
-          passive: true
-        });
+        }, { passive: true });
       }
+
       // Relevance scoring
       const WEIGHTS = {
         name: 3,
@@ -1199,7 +1226,8 @@
         finishes: 1,
         categories: 2,
         keywords: 1,
-        description: 1
+        description: 1,
+        manufacturer: 2 // NEW
       };
 
       function partMatchesCategory(p, cat) {
@@ -1222,6 +1250,7 @@
             name: norm(p.name),
             code: norm(p.code),
             description: norm(p.description),
+            manufacturer: norm(p.manufacturer),
             categories: (p.categories || []).map(norm),
             models: (p.models || []).map(norm),
             keywords: (p.keywords || []).map(norm),
@@ -1232,7 +1261,7 @@
           const pass = tokens.every(t => {
             let hit = false;
             // string fields
-            for (const key of ['name', 'code', 'description']) {
+            for (const key of ['name', 'code', 'description', 'manufacturer']) {
               const val = f[key];
               if (val && val.includes(t)) {
                 hit = true;
@@ -1253,6 +1282,7 @@
           return pass;
         });
       }
+
       // Sorting: Relevance, CSV, alpha, price
       function sortParts(list, mode) {
         const arr = list.slice();
@@ -1271,23 +1301,19 @@
           default:
             if (SCORES.size === 0) return arr.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
             return arr.sort((a, b) => {
-              const sa = SCORES.get(a.code) || 0,
-                sb = SCORES.get(b.code) || 0;
+              const sa = SCORES.get(a.code) || 0, sb = SCORES.get(b.code) || 0;
               return sb - sa || (a.order ?? 0) - (b.order ?? 0);
             });
         }
       }
+
       // URL sync
       function updateUrl(q, s, cat, view) {
         const params = new URLSearchParams(location.search);
-        if (q) params.set('q', q);
-        else params.delete('q');
-        if (s && s !== 'relevance') params.set('sort', s);
-        else params.delete('sort');
-        if (cat) params.set(CAT_PARAM, cat);
-        else params.delete(CAT_PARAM);
-        if (view && view !== VIEW_TILES) params.set(VIEW_PARAM, view);
-        else params.delete(VIEW_PARAM);
+        if (q) params.set('q', q); else params.delete('q');
+        if (s && s !== 'relevance') params.set('sort', s); else params.delete('sort');
+        if (cat) params.set(CAT_PARAM, cat); else params.delete(CAT_PARAM);
+        if (view && view !== VIEW_TILES) params.set(VIEW_PARAM, view); else params.delete(VIEW_PARAM);
         const qs = params.toString();
         history.replaceState(null, '', qs ? `${location.pathname}?${qs}` : location.pathname);
       }
@@ -1298,6 +1324,7 @@
         else clearX.classList.remove('visible');
         searchLabel.classList.toggle('has-value', has);
       }
+
       // Category bar build/update
       function buildCategoryBar() {
         const set = new Set();
@@ -1309,6 +1336,7 @@
         const pri = CATEGORY_PRIORITY.filter(c => allCats.some(x => norm(x) === norm(c)));
         const rest = allCats.filter(c => !lowerPriority.includes(norm(c))).sort((a, b) => a.localeCompare(b));
         ALL_CATEGORIES = [...pri, ...rest];
+
         catBar.innerHTML = '';
         const allChip = chipEl('All', selectedCategory === '' ? true : false, () => {
           selectedCategory = '';
@@ -1316,6 +1344,7 @@
           updateCatChipActive();
         });
         catBar.appendChild(allChip);
+
         ALL_CATEGORIES.forEach(c => {
           const active = norm(c) === norm(selectedCategory);
           const el = chipEl(c, active, () => {
@@ -1347,6 +1376,7 @@
         });
         updateUrl(searchInput.value, sortSelect.value, selectedCategory || '', viewMode);
       }
+
       // PDF fit helper
       function withPdfFit(url) {
         const [base, hash = ''] = url.split('#');
@@ -1365,6 +1395,7 @@
       function isMobile() {
         return window.matchMedia('(max-width: 640px)').matches || /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
       }
+
       // view helpers
       function applyViewToDOM() {
         document.body.dataset.view = viewMode;
@@ -1381,6 +1412,21 @@
         updateUrl(searchInput.value, sortSelect.value, selectedCategory || '', viewMode);
         if (!opts.noUpdate) update();
       }
+
+      // Search bar count text (shows category counts when a category is selected)
+      function updateCountText(listLen) {
+        const total = PARTS.length;
+        const q = searchInput.value.trim();
+        if (selectedCategory) {
+          const inCat = PARTS.filter(p => partMatchesCategory(p, selectedCategory)).length;
+          countEl.textContent = q
+            ? `${listLen} of ${inCat} in ${selectedCategory}`
+            : `${inCat} in ${selectedCategory}`;
+        } else {
+          countEl.textContent = `${listLen} of ${total}`;
+        }
+      }
+
       // Central update
       function update() {
         const q = searchInput.value;
@@ -1390,7 +1436,9 @@
         render(sorted);
         updateUrl(q, s, selectedCategory || '', viewMode);
       }
+
       const debouncedUpdate = debounce(update, 150);
+
       // Events
       searchInput.addEventListener('input', () => {
         setClearXVisible();
@@ -1405,9 +1453,11 @@
         update();
         searchInput.blur();
       });
+
       // view toggle events
       viewTilesBtn.addEventListener('click', () => setView(VIEW_TILES));
       viewListBtn.addEventListener('click', () => setView(VIEW_LIST));
+
       // PDF button: mobile opens same tab, desktop opens modal
       grid.addEventListener('click', (e) => {
         const btn = e.target.closest('.pdf-cta');
@@ -1420,6 +1470,7 @@
         }
         openPdfModal(finalUrl);
       });
+
       // Modal behavior (desktop)
       function openPdfModal(url) {
         lastFocused = document.activeElement;
@@ -1447,9 +1498,9 @@
         const panel = pdfModal.querySelector('.panel');
         if (!panel.contains(e.target)) closePdfModal();
       }
+
       // Hide category bar when not at top
       let ticking = false;
-
       function updateCatbarVisibility() {
         catBar.classList.toggle('hidden', window.scrollY > 0);
         ticking = false;
@@ -1459,39 +1510,57 @@
           requestAnimationFrame(updateCatbarVisibility);
           ticking = true;
         }
-      }, {
-        passive: true
-      });
-      // Init
+      }, { passive: true });
+
+      // Init (fast first paint, then hydrate assets in background)
       (async function init() {
         const params = new URLSearchParams(location.search);
         const q = params.get('q') || '';
         const s = params.get('sort') || 'relevance';
         const cat = params.get(CAT_PARAM) || '';
+
         // pick view from URL or localStorage (default tiles)
         const urlView = params.get(VIEW_PARAM);
         const savedView = localStorage.getItem('catalogView');
-        const initialView = (urlView === VIEW_LIST || urlView === VIEW_TILES) ? urlView : (savedView === VIEW_LIST || savedView === VIEW_TILES) ? savedView : VIEW_TILES;
-        setView(initialView, {
-          noUpdate: true
-        });
+        const initialView =
+          (urlView === VIEW_LIST || urlView === VIEW_TILES) ? urlView :
+          (savedView === VIEW_LIST || savedView === VIEW_TILES) ? savedView :
+          VIEW_TILES;
+        setView(initialView, { noUpdate: true });
+
         searchInput.value = q;
         sortSelect.value = s;
         setClearXVisible();
         selectedCategory = cat;
+
         PARTS = await loadCSV(CSV_URL);
-        await Promise.all(PARTS.map(async (p) => {
-          p.images = await resolveExistingImages(p.possibleImageNames);
-          p.file = await checkFileExists(p.file);
-        }));
+
         buildCategoryBar();
-        update();
+        update(); // render quickly with placeholders
+
+        // Hydrate images + file existence in background (limits network pressure)
+        hydrateAssets(8); // concurrency = 8
       })();
+
+      function hydrateAssets(concurrency = 8) {
+        let i = 0;
+        const workers = Array.from({ length: concurrency }, () => (async () => {
+          while (true) {
+            const idx = i++;
+            if (idx >= PARTS.length) return;
+            const p = PARTS[idx];
+            p.images = await resolveExistingImages(p);
+            p.file = await checkFileExists(p.slug);
+          }
+        })());
+        Promise.all(workers).then(() => {
+          update(); // re-render once when everything is ready
+        });
+      }
+
       async function loadCSV(url) {
         try {
-          const res = await fetch(url, {
-            cache: 'no-store'
-          });
+          const res = await fetch(url); // allow HTTP caching
           if (!res.ok) throw new Error('HTTP ' + res.status);
           const text = await res.text();
           const records = parseCSV(text);
@@ -1501,14 +1570,13 @@
           return [];
         }
       }
+
       // Force tiles on small screens so list view can't appear on mobile
       function enforceMobileTiles() {
         const small = window.matchMedia('(max-width: 640px)').matches;
         if (small && viewMode !== 'tiles') setView('tiles');
       }
-      window.addEventListener('resize', enforceMobileTiles, {
-        passive: true
-      });
+      window.addEventListener('resize', enforceMobileTiles, { passive: true });
       enforceMobileTiles(); // call once on load
     </script>
   </body>
