@@ -249,6 +249,37 @@
         box-shadow: var(--shadow); backdrop-filter: blur(2px); -webkit-tap-highlight-color: transparent;
       }
 
+      /* Subtle carousel arrows */
+      .nav-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        background: rgba(255, 255, 255, 0.88);
+        color: #0f172a;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(2px);
+        z-index: 2;
+        cursor: pointer;
+        transition: background .15s ease, transform .15s ease, opacity .2s ease;
+      }
+      .nav-arrow svg { width: 16px; height: 16px; }
+      .nav-prev { left: 8px; }
+      .nav-next { right: 8px; }
+      .nav-arrow:hover { background: #fff; }
+      .nav-arrow:active { transform: translateY(-50%) scale(0.98); }
+      .nav-arrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      @media (hover: hover) {
+        .nav-arrow { opacity: 0; }
+        .media:hover .nav-arrow { opacity: 1; }
+      }
+
       .content { display: flex; flex-direction: column; gap: 8px; padding: 14px; }
 
       .title-row {
@@ -556,7 +587,7 @@
           const name = pick(rec, ['name']);
           const nameSlug = slugify(name);
           const possibleImageNames = [];
-          for (let j=1; j<=5; j++) {
+          for (let j=1; j<=MAX_IMAGES; j++) {
             const suffix = j > 1 ? `-${j}` : '';
             possibleImageNames.push(`${nameSlug}${suffix}`);
           }
@@ -628,6 +659,19 @@
               <button class="dot ${i===0?'active':''}" type="button" aria-label="Go to image ${i+1}" data-i="${i}"></button>`).join('')}
             </div>` : '';
 
+          const arrowsHTML = resolved.length > 1 ? `
+            <button class="nav-arrow nav-prev" type="button" aria-label="Previous image">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M14 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="nav-arrow nav-next" type="button" aria-label="Next image">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M10 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          ` : '';
+
           const linkCTA = (p.link && p.link.url) ? `
             <a class="img-cta" href="${p.link.url}" target="_blank" rel="noopener" aria-label="${p.link.label} for ${p.name}">${p.link.label}</a>` : '';
 
@@ -645,6 +689,7 @@
                 ${p.price>0 ? `<div class="img-price" title="Price">${fmtPrice.format(p.price)}</div>` : ''}
                 ${ctaGroup}
                 ${dotsHTML}
+                ${arrowsHTML}
               </div>
               <div class="content">
                 <div class="name-row">
@@ -666,6 +711,7 @@
                 ${p.price>0 ? `<div class="img-price" title="Price">${fmtPrice.format(p.price)}</div>` : ''}
                 ${ctaGroup}
                 ${dotsHTML}
+                ${arrowsHTML}
               </div>
               <div class="content">
                 <div class="title-row">
@@ -694,27 +740,39 @@
         const dots = mediaEl.querySelectorAll('.dot');
         const total = slides.length;
         if (total <= 1) return;
+
+        const prevBtn = mediaEl.querySelector('.nav-prev');
+        const nextBtn = mediaEl.querySelector('.nav-next');
+
         let idx = 0, startX = 0, startY = 0;
 
         function go(i) {
           idx = (i + total) % total;
-          track.style.transform = `translateX(-${idx*100}%)`;
+          track.style.transform = `translateX(-${idx * 100}%)`;
           dots.forEach((d, j) => d.classList.toggle('active', j === idx));
           mediaEl.dataset.index = idx;
         }
+
+        // Click anywhere on image cycles forward, dots go to index, arrows prev/next
         mediaEl.addEventListener('click', (e) => {
-          const dot = e.target.closest('.dot');
-          if (dot) { e.stopPropagation(); go(parseInt(dot.dataset.i || '0', 10)); return; }
-          if (e.target.closest('.img-cta') || e.target.closest('.dots')) return;
+          if (e.target.closest('.img-cta') || e.target.closest('.dots') || e.target.closest('.nav-arrow')) return;
           go(idx + 1);
         });
+
+        if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); go(idx - 1); });
+        if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); go(idx + 1); });
+
         mediaEl.addEventListener('touchstart', (e) => {
-          const t = e.touches[0]; startX = t.clientX; startY = t.clientY;
+          const t = e.touches[0];
+          startX = t.clientX; startY = t.clientY;
         }, { passive: true });
+
         mediaEl.addEventListener('touchend', (e) => {
           const t = e.changedTouches[0];
           const dx = t.clientX - startX; const dy = t.clientY - startY;
-          if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy)) { if (dx < 0) go(idx + 1); else go(idx - 1); }
+          if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy)) {
+            if (dx < 0) go(idx + 1); else go(idx - 1);
+          }
         }, { passive: true });
       }
 
