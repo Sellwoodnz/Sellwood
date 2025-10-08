@@ -729,6 +729,50 @@
       body[data-view="list"] .content>.attrs {
         margin: 0;
       }
+
+      /* Back to top button */
+      .back-to-top {
+        position: fixed;
+        right: clamp(12px, 2.5vw, 20px);
+        bottom: clamp(12px, 2.5vh, 20px);
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: #fff;
+        color: #0f172a;
+        box-shadow: var(--shadow);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        opacity: 0;
+        transform: translateY(8px) scale(0.96);
+        visibility: hidden;
+        transition: opacity .2s ease, transform .2s ease, visibility .2s ease;
+        z-index: 990; /* below modal (1000), above toolbar (10) */
+        pointer-events: none;
+        touch-action: manipulation;
+      }
+      .back-to-top.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        visibility: visible;
+        pointer-events: auto;
+      }
+      .back-to-top:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .back-to-top svg {
+        width: 18px;
+        height: 18px;
+      }
+      @media (hover: hover) {
+        .back-to-top:hover {
+          transform: translateY(-1px) scale(1.02);
+        }
+      }
     </style>
   </head>
   <body data-view="tiles">
@@ -779,12 +823,21 @@
       <div id="grid" class="grid" aria-live="polite"></div>
       <div id="empty" class="empty" aria-live="polite"></div>
     </div>
+
     <!-- PDF Modal (desktop) -->
     <div id="pdfModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
       <div class="panel">
         <iframe id="pdfFrame" title="PDF"></iframe>
       </div>
     </div>
+
+    <!-- Back to top button -->
+    <button id="backTopBtn" class="back-to-top" type="button" aria-label="Back to top" title="Back to top">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M7 14l5-5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+
     <script>
       // Configuration
       const CSV_URL = 'catalogue.csv';
@@ -837,6 +890,7 @@
       const pdfModal = document.getElementById('pdfModal');
       const pdfFrame = document.getElementById('pdfFrame');
       const catBar = document.getElementById('catBar');
+      const backTopBtn = document.getElementById('backTopBtn'); // NEW
       // view buttons
       const viewTilesBtn = document.getElementById('viewTilesBtn');
       const viewListBtn = document.getElementById('viewListBtn');
@@ -1413,16 +1467,16 @@
         if (!opts.noUpdate) update();
       }
 
-      // Search bar count text (shows category counts when a category is selected)
-function updateCountText(listLen) {
-  const total = PARTS.length;
-  if (selectedCategory) {
-    const inCat = PARTS.filter(p => partMatchesCategory(p, selectedCategory)).length;
-    countEl.textContent = `${listLen} of ${inCat}`;
-  } else {
-    countEl.textContent = `${listLen} of ${total}`;
-  }
-}
+      // Search bar count text: always "X of X"
+      function updateCountText(listLen) {
+        const total = PARTS.length;
+        if (selectedCategory) {
+          const inCat = PARTS.filter(p => partMatchesCategory(p, selectedCategory)).length;
+          countEl.textContent = `${listLen} of ${inCat}`;
+        } else {
+          countEl.textContent = `${listLen} of ${total}`;
+        }
+      }
 
       // Central update
       function update() {
@@ -1496,10 +1550,12 @@ function updateCountText(listLen) {
         if (!panel.contains(e.target)) closePdfModal();
       }
 
-      // Hide category bar when not at top
+      // Hide category bar when not at top and toggle back-to-top
       let ticking = false;
       function updateCatbarVisibility() {
-        catBar.classList.toggle('hidden', window.scrollY > 0);
+        const y = window.scrollY || document.documentElement.scrollTop;
+        catBar.classList.toggle('hidden', y > 0);
+        backTopBtn.classList.toggle('visible', y > 300); // show threshold
         ticking = false;
       }
       window.addEventListener('scroll', () => {
@@ -1508,6 +1564,16 @@ function updateCountText(listLen) {
           ticking = true;
         }
       }, { passive: true });
+
+      // Back-to-top click (smooth, respects reduced motion)
+      backTopBtn.addEventListener('click', () => {
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReduced) {
+          window.scrollTo(0, 0);
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
 
       // Init (fast first paint, then hydrate assets in background)
       (async function init() {
