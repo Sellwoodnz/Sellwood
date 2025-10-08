@@ -16,13 +16,25 @@
         --shadow: 0 10px 20px rgba(2, 8, 23, 0.06);
         --radius: 14px;
         --maxw: 1200px;
-        --control-h: 46px; /* shared height for search/sort */
-        --pill-h: 26px;    /* uniform height for price pill and CTAs */
+        --control-h: 46px;
+        /* shared height for search/sort */
+        --pill-h: 26px;
+        /* uniform height for price pill and CTAs */
       }
 
-      * { box-sizing: border-box; }
-      html, body { height: 100%; }
-      html { scrollbar-gutter: stable; }
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      html {
+        scrollbar-gutter: stable;
+      }
+
       body {
         margin: 0;
         font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -30,9 +42,17 @@
         background: #fff;
       }
 
-      .container { max-width: var(--maxw); margin: 0 auto; padding: 24px 16px 48px; }
+      .container {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 24px 16px 48px;
+      }
 
-      header { display: grid; gap: 10px; margin-bottom: 16px; }
+      header {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
 
       .title {
         font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -47,37 +67,55 @@
         top: 0;
         z-index: 10;
         padding: 12px 0 20px;
-        margin-left: 20px;   /* 20px inset on both sides */
+        margin-left: 20px;
+        /* 20px inset on both sides */
         margin-right: 20px;
       }
-      .toolbar::after { content: none; display: none; }
+
+      .toolbar::after {
+        content: none;
+        display: none;
+      }
 
       /* Equal gaps between Search | Sort | Tiles/List */
       .toolbar .search-wrap {
         display: grid;
-        grid-template-columns: 1fr auto auto; /* search | sort | view */
+        grid-template-columns: 1fr auto auto;
+        /* search | sort | view */
         align-items: center;
-        gap: 15px; /* the only spacing between the three controls */
+        gap: 15px;
+        /* the only spacing between the three controls */
         padding-left: 0;
         padding-right: 0;
       }
 
       /* Let the gap handle spacing (remove ad-hoc margins) */
-      .toolbar .search { margin: 0; }
-      .toolbar .sort-select { margin: 0; }
-      .toolbar .view-toggle { margin: 0; }
+      .toolbar .search {
+        margin: 0;
+      }
+
+      .toolbar .sort-select {
+        margin: 0;
+      }
+
+      .toolbar .view-toggle {
+        margin: 0;
+      }
 
       /* Hide Sort + Tiles/List on small screens */
       @media (max-width: 640px) {
         .toolbar .search-wrap {
-          grid-template-columns: 1fr; /* only search visible */
+          grid-template-columns: 1fr;
+          /* only search visible */
           gap: 15px;
           padding-left: 0;
           padding-right: 0;
         }
+
         .toolbar .sort-select,
         .toolbar .view-toggle {
-          display: none !important; /* hide on mobile */
+          display: none !important;
+          /* hide on mobile */
         }
       }
 
@@ -93,6 +131,7 @@
         min-width: 0;
         min-height: var(--control-h);
       }
+
       .search input {
         width: 100%;
         border: none;
@@ -103,18 +142,56 @@
         flex: 1 1 auto;
         min-width: 0;
       }
-      .search input::-webkit-search-cancel-button { -webkit-appearance: none; }
-      .search .icon { width: 20px; height: 20px; color: var(--muted); flex: 0 0 auto; }
-      .clear-x {
-        appearance: none; border: none; background: transparent; color: var(--muted);
-        width: 24px; height: 24px; border-radius: 50%;
-        display: none; align-items: center; justify-content: center; cursor: pointer; flex: 0 0 auto;
+
+      .search input::-webkit-search-cancel-button {
+        -webkit-appearance: none;
       }
-      .search .icon-search { display: inline-block; }
-      .search .clear-x { display: none; }
-      .search.has-value .icon-search { display: none; }
-      .search.has-value .clear-x { display: inline-flex; }
-      .search .count { margin-left: auto; color: var(--muted); font-size: 12px; white-space: nowrap; flex: 0 0 auto; }
+
+      .search .icon {
+        width: 20px;
+        height: 20px;
+        color: var(--muted);
+        flex: 0 0 auto;
+      }
+
+      .clear-x {
+        appearance: none;
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        flex: 0 0 auto;
+      }
+
+      .search .icon-search {
+        display: inline-block;
+      }
+
+      .search .clear-x {
+        display: none;
+      }
+
+      .search.has-value .icon-search {
+        display: none;
+      }
+
+      .search.has-value .clear-x {
+        display: inline-flex;
+      }
+
+      .search .count {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 12px;
+        white-space: nowrap;
+        flex: 0 0 auto;
+      }
 
       .sort-select {
         border: 1px solid var(--border);
@@ -125,6 +202,13 @@
         color: var(--muted);
         box-shadow: var(--shadow);
         font-size: 16px;
+
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: none;
+        text-align: center;
+        text-align-last: center;
       }
 
       /* View toggle buttons */
@@ -133,6 +217,7 @@
         gap: 6px;
         justify-self: end;
       }
+
       .view-btn {
         appearance: none;
         border: 1px solid var(--border);
@@ -148,30 +233,62 @@
         gap: 8px;
         font-size: 14px;
       }
+
       .view-btn[aria-pressed="true"] {
         background: #fee2e2;
         color: #b91c1c;
         border-color: #fecaca;
         box-shadow: 0 2px 6px rgba(220, 38, 38, 0.12);
       }
-      .view-btn svg { width: 18px; height: 18px; }
+
+      .view-btn svg {
+        width: 18px;
+        height: 18px;
+      }
 
       /* Category filter bar (align to toolbar inset via .toolbar margin) */
       .catbar {
-        display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-        margin: 10px 0 0 0;  /* no L/R margin; toolbar provides the inset */
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 10px 0 0 0;
+        /* no L/R margin; toolbar provides the inset */
         transition: opacity 0.3s ease-out, max-height 0.3s ease-out, margin-top 0.3s ease-out;
-        max-height: 40px; opacity: 1; overflow: hidden;
+        max-height: 40px;
+        opacity: 1;
+        overflow: hidden;
       }
-      .catbar.hidden { max-height: 0; opacity: 0; margin-top: 0; }
+
+      .catbar.hidden {
+        max-height: 0;
+        opacity: 0;
+        margin-top: 0;
+      }
+
       .cat-chip {
-        appearance: none; border: 1px solid #e2e8f0; background: #eee; color: #0f172a;
-        font-size: 13px; line-height: 1; border-radius: 999px; padding: 6px 10px; cursor: pointer; user-select: none;
+        appearance: none;
+        border: 1px solid #e2e8f0;
+        background: #eee;
+        color: #0f172a;
+        font-size: 13px;
+        line-height: 1;
+        border-radius: 999px;
+        padding: 6px 10px;
+        cursor: pointer;
+        user-select: none;
         transition: background .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
       }
-      .cat-chip:hover { background: #f1f5f9; }
+
+      .cat-chip:hover {
+        background: #f1f5f9;
+      }
+
       .cat-chip.active {
-        background: #fee2e2; color: #b91c1c; border-color: #fecaca; box-shadow: 0 2px 6px rgba(220, 38, 38, 0.12);
+        background: #fee2e2;
+        color: #b91c1c;
+        border-color: #fecaca;
+        box-shadow: 0 2px 6px rgba(220, 38, 38, 0.12);
       }
 
       .grid {
@@ -191,7 +308,10 @@
         flex-direction: column;
         transition: box-shadow .18s ease;
       }
-      .card:hover { box-shadow: var(--shadow); }
+
+      .card:hover {
+        box-shadow: var(--shadow);
+      }
 
       .media {
         width: 100%;
@@ -204,49 +324,116 @@
         -webkit-touch-callout: none;
         -webkit-tap-highlight-color: transparent;
       }
+
       .carousel {
-        display: flex; width: 100%; height: 100%;
-        transition: transform .3s ease; will-change: transform; cursor: pointer; -webkit-tap-highlight-color: transparent;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        transition: transform .3s ease;
+        will-change: transform;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
       }
-      .slide { width: 100%; height: 100%; flex: 0 0 100%; position: relative; -webkit-tap-highlight-color: transparent; }
-      .slide img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+
+      .slide {
+        width: 100%;
+        height: 100%;
+        flex: 0 0 100%;
+        position: relative;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        pointer-events: none;
+      }
 
       .dots {
-        position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%);
-        display: inline-flex; gap: 6px; z-index: 2; -webkit-tap-highlight-color: transparent;
+        position: absolute;
+        left: 50%;
+        bottom: 8px;
+        transform: translateX(-50%);
+        display: inline-flex;
+        gap: 6px;
+        z-index: 2;
+        -webkit-tap-highlight-color: transparent;
       }
+
       .dot {
-        width: 6px; height: 6px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, 0.18);
-        background: rgba(255, 255, 255, 0.9); padding: 0; line-height: 0; cursor: pointer;
-        box-shadow: var(--shadow); backdrop-filter: blur(2px); -webkit-tap-highlight-color: transparent;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        border: 1px solid rgba(0, 0, 0, 0.18);
+        background: rgba(255, 255, 255, 0.9);
+        padding: 0;
+        line-height: 0;
+        cursor: pointer;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(2px);
+        -webkit-tap-highlight-color: transparent;
       }
-      .dot.active { border-color: var(--accent); background: var(--accent); box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25); }
+
+      .dot.active {
+        border-color: var(--accent);
+        background: var(--accent);
+        box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
+      }
 
       .img-price {
-        position: absolute; left: 10px; bottom: 10px;
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
         height: var(--pill-h);
-        padding: 0 10px;                 /* same horizontal padding */
+        padding: 0 10px;
+        /* same horizontal padding */
         border-radius: 999px;
-        background: #dc2626; color: #fff; font-weight: 400; font-size: 12px; line-height: 1;
-        display: inline-flex; align-items: center;  /* center vertically */
+        background: #dc2626;
+        color: #fff;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        /* center vertically */
         box-shadow: var(--shadow);
         backdrop-filter: blur(2px);
         z-index: 1;
       }
 
       .img-ctas {
-        position: absolute; right: 10px; bottom: 10px; display: inline-flex; gap: 8px; z-index: 1; -webkit-tap-highlight-color: transparent;
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        display: inline-flex;
+        gap: 8px;
+        z-index: 1;
+        -webkit-tap-highlight-color: transparent;
       }
+
       .img-cta {
         appearance: none;
-        height: var(--pill-h);           /* match price pill height */
-        padding: 0 10px;                 /* same horizontal padding */
+        height: var(--pill-h);
+        /* match price pill height */
+        padding: 0 10px;
+        /* same horizontal padding */
         border-radius: 5px;
-        font-size: 12px; font-weight: 600; line-height: 1;
-        display: inline-flex; align-items: center;
-        border: none; background: rgba(255, 255, 255, 0.88); color: #000000;
-        text-decoration: none; cursor: pointer; transition: transform .15s ease, background .15s ease;
-        box-shadow: var(--shadow); backdrop-filter: blur(2px); -webkit-tap-highlight-color: transparent;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        border: none;
+        background: rgba(255, 255, 255, 0.88);
+        color: #000000;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform .15s ease, background .15s ease;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(2px);
+        -webkit-tap-highlight-color: transparent;
       }
 
       /* Simple text carousel arrows (no background) */
@@ -254,12 +441,16 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        width: 44px;                 /* touch-friendly hit area */
+        width: 44px;
+        /* touch-friendly hit area */
         height: 44px;
-        background: transparent;     /* no background */
-        border: none;                /* no border */
+        background: transparent;
+        /* no background */
+        border: none;
+        /* no border */
         color: rgba(255, 255, 255, 0.95);
-        font-size: 40px;             /* size of the ‹ › character */
+        font-size: 40px;
+        /* size of the ‹ › character */
         line-height: 1;
         display: flex;
         align-items: center;
@@ -267,67 +458,202 @@
         z-index: 2;
         cursor: pointer;
         user-select: none;
-        text-shadow: 0 1px 2px rgba(0,0,0,.35); /* subtle contrast on bright images */
+        text-shadow: 0 1px 2px rgba(0, 0, 0, .35);
+        /* subtle contrast on bright images */
         transition: opacity .2s ease, transform .15s ease;
       }
-      .nav-prev { left: 6px; }
-      .nav-next { right: 6px; }
-      .nav-arrow:active { transform: translateY(-50%) scale(0.98); }
-      .nav-arrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
-      @media (hover: hover) {
-        .nav-arrow { opacity: 0; }
-        .media:hover .nav-arrow { opacity: 1; }
+
+      .nav-prev {
+        left: 6px;
       }
 
-      .content { display: flex; flex-direction: column; gap: 8px; padding: 14px; }
+      .nav-next {
+        right: 6px;
+      }
+
+      .nav-arrow:active {
+        transform: translateY(-50%) scale(0.98);
+      }
+
+      .nav-arrow:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        border-radius: 6px;
+      }
+
+      @media (hover: hover) {
+        .nav-arrow {
+          opacity: 0;
+        }
+
+        .media:hover .nav-arrow {
+          opacity: 1;
+        }
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 14px;
+      }
 
       .title-row {
-        display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 8px;
       }
-      .title-row .name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-      .name { font-weight: 700; font-size: 16px; line-height: 1.25; }
+      .title-row .name {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .name {
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 1.25;
+      }
 
       .code {
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-        color: #000000; background: #eee; border: 1px solid #e2e8f0; padding: 2px 8px; width: fit-content; border-radius: 999px; font-size: 12px; flex: 0 0 auto;
+        color: #000000;
+        background: #eee;
+        border: 1px solid #e2e8f0;
+        padding: 2px 8px;
+        width: fit-content;
+        border-radius: 999px;
+        font-size: 12px;
+        flex: 0 0 auto;
       }
 
-      .models { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; margin-bottom: 2px; }
-      .model-tag { font-size: 12px; color: #b91c1c; background: #fee2e2; border: 1px solid #fecaca; border-radius: 999px; padding: 2px 8px; width: fit-content; }
+      .models {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 4px;
+        margin-bottom: 2px;
+      }
 
-      .attrs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; margin-bottom: 2px; }
-      .attr-pill { font-size: 10px; color: #000000; background: #eee; border: 1px solid #e2e8f0; border-radius: 999px; padding: 2px 8px; width: fit-content; }
-      .material-pill { background: #ddd; }
-      .finish-pill { background: #eee; }
+      .model-tag {
+        font-size: 12px;
+        color: #b91c1c;
+        background: #fee2e2;
+        border: 1px solid #fecaca;
+        border-radius: 999px;
+        padding: 2px 8px;
+        width: fit-content;
+      }
+
+      .attrs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 4px;
+        margin-bottom: 2px;
+      }
+
+      .attr-pill {
+        font-size: 10px;
+        color: #000000;
+        background: #eee;
+        border: 1px solid #e2e8f0;
+        border-radius: 999px;
+        padding: 2px 8px;
+        width: fit-content;
+      }
+
+      .material-pill {
+        background: #ddd;
+      }
+
+      .finish-pill {
+        background: #eee;
+      }
 
       .desc {
-        color: #334155; font-size: 14px; line-height: 1.4;
-        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        color: #334155;
+        font-size: 14px;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
       }
 
-      .empty { display: none; text-align: center; color: var(--muted); font-size: 14px; margin: 24px 0; }
-      .empty.active { display: block; }
+      .empty {
+        display: none;
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin: 24px 0;
+      }
+
+      .empty.active {
+        display: block;
+      }
 
       /* Modal */
       .modal {
-        position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center;
-        background: rgba(2, 8, 23, 0.55); padding: 12px; opacity: 0; visibility: hidden; transition: opacity .18s ease, visibility .18s ease;
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: grid;
+        place-items: center;
+        background: rgba(2, 8, 23, 0.55);
+        padding: 12px;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .18s ease, visibility .18s ease;
       }
-      .modal.open { opacity: 1; visibility: visible; }
+
+      .modal.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
       .modal .panel {
-        box-sizing: border-box; width: min(960px, calc(100vw - 24px)); height: min(92vh, calc(100vh - 24px));
-        background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; display: grid;
+        box-sizing: border-box;
+        width: min(960px, calc(100vw - 24px));
+        height: min(92vh, calc(100vh - 24px));
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        display: grid;
       }
-      .modal .panel iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+      .modal .panel iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
+      }
 
       @media (max-width: 640px) {
-        .modal { padding: 10px; }
-        .modal .panel { width: calc(100vw - 20px); height: calc(100vh - 20px); border-radius: 10px; }
-        .catbar { overflow-x: auto; max-height: 100px; }
+        .modal {
+          padding: 10px;
+        }
+
+        .modal .panel {
+          width: calc(100vw - 20px);
+          height: calc(100vh - 20px);
+          border-radius: 10px;
+        }
+
+        .catbar {
+          overflow-x: auto;
+          max-height: 100px;
+        }
       }
 
-      body.modal-open { overflow: hidden; }
+      body.modal-open {
+        overflow: hidden;
+      }
 
       /* ========================= */
       /* List view overrides       */
@@ -337,41 +663,65 @@
         flex-direction: column;
         gap: 12px;
       }
+
       body[data-view="list"] .card {
         flex-direction: row;
         align-items: stretch;
       }
+
       body[data-view="list"] .media {
-        flex: 0 0 180px; /* image column */
+        flex: 0 0 180px;
+        /* image column */
         width: 180px;
         aspect-ratio: 4 / 3;
         border-right: 1px solid var(--border);
       }
+
       @media (min-width: 1100px) {
-        body[data-view="list"] .media { flex-basis: 220px; width: 220px; }
+        body[data-view="list"] .media {
+          flex-basis: 220px;
+          width: 220px;
+        }
       }
+
       body[data-view="list"] .content {
         padding: 12px 14px;
         gap: 8px;
         justify-content: center;
       }
+
       body[data-view="list"] .desc {
-        display: block;           /* remove line clamp */
+        display: block;
+        /* remove line clamp */
         -webkit-line-clamp: initial;
         -webkit-box-orient: initial;
         overflow: visible;
       }
-      body[data-view="list"] .title-row { display: none; } /* not used in list layout */
-      body[data-view="list"] .dots { display: none; }      /* optional: hide image dots in list */
 
+      body[data-view="list"] .title-row {
+        display: none;
+      }
+
+      /* not used in list layout */
+      body[data-view="list"] .dots {
+        display: none;
+      }
+
+      /* optional: hide image dots in list */
       /* Stacked rows for list view */
       body[data-view="list"] .name-row {
         display: flex;
         align-items: center;
         gap: 12px;
       }
-      body[data-view="list"] .content > .models { margin: 0; }
-      body[data-view="list"] .content > .attrs { margin: 0; }
+
+      body[data-view="list"] .content>.models {
+        margin: 0;
+      }
+
+      body[data-view="list"] .content>.attrs {
+        margin: 0;
+      }
     </style>
   </head>
   <body data-view="tiles">
@@ -393,7 +743,6 @@
             <input id="search" type="search" placeholder="Search" autocomplete="off" aria-label="Search parts" />
             <span id="count" class="count" aria-live="polite">0 of 0</span>
           </label>
-
           <select id="sort" class="sort-select" aria-label="Sort">
             <option value="relevance">Sort</option>
             <option value="name-asc">A–Z</option>
@@ -401,43 +750,34 @@
             <option value="price-asc">$ Low</option>
             <option value="price-desc">$ High</option>
           </select>
-
           <div class="view-toggle" role="group" aria-label="Change layout">
             <button id="viewTilesBtn" class="view-btn" type="button" aria-pressed="true" title="Tiles view">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <rect x="4" y="4" width="7" height="7" stroke="currentColor" stroke-width="1.8" rx="1.5"/>
-                <rect x="13" y="4" width="7" height="7" stroke="currentColor" stroke-width="1.8" rx="1.5"/>
-                <rect x="4" y="13" width="7" height="7" stroke="currentColor" stroke-width="1.8" rx="1.5"/>
-                <rect x="13" y="13" width="7" height="7" stroke="currentColor" stroke-width="1.8" rx="1.5"/>
-              </svg>
-              Tiles
-            </button>
+                <rect x="4" y="4" width="7" height="7" stroke="currentColor" stroke-width="1.8" rx="1.5" />
+                <rect x="13" y="4" width="7" height="7" stroke="currentColor" stroke-width="1.8" rx="1.5" />
+                <rect x="4" y="13" width="7" height="7" stroke="currentColor" stroke-width="1.8" rx="1.5" />
+                <rect x="13" y="13" width="7" height="7" stroke="currentColor" stroke-width="1.8" rx="1.5" />
+              </svg> Tiles </button>
             <button id="viewListBtn" class="view-btn" type="button" aria-pressed="false" title="List view">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <rect x="4" y="6" width="16" height="2" fill="currentColor"/>
-                <rect x="4" y="11" width="16" height="2" fill="currentColor"/>
-                <rect x="4" y="16" width="16" height="2" fill="currentColor"/>
-              </svg>
-              List
-            </button>
+                <rect x="4" y="6" width="16" height="2" fill="currentColor" />
+                <rect x="4" y="11" width="16" height="2" fill="currentColor" />
+                <rect x="4" y="16" width="16" height="2" fill="currentColor" />
+              </svg> List </button>
           </div>
         </div>
-
         <!-- Category filter bar -->
         <div id="catBar" class="catbar" role="group" aria-label="Filter by category"></div>
       </div>
-
       <div id="grid" class="grid" aria-live="polite"></div>
       <div id="empty" class="empty" aria-live="polite"></div>
     </div>
-
     <!-- PDF Modal (desktop) -->
     <div id="pdfModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
       <div class="panel">
         <iframe id="pdfFrame" title="PDF"></iframe>
       </div>
     </div>
-
     <script>
       // Configuration
       const CSV_URL = 'catalogue.csv';
@@ -447,16 +787,13 @@
       const FILE_DIR = IMAGE_DIR;
       const FILE_DEFAULT_EXT = 'pdf';
       const MAX_IMAGES = 5;
-
       // Custom category ordering
       const CATEGORY_PRIORITY = ['Attic Ladder', 'Roof Access', 'Roof Hatch', 'Natural Lighting', 'Fixings'];
       const CAT_PARAM = 'cat';
-
       // view param constants
       const VIEW_PARAM = 'view';
       const VIEW_TILES = 'tiles';
       const VIEW_LIST = 'list';
-
       // DOM refs
       const grid = document.getElementById('grid');
       const countEl = document.getElementById('count');
@@ -468,15 +805,14 @@
       const pdfModal = document.getElementById('pdfModal');
       const pdfFrame = document.getElementById('pdfFrame');
       const catBar = document.getElementById('catBar');
-
       // view buttons
       const viewTilesBtn = document.getElementById('viewTilesBtn');
-      const viewListBtn  = document.getElementById('viewListBtn');
-
+      const viewListBtn = document.getElementById('viewListBtn');
       const fmtPrice = new Intl.NumberFormat('en-NZ', {
-        style: 'currency', currency, currencyDisplay: 'narrowSymbol'
+        style: 'currency',
+        currency,
+        currencyDisplay: 'narrowSymbol'
       });
-
       // State
       let PARTS = [];
       const SCORES = new Map();
@@ -484,31 +820,36 @@
       let selectedCategory = ''; // empty = All
       let ALL_CATEGORIES = [];
       let viewMode = VIEW_TILES;
-
       // Helpers
       function debounce(fn, wait = 180) {
         let t;
-        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), wait); };
+        return (...a) => {
+          clearTimeout(t);
+          t = setTimeout(() => fn(...a), wait);
+        };
       }
+
       function norm(s) {
-        return String(s || '').toLowerCase().normalize('NFKD')
-          .replace(/[\u0300-\u036f]/g, '')
-          .replace(/[_/\\-]+/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim();
+        return String(s || '').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[_/\\-]+/g, ' ').replace(/\s+/g, ' ').trim();
       }
-      function slugify(s) { return norm(s).replace(/\s+/g, '-'); }
+
+      function slugify(s) {
+        return norm(s).replace(/\s+/g, '-');
+      }
+
       function splitList(s) {
         if (!s) return [];
         return String(s).split(/[;]+|,(?!\s)/g).map(v => v.trim()).filter(Boolean);
       }
-
       async function resolveExistingImages(names) {
         const checkOne = async (name) => {
           for (const ext of IMAGE_DEFAULT_EXTS) {
             const v = `${IMAGE_DIR.replace(/\/?$/,'/')}${name}.${ext}`;
             try {
-              const res = await fetch(v, { method: 'HEAD', cache: 'no-store' });
+              const res = await fetch(v, {
+                method: 'HEAD',
+                cache: 'no-store'
+              });
               if (res.ok) return v;
             } catch {}
           }
@@ -517,64 +858,86 @@
         const urls = await Promise.all(names.map(checkOne));
         return urls.filter(Boolean);
       }
-
       async function checkFileExists(rawName) {
         if (!rawName) return null;
         const v = `${FILE_DIR.replace(/\/?$/,'/')}${rawName}.${FILE_DEFAULT_EXT}`;
         try {
-          const res = await fetch(v, { method: 'HEAD', cache: 'no-store' });
+          const res = await fetch(v, {
+            method: 'HEAD',
+            cache: 'no-store'
+          });
           return res.ok ? v : null;
         } catch {
           return null;
         }
       }
 
-function parseCSV(text) {
-  // Strip BOM if present
-  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+      function parseCSV(text) {
+        // Strip BOM if present
+        if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+        const rows = [];
+        let i = 0,
+          f = '',
+          row = [],
+          q = false;
 
-  const rows = [];
-  let i = 0, f = '', row = [], q = false;
+        function pushF() {
+          row.push(f);
+          f = '';
+        }
 
-  function pushF(){ row.push(f); f=''; }
-  function pushR(){ rows.push(row); row=[]; }
-
-  while (i < text.length) {
-    const c = text[i];
-    if (q) {
-      if (c === '"') {
-        if (text[i+1] === '"') { f+='"'; i++; } else { q = false; }
-      } else { f += c; }
-    } else {
-      if (c === '"') q = true;
-      else if (c === ',') pushF();
-      else if (c === '\n') { pushF(); pushR(); }
-      else if (c === '\r') { /* ignore */ }
-      else { f += c; }
-    }
-    i++;
-  }
-  if (f.length > 0 || row.length) { pushF(); pushR(); }
-
-  // Drop blank rows and single-cell comment/header rows (except the first header row)
-  const cleaned = rows.filter((r, idx) => {
-    if (idx === 0) return true; // keep the CSV header row
-    const nonEmpty = r.filter(v => String(v).trim() !== '');
-    if (nonEmpty.length === 0) return false; // blank row
-    // comment/header row = exactly one non-empty cell starting with #, ;, or //
-    const first = String(nonEmpty[0]).trim();
-    if (nonEmpty.length === 1 && (/^(#|;|\/\/)/.test(first))) return false;
-    return true;
-  });
-
-  if (!cleaned.length) return [];
-  const header = cleaned[0].map(h => norm(h).replace(/\s+/g, ''));
-  return cleaned.slice(1).map(r => {
-    const o = {};
-    for (let j = 0; j < header.length; j++) o[header[j]] = r[j] ?? '';
-    return o;
-  });
-}
+        function pushR() {
+          rows.push(row);
+          row = [];
+        }
+        while (i < text.length) {
+          const c = text[i];
+          if (q) {
+            if (c === '"') {
+              if (text[i + 1] === '"') {
+                f += '"';
+                i++;
+              } else {
+                q = false;
+              }
+            } else {
+              f += c;
+            }
+          } else {
+            if (c === '"') q = true;
+            else if (c === ',') pushF();
+            else if (c === '\n') {
+              pushF();
+              pushR();
+            } else if (c === '\r') {
+              /* ignore */ } else {
+              f += c;
+            }
+          }
+          i++;
+        }
+        if (f.length > 0 || row.length) {
+          pushF();
+          pushR();
+        }
+        // Drop blank rows and single-cell comment/header rows (except the first header row)
+        const cleaned = rows.filter((r, idx) => {
+          if (idx === 0) return true; // keep the CSV header row
+          const nonEmpty = r.filter(v => String(v).trim() !== '');
+          if (nonEmpty.length === 0) return false; // blank row
+          // comment/header row = exactly one non-empty cell starting with #, ;, or //
+          const first = String(nonEmpty[0]).trim();
+          if (nonEmpty.length === 1 && (/^(#|;|\/\/)/.test(first))) return false;
+          return true;
+        });
+        if (!cleaned.length) return [];
+        const header = cleaned[0].map(h => norm(h).replace(/\s+/g, ''));
+        return cleaned.slice(1).map(r => {
+          const o = {};
+          for (let j = 0; j < header.length; j++) o[header[j]] = r[j] ?? '';
+          return o;
+        });
+      }
 
       function pick(rec, names) {
         for (const n of names) {
@@ -582,44 +945,65 @@ function parseCSV(text) {
         }
         return '';
       }
+
       function parseLink(raw) {
         const s = String(raw || '').trim();
         if (!s) return null;
         const idx = s.indexOf(';');
-        let label='', url='';
+        let label = '',
+          url = '';
         if (idx === -1) {
-          if (/^https?:\/\//i.test(s)) { label = 'Link'; url = s; }
-          else return null;
+          if (/^https?:\/\//i.test(s)) {
+            label = 'Link';
+            url = s;
+          } else return null;
         } else {
-          label = s.slice(0, idx).trim(); url = s.slice(idx+1).trim();
+          label = s.slice(0, idx).trim();
+          url = s.slice(idx + 1).trim();
           if (!url) return null;
           if (!label) label = 'Link';
         }
-        return { label, url };
+        return {
+          label,
+          url
+        };
       }
+
       function recordsToParts(records) {
         return records.map((rec, i) => {
           const name = pick(rec, ['name']);
           const nameSlug = slugify(name);
           const possibleImageNames = [];
-          for (let j=1; j<=MAX_IMAGES; j++) {
+          for (let j = 1; j <= MAX_IMAGES; j++) {
             const suffix = j > 1 ? `-${j}` : '';
             possibleImageNames.push(`${nameSlug}${suffix}`);
           }
-        const code = pick(rec, ['code']);
+          const code = pick(rec, ['code']);
           const description = pick(rec, ['description']);
           const price = parseFloat(pick(rec, ['price'])) || 0;
-          const models = splitList(pick(rec, ['model','models']));
-          const categories = splitList(pick(rec, ['category','categories','catagory']));
-          const material = pick(rec, ['material']);
-          const finish = pick(rec, ['finish','finiah']);
+          const models = splitList(pick(rec, ['model', 'models']));
+          const categories = splitList(pick(rec, ['category', 'categories', 'catagory']));
+          // MULTI values for materials and finishes
+          const materials = splitList(pick(rec, ['material']));
+          const finishes = splitList(pick(rec, ['finish', 'finiah']));
           const keywords = splitList(pick(rec, ['keywords']));
           const linkRaw = pick(rec, ['link']);
           const link = parseLink(linkRaw);
           const file = nameSlug;
           return {
-            name, code, description, price, possibleImageNames, models, categories,
-            material, finish, keywords, link, file, order: i
+            name,
+            code,
+            description,
+            price,
+            possibleImageNames,
+            models,
+            categories,
+            materials,
+            finishes,
+            keywords,
+            link,
+            file,
+            order: i
           };
         });
       }
@@ -627,7 +1011,6 @@ function parseCSV(text) {
       function render(list) {
         grid.innerHTML = '';
         const q = searchInput.value.trim();
-
         if (!list.length) {
           let msg = '';
           if (PARTS.length === 0) msg = 'No parts available.';
@@ -637,108 +1020,124 @@ function parseCSV(text) {
             msg = `No parts found${catTxt}${qTxt}.`;
           }
           emptyEl.textContent = msg;
-          if (msg) emptyEl.classList.add('active'); else emptyEl.classList.remove('active');
+          if (msg) emptyEl.classList.add('active');
+          else emptyEl.classList.remove('active');
           countEl.textContent = `0 of ${PARTS.length}`;
           return;
         } else {
           emptyEl.classList.remove('active');
         }
-
         list.forEach(p => {
           const card = document.createElement('article');
           card.className = 'card';
           card.setAttribute('data-code', p.code);
-
           const hasModels = Array.isArray(p.models) && p.models.length > 0;
-          const modelsHTML = hasModels ? p.models.map(m => `<span class="model-tag">${m}</span>`).join('') : '';
-
-          const hasMaterial = !!(p.material && String(p.material).trim());
-          const hasFinish = !!(p.finish && String(p.finish).trim());
-          const attrsHTML = (hasMaterial || hasFinish) ? `
-            <div class="attrs" aria-label="Material and finish">
-              ${hasMaterial ? `<span class="attr-pill material-pill" title="Material">${p.material}</span>` : ''}
-              ${hasFinish ? `<span class="attr-pill finish-pill" title="Finish">${p.finish}</span>` : ''}
+          const modelsHTML = hasModels ? p.models.map(m => `
+				<span class="model-tag">${m}</span>`).join('') : '';
+          // Material/Finish pills (support multiple)
+          const hasMaterials = Array.isArray(p.materials) && p.materials.length > 0;
+          const hasFinishes = Array.isArray(p.finishes) && p.finishes.length > 0;
+          const materialsHTML = hasMaterials ? p.materials.map(mat => `
+				<span class="attr-pill material-pill" title="Material">${mat}</span>`).join('') : '';
+          const finishesHTML = hasFinishes ? p.finishes.map(fin => `
+				<span class="attr-pill finish-pill" title="Finish">${fin}</span>`).join('') : '';
+          const attrsHTML = (hasMaterials || hasFinishes) ? `
+            
+				<div class="attrs" aria-label="Material and finish">
+              ${materialsHTML}${finishesHTML}
             </div>` : '';
-
           const rawImages = p.images || [];
           const placeholder = `https://placehold.jp/48/eee/666/600x400.png?text=${encodeURIComponent(p.name || 'Part')}`;
           const resolved = rawImages.length ? rawImages : [placeholder];
-
           const slidesHTML = resolved.map((src, i) => `
-            <div class="slide">
-              <img src="${src}" alt="${(p.name||'Part')} image ${i+1}" loading="lazy" decoding="async" />
-            </div>`).join('');
-
+            
+				<div class="slide">
+					<img src="${src}" alt="${(p.name||'Part')} image ${i+1}" loading="lazy" decoding="async" />
+				</div>`).join('');
           const dotsHTML = resolved.length > 1 ? `
-            <div class="dots">${resolved.map((_,i)=>`
-              <button class="dot ${i===0?'active':''}" type="button" aria-label="Go to image ${i+1}" data-i="${i}"></button>`).join('')}
-            </div>` : '';
-
+            
+				<div class="dots">${resolved.map((_,i)=>`
+              
+					<button class="dot ${i===0?'active':''}" type="button" aria-label="Go to image ${i+1}" data-i="${i}"></button>`).join('')}
+            
+				</div>` : '';
           const arrowsHTML = resolved.length > 1 ? `
-            <button class="nav-arrow nav-prev" type="button" aria-label="Previous image" title="Previous">‹</button>
-            <button class="nav-arrow nav-next" type="button" aria-label="Next image" title="Next">›</button>
+            
+				<button class="nav-arrow nav-prev" type="button" aria-label="Previous image" title="Previous">‹</button>
+				<button class="nav-arrow nav-next" type="button" aria-label="Next image" title="Next">›</button>
           ` : '';
-
           const linkCTA = (p.link && p.link.url) ? `
-            <a class="img-cta" href="${p.link.url}" target="_blank" rel="noopener" aria-label="${p.link.label} for ${p.name}">${p.link.label}</a>` : '';
-
+            
+				<a class="img-cta" href="${p.link.url}" target="_blank" rel="noopener" aria-label="${p.link.label} for ${p.name}">${p.link.label}</a>` : '';
           const fileUrl = p.file;
-          const fileCTA = fileUrl ? `<button class="img-cta pdf-cta" type="button" data-file="${fileUrl}" data-title="${p.name}">File</button>` : '';
-          const ctaGroup = (linkCTA || fileCTA) ? `<div class="img-ctas">${linkCTA}${fileCTA}</div>` : '';
-
+          const fileCTA = fileUrl ? `
+				<button class="img-cta pdf-cta" type="button" data-file="${fileUrl}" data-title="${p.name}">File</button>` : '';
+          const ctaGroup = (linkCTA || fileCTA) ? `
+				<div class="img-ctas">${linkCTA}${fileCTA}</div>` : '';
           if (viewMode === VIEW_LIST) {
             // List view: Name+Code, then Models, then Material/Finish, then Description
             card.innerHTML = `
-              <div class="media" data-index="0">
-                <div class="carousel" role="group" aria-label="Images for ${p.name}">
+              
+				<div class="media" data-index="0">
+					<div class="carousel" role="group" aria-label="Images for ${p.name}">
                   ${slidesHTML}
                 </div>
-                ${p.price>0 ? `<div class="img-price" title="Price">${fmtPrice.format(p.price)}</div>` : ''}
+                ${p.price>0 ? `
+					<div class="img-price" title="Price">${fmtPrice.format(p.price)}</div>` : ''}
                 ${ctaGroup}
                 ${dotsHTML}
                 ${arrowsHTML}
-              </div>
-              <div class="content">
-                <div class="name-row">
-                  <div class="name">${p.name}</div>
-                  ${p.code ? `<div class="code">${p.code}</div>` : ''}
-                </div>
-                ${hasModels ? `<div class="models" aria-label="Compatible models">${modelsHTML}</div>` : ''}
+              
+				</div>
+				<div class="content">
+					<div class="name-row">
+						<div class="name">${p.name}</div>
+                  ${p.code ? `
+						<div class="code">${p.code}</div>` : ''}
+                
+					</div>
+                ${hasModels ? `
+					<div class="models" aria-label="Compatible models">${modelsHTML}</div>` : ''}
                 ${attrsHTML}
-                <div class="desc">${p.description}</div>
-              </div>
+                
+					<div class="desc">${p.description}</div>
+				</div>
             `;
           } else {
             // Tiles view
             card.innerHTML = `
-              <div class="media" data-index="0">
-                <div class="carousel" role="group" aria-label="Images for ${p.name}">
+              
+				<div class="media" data-index="0">
+					<div class="carousel" role="group" aria-label="Images for ${p.name}">
                   ${slidesHTML}
                 </div>
-                ${p.price>0 ? `<div class="img-price" title="Price">${fmtPrice.format(p.price)}</div>` : ''}
+                ${p.price>0 ? `
+					<div class="img-price" title="Price">${fmtPrice.format(p.price)}</div>` : ''}
                 ${ctaGroup}
                 ${dotsHTML}
                 ${arrowsHTML}
-              </div>
-              <div class="content">
-                <div class="title-row">
-                  <div class="name">${p.name}</div>
-                  ${p.code ? `<div class="code">${p.code}</div>` : ''}
-                </div>
-                ${hasModels ? `<div class="models" aria-label="Compatible models">${modelsHTML}</div>` : ''}
+              
+				</div>
+				<div class="content">
+					<div class="title-row">
+						<div class="name">${p.name}</div>
+                  ${p.code ? `
+						<div class="code">${p.code}</div>` : ''}
+                
+					</div>
+                ${hasModels ? `
+					<div class="models" aria-label="Compatible models">${modelsHTML}</div>` : ''}
                 ${attrsHTML}
-                <div class="desc">${p.description}</div>
-              </div>
+                
+					<div class="desc">${p.description}</div>
+				</div>
             `;
           }
-
           setupCarousel(card.querySelector('.media'));
           grid.appendChild(card);
         });
-
         countEl.textContent = `${list.length} of ${PARTS.length}`;
       }
-
       // Carousel
       function setupCarousel(mediaEl) {
         const track = mediaEl.querySelector('.carousel');
@@ -747,11 +1146,11 @@ function parseCSV(text) {
         const dots = mediaEl.querySelectorAll('.dot');
         const total = slides.length;
         if (total <= 1) return;
-
         const prevBtn = mediaEl.querySelector('.nav-prev');
         const nextBtn = mediaEl.querySelector('.nav-next');
-
-        let idx = 0, startX = 0, startY = 0;
+        let idx = 0,
+          startX = 0,
+          startY = 0;
 
         function go(i) {
           idx = (i + total) % total;
@@ -759,32 +1158,49 @@ function parseCSV(text) {
           dots.forEach((d, j) => d.classList.toggle('active', j === idx));
           mediaEl.dataset.index = idx;
         }
-
         // Click anywhere on image cycles forward, dots go to index, arrows prev/next
         mediaEl.addEventListener('click', (e) => {
           if (e.target.closest('.img-cta') || e.target.closest('.dots') || e.target.closest('.nav-arrow')) return;
           go(idx + 1);
         });
-
-        if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); go(idx - 1); });
-        if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); go(idx + 1); });
-
+        if (prevBtn) prevBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          go(idx - 1);
+        });
+        if (nextBtn) nextBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          go(idx + 1);
+        });
         mediaEl.addEventListener('touchstart', (e) => {
           const t = e.touches[0];
-          startX = t.clientX; startY = t.clientY;
-        }, { passive: true });
-
+          startX = t.clientX;
+          startY = t.clientY;
+        }, {
+          passive: true
+        });
         mediaEl.addEventListener('touchend', (e) => {
           const t = e.changedTouches[0];
-          const dx = t.clientX - startX; const dy = t.clientY - startY;
+          const dx = t.clientX - startX;
+          const dy = t.clientY - startY;
           if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy)) {
-            if (dx < 0) go(idx + 1); else go(idx - 1);
+            if (dx < 0) go(idx + 1);
+            else go(idx - 1);
           }
-        }, { passive: true });
+        }, {
+          passive: true
+        });
       }
-
       // Relevance scoring
-      const WEIGHTS = { name: 3, code: 3, models: 2, material: 2, finish: 1, categories: 2, keywords: 1, description: 1 };
+      const WEIGHTS = {
+        name: 3,
+        code: 3,
+        models: 2,
+        materials: 2,
+        finishes: 1,
+        categories: 2,
+        keywords: 1,
+        description: 1
+      };
 
       function partMatchesCategory(p, cat) {
         if (!cat) return true;
@@ -806,25 +1222,30 @@ function parseCSV(text) {
             name: norm(p.name),
             code: norm(p.code),
             description: norm(p.description),
-            material: norm(p.material),
-            finish: norm(p.finish),
             categories: (p.categories || []).map(norm),
             models: (p.models || []).map(norm),
-            keywords: (p.keywords || []).map(norm)
+            keywords: (p.keywords || []).map(norm),
+            materials: (p.materials || []).map(norm),
+            finishes: (p.finishes || []).map(norm)
           };
           let score = 0;
           const pass = tokens.every(t => {
             let hit = false;
-            for (const key of ['name','code','description','material','finish']) {
+            // string fields
+            for (const key of ['name', 'code', 'description']) {
               const val = f[key];
               if (val && val.includes(t)) {
                 hit = true;
                 score += WEIGHTS[key] + ((key === 'name' || key === 'code') && val.startsWith(t) ? 1 : 0);
               }
             }
-            for (const key of ['models','keywords','categories']) {
+            // array fields
+            for (const key of ['models', 'keywords', 'categories', 'materials', 'finishes']) {
               const arr = f[key];
-              if (arr?.some(v => v.includes(t))) { hit = true; score += WEIGHTS[key]; }
+              if (arr?.some(v => v.includes(t))) {
+                hit = true;
+                score += WEIGHTS[key];
+              }
             }
             return hit;
           });
@@ -832,54 +1253,62 @@ function parseCSV(text) {
           return pass;
         });
       }
-
       // Sorting: Relevance, CSV, alpha, price
       function sortParts(list, mode) {
         const arr = list.slice();
         switch (mode) {
-          case 'csv':        return arr.sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
-          case 'price-asc':  return arr.sort((a,b) => a.price - b.price || a.name.localeCompare(b.name));
-          case 'price-desc': return arr.sort((a,b) => b.price - a.price || a.name.localeCompare(b.name));
-          case 'name-asc':   return arr.sort((a,b) => a.name.localeCompare(b.name));
-          case 'name-desc':  return arr.sort((a,b) => b.name.localeCompare(a.name));
+          case 'csv':
+            return arr.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+          case 'price-asc':
+            return arr.sort((a, b) => a.price - b.price || a.name.localeCompare(b.name));
+          case 'price-desc':
+            return arr.sort((a, b) => b.price - a.price || a.name.localeCompare(b.name));
+          case 'name-asc':
+            return arr.sort((a, b) => a.name.localeCompare(b.name));
+          case 'name-desc':
+            return arr.sort((a, b) => b.name.localeCompare(a.name));
           case 'relevance':
           default:
-            if (SCORES.size === 0) return arr.sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
-            return arr.sort((a,b) => {
-              const sa = SCORES.get(a.code) || 0, sb = SCORES.get(b.code) || 0;
+            if (SCORES.size === 0) return arr.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+            return arr.sort((a, b) => {
+              const sa = SCORES.get(a.code) || 0,
+                sb = SCORES.get(b.code) || 0;
               return sb - sa || (a.order ?? 0) - (b.order ?? 0);
             });
         }
       }
-
       // URL sync
       function updateUrl(q, s, cat, view) {
         const params = new URLSearchParams(location.search);
-        if (q) params.set('q', q); else params.delete('q');
-        if (s && s !== 'relevance') params.set('sort', s); else params.delete('sort');
-        if (cat) params.set(CAT_PARAM, cat); else params.delete(CAT_PARAM);
-        if (view && view !== VIEW_TILES) params.set(VIEW_PARAM, view); else params.delete(VIEW_PARAM);
-
+        if (q) params.set('q', q);
+        else params.delete('q');
+        if (s && s !== 'relevance') params.set('sort', s);
+        else params.delete('sort');
+        if (cat) params.set(CAT_PARAM, cat);
+        else params.delete(CAT_PARAM);
+        if (view && view !== VIEW_TILES) params.set(VIEW_PARAM, view);
+        else params.delete(VIEW_PARAM);
         const qs = params.toString();
         history.replaceState(null, '', qs ? `${location.pathname}?${qs}` : location.pathname);
       }
 
       function setClearXVisible() {
         const has = searchInput.value.trim().length > 0;
-        if (has) clearX.classList.add('visible'); else clearX.classList.remove('visible');
+        if (has) clearX.classList.add('visible');
+        else clearX.classList.remove('visible');
         searchLabel.classList.toggle('has-value', has);
       }
-
       // Category bar build/update
       function buildCategoryBar() {
         const set = new Set();
-        PARTS.forEach(p => (p.categories || []).forEach(c => { if (c && c.trim()) set.add(c.trim()); }));
+        PARTS.forEach(p => (p.categories || []).forEach(c => {
+          if (c && c.trim()) set.add(c.trim());
+        }));
         const allCats = Array.from(set);
         const lowerPriority = CATEGORY_PRIORITY.map(norm);
         const pri = CATEGORY_PRIORITY.filter(c => allCats.some(x => norm(x) === norm(c)));
-        const rest = allCats.filter(c => !lowerPriority.includes(norm(c))).sort((a,b) => a.localeCompare(b));
+        const rest = allCats.filter(c => !lowerPriority.includes(norm(c))).sort((a, b) => a.localeCompare(b));
         ALL_CATEGORIES = [...pri, ...rest];
-
         catBar.innerHTML = '';
         const allChip = chipEl('All', selectedCategory === '' ? true : false, () => {
           selectedCategory = '';
@@ -898,7 +1327,7 @@ function parseCSV(text) {
         });
       }
 
-      function chipEl(label, active=false, onClick) {
+      function chipEl(label, active = false, onClick) {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'cat-chip' + (active ? ' active' : '');
@@ -918,7 +1347,6 @@ function parseCSV(text) {
         });
         updateUrl(searchInput.value, sortSelect.value, selectedCategory || '', viewMode);
       }
-
       // PDF fit helper
       function withPdfFit(url) {
         const [base, hash = ''] = url.split('#');
@@ -933,10 +1361,10 @@ function parseCSV(text) {
         const h = params.toString();
         return base + (h ? '#' + h : '');
       }
+
       function isMobile() {
         return window.matchMedia('(max-width: 640px)').matches || /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
       }
-
       // view helpers
       function applyViewToDOM() {
         document.body.dataset.view = viewMode;
@@ -944,7 +1372,8 @@ function parseCSV(text) {
         viewTilesBtn.setAttribute('aria-pressed', isTiles ? 'true' : 'false');
         viewListBtn.setAttribute('aria-pressed', isTiles ? 'false' : 'true');
       }
-      function setView(mode, opts={}) {
+
+      function setView(mode, opts = {}) {
         if (mode !== VIEW_TILES && mode !== VIEW_LIST) mode = VIEW_TILES;
         viewMode = mode;
         localStorage.setItem('catalogView', viewMode);
@@ -952,7 +1381,6 @@ function parseCSV(text) {
         updateUrl(searchInput.value, sortSelect.value, selectedCategory || '', viewMode);
         if (!opts.noUpdate) update();
       }
-
       // Central update
       function update() {
         const q = searchInput.value;
@@ -963,29 +1391,35 @@ function parseCSV(text) {
         updateUrl(q, s, selectedCategory || '', viewMode);
       }
       const debouncedUpdate = debounce(update, 150);
-
       // Events
-      searchInput.addEventListener('input', () => { setClearXVisible(); debouncedUpdate(); });
+      searchInput.addEventListener('input', () => {
+        setClearXVisible();
+        debouncedUpdate();
+      });
       sortSelect.addEventListener('change', update);
       clearX.addEventListener('click', (e) => {
-        e.preventDefault(); e.stopPropagation();
-        searchInput.value = ''; setClearXVisible(); update(); searchInput.blur();
+        e.preventDefault();
+        e.stopPropagation();
+        searchInput.value = '';
+        setClearXVisible();
+        update();
+        searchInput.blur();
       });
-
       // view toggle events
       viewTilesBtn.addEventListener('click', () => setView(VIEW_TILES));
-      viewListBtn.addEventListener('click',  () => setView(VIEW_LIST));
-
+      viewListBtn.addEventListener('click', () => setView(VIEW_LIST));
       // PDF button: mobile opens same tab, desktop opens modal
       grid.addEventListener('click', (e) => {
         const btn = e.target.closest('.pdf-cta');
         if (!btn) return;
         const url = btn.getAttribute('data-file');
         const finalUrl = withPdfFit(url);
-        if (isMobile()) { window.location.assign(finalUrl); return; }
+        if (isMobile()) {
+          window.location.assign(finalUrl);
+          return;
+        }
         openPdfModal(finalUrl);
       });
-
       // Modal behavior (desktop)
       function openPdfModal(url) {
         lastFocused = document.activeElement;
@@ -995,6 +1429,7 @@ function parseCSV(text) {
         document.addEventListener('keydown', onModalKeydown);
         pdfModal.addEventListener('click', onModalBackdrop);
       }
+
       function closePdfModal() {
         pdfModal.classList.remove('open');
         document.body.classList.remove('modal-open');
@@ -1003,52 +1438,60 @@ function parseCSV(text) {
         pdfModal.removeEventListener('click', onModalBackdrop);
         if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
       }
-      function onModalKeydown(e) { if (e.key === 'Escape') closePdfModal(); }
+
+      function onModalKeydown(e) {
+        if (e.key === 'Escape') closePdfModal();
+      }
+
       function onModalBackdrop(e) {
         const panel = pdfModal.querySelector('.panel');
         if (!panel.contains(e.target)) closePdfModal();
       }
-
       // Hide category bar when not at top
       let ticking = false;
-      function updateCatbarVisibility() { catBar.classList.toggle('hidden', window.scrollY > 0); ticking = false; }
-      window.addEventListener('scroll', () => {
-        if (!ticking) { requestAnimationFrame(updateCatbarVisibility); ticking = true; }
-      }, { passive: true });
 
+      function updateCatbarVisibility() {
+        catBar.classList.toggle('hidden', window.scrollY > 0);
+        ticking = false;
+      }
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(updateCatbarVisibility);
+          ticking = true;
+        }
+      }, {
+        passive: true
+      });
       // Init
       (async function init() {
         const params = new URLSearchParams(location.search);
         const q = params.get('q') || '';
         const s = params.get('sort') || 'relevance';
         const cat = params.get(CAT_PARAM) || '';
-
         // pick view from URL or localStorage (default tiles)
         const urlView = params.get(VIEW_PARAM);
         const savedView = localStorage.getItem('catalogView');
-        const initialView = (urlView === VIEW_LIST || urlView === VIEW_TILES) ? urlView
-                           : (savedView === VIEW_LIST || savedView === VIEW_TILES) ? savedView
-                           : VIEW_TILES;
-        setView(initialView, { noUpdate: true });
-
+        const initialView = (urlView === VIEW_LIST || urlView === VIEW_TILES) ? urlView : (savedView === VIEW_LIST || savedView === VIEW_TILES) ? savedView : VIEW_TILES;
+        setView(initialView, {
+          noUpdate: true
+        });
         searchInput.value = q;
         sortSelect.value = s;
         setClearXVisible();
         selectedCategory = cat;
-
         PARTS = await loadCSV(CSV_URL);
         await Promise.all(PARTS.map(async (p) => {
           p.images = await resolveExistingImages(p.possibleImageNames);
           p.file = await checkFileExists(p.file);
         }));
-
         buildCategoryBar();
         update();
       })();
-
       async function loadCSV(url) {
         try {
-          const res = await fetch(url, { cache: 'no-store' });
+          const res = await fetch(url, {
+            cache: 'no-store'
+          });
           if (!res.ok) throw new Error('HTTP ' + res.status);
           const text = await res.text();
           const records = parseCSV(text);
@@ -1058,13 +1501,14 @@ function parseCSV(text) {
           return [];
         }
       }
-
       // Force tiles on small screens so list view can't appear on mobile
       function enforceMobileTiles() {
         const small = window.matchMedia('(max-width: 640px)').matches;
         if (small && viewMode !== 'tiles') setView('tiles');
       }
-      window.addEventListener('resize', enforceMobileTiles, { passive: true });
+      window.addEventListener('resize', enforceMobileTiles, {
+        passive: true
+      });
       enforceMobileTiles(); // call once on load
     </script>
   </body>
