@@ -12,16 +12,16 @@ Attic Ladder,A25 Attic Ladder,A25,,,A25,Heights: 2300mm - 2450mm<br>Opening: 140
 Attic Ladder,A28 Attic Ladder,A28,,,A28,Heights: 2550mm - 2700mm<br>Opening: 1400mm x 650mm,2299,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/commercial-range/a28-attic-ladder
 Attic Ladder,A36 Attic Ladder,A36,,,A36,Heights: 2700mm - 3660mm<br>Opening: 1400mm x 650mm,3499,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/commercial-range/a36-attic-ladder
 # Attic Ladders Parts
-Attic Ladder,Ladder Hinge P,AL-LHP,STEEL,POWDERCOAT,P30;FT30;FA30;FTW30,V shaped ladder hinge,15,,
-Attic Ladder,Ladder Hinge D,AL-LHD,,,D28;D30;D36,Plate shaped ladder hinge,20,,
-Attic Ladder,Ladder Hinge A,AL-LHA,,,Q24;P36;A25;A28;A36,Plate shaped ladder hinge,25,,
-Attic Ladder,Ladder Hinge Q,AL-LHQ,,,Q24;P36,Plate shaped ladder hinge,20,,
-Attic Ladder,Handrail P,AL-HRP,,,P30;D28;FT30;FA30;FTW30,Red round tube handrail,20,,
-Attic Ladder,Lid P,AL-LP,,,P30;P36,36mm insulated lid,40,,
-Attic Ladder,Operating Rod P,AL-ORP,,,P30;D28;A25;A28,1100mm long round rod with hook,15,,
-Attic Ladder,Ladder Section P,AL-LSP,,,P30;FT30;FTW30,1100mm ladder section dovetailed treads,40,,
+Attic Ladder,Ladder Hinge P,ALP-LHP,STEEL,POWDERCOAT,P30;FT30;FA30;FTW30,V shaped ladder hinge,15,,
+Attic Ladder,Ladder Hinge D,ALP-LHD,STEEL,POWDERCOAT,D28;D30;D36,Plate shaped ladder hinge,20,,
+Attic Ladder,Ladder Hinge A,ALP-LHA,STEEL,POWDERCOAT,Q24;P36;A25;A28;A36,Plate shaped ladder hinge,25,,
+Attic Ladder,Ladder Hinge Q,ALP-LHQ,STEEL,POWDERCOAT,Q24;P36,Plate shaped ladder hinge,20,,
+Attic Ladder,Handrail P,ALP-HRP,STEEL,POWDERCOAT,P30;D28;FT30;FA30;FTW30,Red round tube handrail,20,,
+Attic Ladder,Lid P,ALP-LP,TIMBER,,P30;P36,36mm insulated lid,40,,
+Attic Ladder,Operating Rod P,ALP-ORP,TIMBER,,P30;D28;A25;A28,1100mm long round rod with hook,15,,
+Attic Ladder,Ladder Section P,ALP-LSP,TIMBER,,P30;FT30;FTW30,1100mm ladder section dovetailed treads,40,,
 # Roof Hatch Parts
-Roof Hatch,Gas Strut,RH-GS,STAINLESS STEEL,,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,150n,80,Pneumatic Stay,
+Roof Hatch,Gas Strut,RHP-GS,STAINLESS STEEL,,SRH800800;SRH900700;SRH1200700;SRH1200900;SRH1500700,150n,80,Pneumatic Stay,
 # Fasteners
-Fasteners,M8x25 Bolt,,STEEL 8.8,ZINC,,General fastener typically used for connecting ladder stay arms together,,,
-Fasteners,D Shackle 6mm,,STEEL,GALV,,General fastener 6mm dia,1,,
+Fasteners,M8x25 Bolt,FB-M8x25,STEEL 8.8,ZINC,,General fastener typically used for connecting ladder stay arms together,,,
+Fasteners,D Shackle 6mm,FS-6,STEEL,GALV,,General fastener 6mm dia,1,,
