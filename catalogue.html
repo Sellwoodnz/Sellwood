@@ -529,36 +529,52 @@
         }
       }
 
-      function parseCSV(text) {
-        const rows = [];
-        let i = 0, f = '', row = [], q = false;
-        function pushF(){ row.push(f); f=''; }
-        function pushR(){ rows.push(row); row=[]; }
-        while (i < text.length) {
-          const c = text[i];
-          if (q) {
-            if (c === '"') {
-              if (text[i+1] === '"') { f+='"'; i++; } else { q = false; }
-            } else { f += c; }
-          } else {
-            if (c === '"') q = true;
-            else if (c === ',') pushF();
-            else if (c === '\n') { pushF(); pushR(); }
-            else if (c === '\r') {}
-            else f += c;
-          }
-          i++;
-        }
-        if (f.length > 0 || row.length) { pushF(); pushR(); }
-        while (rows.length && rows[rows.length-1].every(v => v === '')) rows.pop();
-        if (!rows.length) return [];
-        const header = rows[0].map(h => norm(h).replace(/\s+/g, ''));
-        return rows.slice(1).map(r => {
-          const o = {};
-          for (let j=0; j<header.length; j++) o[header[j]] = r[j] ?? '';
-          return o;
-        });
-      }
+function parseCSV(text) {
+  // Strip BOM if present
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+
+  const rows = [];
+  let i = 0, f = '', row = [], q = false;
+
+  function pushF(){ row.push(f); f=''; }
+  function pushR(){ rows.push(row); row=[]; }
+
+  while (i < text.length) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') {
+        if (text[i+1] === '"') { f+='"'; i++; } else { q = false; }
+      } else { f += c; }
+    } else {
+      if (c === '"') q = true;
+      else if (c === ',') pushF();
+      else if (c === '\n') { pushF(); pushR(); }
+      else if (c === '\r') { /* ignore */ }
+      else { f += c; }
+    }
+    i++;
+  }
+  if (f.length > 0 || row.length) { pushF(); pushR(); }
+
+  // Drop blank rows and single-cell comment/header rows (except the first header row)
+  const cleaned = rows.filter((r, idx) => {
+    if (idx === 0) return true; // keep the CSV header row
+    const nonEmpty = r.filter(v => String(v).trim() !== '');
+    if (nonEmpty.length === 0) return false; // blank row
+    // comment/header row = exactly one non-empty cell starting with #, ;, or //
+    const first = String(nonEmpty[0]).trim();
+    if (nonEmpty.length === 1 && (/^(#|;|\/\/)/.test(first))) return false;
+    return true;
+  });
+
+  if (!cleaned.length) return [];
+  const header = cleaned[0].map(h => norm(h).replace(/\s+/g, ''));
+  return cleaned.slice(1).map(r => {
+    const o = {};
+    for (let j = 0; j < header.length; j++) o[header[j]] = r[j] ?? '';
+    return o;
+  });
+}
 
       function pick(rec, names) {
         for (const n of names) {
