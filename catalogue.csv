@@ -1,19 +1,19 @@
 catagory,name,code,models,manufacturer,material,finish,description,price,keywords,link
 # Products,,,,,,,,,,
-Attic Ladder,PN30 Attic Ladder,PN30,PN30,HANGZHOU TIMESWOOD,PINE;STEEL,FACTORY,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 550mm,699,Pull Down;Folding;Loft,https://www.sellwood.com.au/products/pn30-attic-ladder
-Attic Ladder,P30 Attic Ladder,P30,P30,HANGZHOU TIMESWOOD,PINE;STEEL,FACTORY,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 600mm,699,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/premier-range/p30-attic-ladder
-Attic Ladder,P36 Attic Ladder,P36,P36,HANGZHOU TIMESWOOD,PINE;STEEL,FACTORY,Heights: 3050mm - 3660mm<br>Opening: 1300mm x 600mm,1599,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/premier-range/p3-attic-ladder
-Attic Ladder,D28 Attic Ladder,D28,D28,HANGZHOU TIMESWOOD,PINE;STEEL,FACTORY,Heights: 2250mm - 2800mm<br>Opening: 1400mm x 650mm,1499,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/deluxe-range/d28-attic-ladder
-Attic Ladder,D30 Attic Ladder,D30,D30,HANGZHOU TIMESWOOD,PINE;STEEL,FACTORY,Heights: 2800mm - 3100mm<br>Opening: 1450mm x 650mm,1799,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/deluxe-range/d30-attic-ladder
-Attic Ladder,D36 Attic Ladder,D36,D36,HANGZHOU TIMESWOOD,PINE;STEEL,FACTORY,Heights: 3100mm - 3660mm<br>Opening: 1450mm x 650mm,2199,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/deluxe-range/d36-attic-ladder
-Attic Ladder,Q24 Attic Ladder,Q24,Q24,HANGZHOU TIMESWOOD,PINE;STEEL,FACTORY,Heights: 2250mm - 2440mm<br>Opening: 835mm x 650mm,899,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/truss-range/q24-attic-ladder
-Attic Ladder,Q27 Attic Ladder,Q27,Q27,HANGZHOU TIMESWOOD,PINE;STEEL,FACTORY,Heights: 2300mm - 2700mm<br>Opening: 835mm x 650mm,999,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/truss-range/q27-attic-ladder
-Attic Ladder,A25 Attic Ladder,A25,A25,HANGZHOU TIMESWOOD,PINE;STEEL,FACTORY,Heights: 2300mm - 2450mm<br>Opening: 1400mm x 650mm,2199,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/commercial-range/a25-attic-ladder
-Attic Ladder,A28 Attic Ladder,A28,A28,HANGZHOU TIMESWOOD,PINE;STEEL,FACTORY,Heights: 2550mm - 2700mm<br>Opening: 1400mm x 650mm,2299,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/commercial-range/a28-attic-ladder
-Attic Ladder,A36 Attic Ladder,A36,A36,HANGZHOU TIMESWOOD,PINE;STEEL,FACTORY,Heights: 2700mm - 3660mm<br>Opening: 1400mm x 650mm,3499,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/commercial-range/a36-attic-ladder
-Attic Ladder,FT30 Attic Ladder,FT30,FT30,HANGZHOU TIMESWOOD,PINE;STEEL,FACTORY,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 600mm,499,,https://www.sellwood.co.nz/product/foldaway-range/ft30-attic-ladder
-Attic Ladder,FA30 Attic Ladder,FA30,FA30,HANGZHOU TIMESWOOD,PINE;STEEL,FACTORY,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 600mm,649,,https://www.sellwood.co.nz/product/foldaway-range/fa30-attic-ladder
-Attic Ladder,FTW Attic Ladder,FTW30,FTW30,HANGZHOU TIMESWOOD,PINE;STEEL,FACTORY,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 700mm,849,,https://www.sellwood.co.nz/product/foldaway-range/ftw30-attic-ladder
+Attic Ladder,PN30 Attic Ladder,PN30,PN30,HANGZHOU TIMESWOOD,PINE;STEEL,,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 550mm,699,Pull Down;Folding;Loft,https://www.sellwood.com.au/products/pn30-attic-ladder
+Attic Ladder,P30 Attic Ladder,P30,P30,HANGZHOU TIMESWOOD,PINE;STEEL,,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 600mm,699,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/premier-range/p30-attic-ladder
+Attic Ladder,P36 Attic Ladder,P36,P36,HANGZHOU TIMESWOOD,PINE;STEEL,,Heights: 3050mm - 3660mm<br>Opening: 1300mm x 600mm,1599,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/premier-range/p3-attic-ladder
+Attic Ladder,D28 Attic Ladder,D28,D28,HANGZHOU TIMESWOOD,PINE;STEEL,,Heights: 2250mm - 2800mm<br>Opening: 1400mm x 650mm,1499,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/deluxe-range/d28-attic-ladder
+Attic Ladder,D30 Attic Ladder,D30,D30,HANGZHOU TIMESWOOD,PINE;STEEL,,Heights: 2800mm - 3100mm<br>Opening: 1450mm x 650mm,1799,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/deluxe-range/d30-attic-ladder
+Attic Ladder,D36 Attic Ladder,D36,D36,HANGZHOU TIMESWOOD,PINE;STEEL,,Heights: 3100mm - 3660mm<br>Opening: 1450mm x 650mm,2199,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/deluxe-range/d36-attic-ladder
+Attic Ladder,Q24 Attic Ladder,Q24,Q24,HANGZHOU TIMESWOOD,PINE;STEEL,,Heights: 2250mm - 2440mm<br>Opening: 835mm x 650mm,899,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/truss-range/q24-attic-ladder
+Attic Ladder,Q27 Attic Ladder,Q27,Q27,HANGZHOU TIMESWOOD,PINE;STEEL,,Heights: 2300mm - 2700mm<br>Opening: 835mm x 650mm,999,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/truss-range/q27-attic-ladder
+Attic Ladder,A25 Attic Ladder,A25,A25,HANGZHOU TIMESWOOD,PINE;STEEL,,Heights: 2300mm - 2450mm<br>Opening: 1400mm x 650mm,2199,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/commercial-range/a25-attic-ladder
+Attic Ladder,A28 Attic Ladder,A28,A28,HANGZHOU TIMESWOOD,PINE;STEEL,,Heights: 2550mm - 2700mm<br>Opening: 1400mm x 650mm,2299,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/commercial-range/a28-attic-ladder
+Attic Ladder,A36 Attic Ladder,A36,A36,HANGZHOU TIMESWOOD,PINE;STEEL,,Heights: 2700mm - 3660mm<br>Opening: 1400mm x 650mm,3499,Pull Down;Folding;Loft,https://www.sellwood.co.nz/product/commercial-range/a36-attic-ladder
+Attic Ladder,FT30 Attic Ladder,FT30,FT30,HANGZHOU TIMESWOOD,PINE;STEEL,,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 600mm,499,,https://www.sellwood.co.nz/product/foldaway-range/ft30-attic-ladder
+Attic Ladder,FA30 Attic Ladder,FA30,FA30,HANGZHOU TIMESWOOD,PINE;STEEL,,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 600mm,649,,https://www.sellwood.co.nz/product/foldaway-range/fa30-attic-ladder
+Attic Ladder,FTW Attic Ladder,FTW30,FTW30,HANGZHOU TIMESWOOD,PINE;STEEL,,Heights: 2250mm - 3050mm<br>Opening: 1300mm x 700mm,849,,https://www.sellwood.co.nz/product/foldaway-range/ftw30-attic-ladder
 ,,,,,,,,,,
 Roof Access,SRH900700 Roof Hatch,SRH900700,SRH900700,ZHEJIANG SHUNSHI,ALUMINIUM,P/C Gull Grey,Opening: 900mm x 700mm,1890,,https://www.sellwood.co.nz/product/roof-hatch/srh900700-roof-hatch
 Roof Access,SRH800800 Roof Hatch,SRH800800,SRH800800,ZHEJIANG SHUNSHI,ALUMINIUM,P/C Gull Grey,Opening: 800mm x 800mm,1890,,https://www.sellwood.co.nz/product/roof-hatch/srh800800-roof-hatch
